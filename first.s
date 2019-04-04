@@ -12,9 +12,9 @@ msg:.ascii "Hello, World! This is my first assembly program."
     .org 510
     .word 0xAA55
 
-#as first.s -o first.o
-#ld -Ttext=0x7c00 -o first.img --oformat=binary first.o
-#sudo qemu-system-i386 -drive format=raw,file=first.img
+# as first.s -o first.o
+# ld -Ttext=0x7c00 -o first.img --oformat=binary first.o
+# sudo qemu-system-i386 -drive format=raw,file=first.img
 
 
 
