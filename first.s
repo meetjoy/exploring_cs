@@ -3,7 +3,7 @@
 _start:
 mov $26, %cx
 mov $0x0903, %dx
-mov $0x000c, %bx
+mov $0x0001, %bx
 mov $msg, %bp
 mov $0x1301, %ax
 int $0x10
