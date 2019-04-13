@@ -4,28 +4,16 @@
 _start:                 # main program body
 SCN_SEL:  .word 0xb800  #! the segment number of video memory
 scn_pos:  .word 0x0     # 2 bytes to save the current screen postion
-# main program starts, prints the ascii code 0 to 127 to screen
+# main program starts, prints an ascii code to screen
     mov $0x0d, %ah      # 0x0d is the colour attributes of the code to be printed
-    mov $0, %al         # sets the first code point 0
-1:  call write_screen   # calls function to print 0 to screen
-    mov %al, %bl        # temperarily saves the code point to %bl
-    cmp  $127, %al      # if %al >= 127, means all 128 ascii code all printed
-    jge   end           # then jmp to end to finsh
-    mov $32, %al        # else, print a space
-    mov $0, %cx
-2:  call write_screen
-    add $1, %cx
-    cmp $9, %cx
-    jb   2b
-    add  $1, %bl        # adds %bl with 1 and puts it back to %al for next round
-    mov %bl, %al
-    jmp 1b
+    mov $97, %al        # sets the code point 97 to %al
+    call write_screen   # calls function to print 0 to screen
 end: jmp .
 # function,parametre: %ax, sets %ax before call, relies on SCN_SEL,scn_pos
 write_screen:           
     push %es            # puts %es to stack
     pushl %ebx          # puts %ebx to stack
-    mov SCN_SEL, %ebx   #
+    mov SCN_SEL, %ebx   # 
     mov %bx,%es         # sets %es segments register to the video segment
     mov scn_pos, %bx    # get the value in memory of scn_pos
     mov %ax, %es:(%bx)  # writes 2 bytes to screen, you will see 1 character displayed
