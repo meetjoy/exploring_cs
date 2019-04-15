@@ -28,9 +28,10 @@ write_screen:
     mov SCN_SEL, %ebx   #
     mov %bx,%es         # set %es segments register to the video segment
     mov scn_pos, %bx    # get the value in memory of scn_pos
+    shlw %bx
     mov %ax, %es:(%bx)  # write 2 bytes to screen, you will see 1 character displayed
     add $2, %bx         # add 2 to get next memory address
-    cmp $4000, %bx      # compare next memory address, if > 2000 means full screen written
+    cmp $2000, %bx      # compare next memory address, if > 2000 means full screen written
     jb 1f               # if < 2000, go to lable 1 
     mov $0, %bx         # if > 2000, reset next memory address to 0
 1:  mov %bx, scn_pos    # save next memory address to memory
