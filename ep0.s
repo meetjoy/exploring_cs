@@ -14,7 +14,7 @@ write_screen:
     pushw %es           # put %es to stack
     pushl %ebx          # put %ebx to stack
     movl  SCN_SEL, %ebx # 
-    movw  %bx,%es       # set %es segment register to the video segment
+    movw  %bx,%es       # set %es segment register to the colour text area of video ram
     movw  scn_pos, %bx  # get the value in memory of scn_pos
     shlw  %bx           # time %bx by 2
     movw  %ax, %es:(%bx)# write 2 bytes to screen, 1 character displayed
