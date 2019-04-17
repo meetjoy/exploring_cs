@@ -14,7 +14,7 @@ write_screen:
     pushw %es           # put %es to stack
     pushl %ebx          # put %ebx to stack
     movl  SCN_SEL, %ebx # 
-    movw  %bx,%es       # set %es segment register to the colour text area of video ram
+    movw  %bx,%es       # set %es segment register to colour text area of video RAM
     movw  scn_pos, %bx  # get the value in memory of scn_pos
     shlw  %bx           # time %bx by 2
     movw  %ax, %es:(%bx)# write 2 bytes to screen, 1 character displayed
@@ -23,7 +23,7 @@ write_screen:
     ret
 # end of function
 
-SCN_SEL:  .word 0xb800  #! the segment number of video memory
+SCN_SEL:  .word 0xb800  #! memory number where colour text starts
 scn_pos:  .word 0x0     # 2 bytes to save current screen postion
 .org 510                # to advance the location to 510th byte
 .word 0xAA55            # last 16 bits of first 512 bytes on disk
