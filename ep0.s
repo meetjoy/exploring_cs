@@ -25,7 +25,7 @@ write_char:
     pushw %es
     movw SCN_SEL, %es  #
     movl scn_pos, %ebx
-    shll  %ebx           # time %bx by 2
+    shll  $1, %ebx           # time %bx by 2
     movw  %ax, %es:(%bx)# write 2 bytes to screen, 1 character displayed
     popw  %es
     popl  %ebx          # recover %ebx from stack

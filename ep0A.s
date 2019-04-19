@@ -40,7 +40,7 @@ write_char:
     cmpl  $2000, %ebx   # test full screen?
     jb    1f
     xorl  %ebx, %ebx
-1:  shll  %ebx           # time %bx by 2
+1:  shll  $1, %ebx           # time %bx by 2
     movw  %ax, %es:(%bx)# write 2 bytes to screen, 1 character displayed
     shrl  $1, %ebx
     addl  $1, %ebx
