@@ -1,1 +1,1 @@
-This document brings us to a toursim over the computer system.
+This document brings us to a tour over the computer system.
