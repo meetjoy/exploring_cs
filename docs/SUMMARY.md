@@ -1,6 +1,5 @@
-# Summary
 
-## Use headings to create page groups like this one
+## Table of Contents
 
 * [Chapter 1](1.0.md)
     * [First Section]()
