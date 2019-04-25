@@ -1,9 +1,11 @@
 # Table of Contents
 
-1. [Chapter 1]()
-    1. [Section 1.1]()
-    2. [Section 1.2]()
-2. [Chapter 2]()
-    1. [Section 2.1]()
-    2. [Section 2.2]()
+* [Chapter 1]()
+    * [Section]()
+    * [Section]()
+* [Chapter 2]()
+    * [Section]()
+    * [Section]()
+    * [Section](2.7.md)
+    * [Section](2.8.md)
 
