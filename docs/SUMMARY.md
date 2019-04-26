@@ -6,6 +6,6 @@
 * [Chapter 2]()
     * [Section]()
     * [Section]()
-    * [Section](2.7.md)
-    * [Section](2.8.md)
+    * [Legacy BIOS: Read from Disk into Memroy](2.7.md)
+    * [Boot loader program function](2.8.md)
 
