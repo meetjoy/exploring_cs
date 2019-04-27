@@ -2,7 +2,7 @@
 
  A Linux operating system is to be used as the platform for the experiments we are going to do in this book. Please move to the next section if you already have any distribution of Linux installed on your personal computer, it can be running on a virtual machine or alongside with Windows or macOS.
 
-For these who do not currently have a Linux system in hand, or these who are even new to Linux system, Ubuntu desktop is recommended. Ubuntu is a free and open-source Linux distribution. It can be installed either on a virtual machine which is running on your current operating system or alongside with your current operating system. Please refer to [appendix A](../appendix-a-installing-ubuntu-desktop.md) for more information if you encounter some difficulties in installing Ubuntu desktop. It might take several hours if it’s your first time to install a system. Be patient and keep searching the answers whenever something confuses you.
+For these who do not currently have a Linux system in hand, or these who are even new to Linux system, Ubuntu desktop is recommended. Ubuntu is a free and open-source Linux distribution. It can be installed either on a virtual machine which is running on your current operating system or alongside with your current operating system. Please refer to [appendix A](appendix-a-installing-ubuntu-desktop.md) for more information if you encounter some difficulties in installing Ubuntu desktop. It might take several hours if it’s your first time to install a system. Be patient and keep searching the answers whenever something confuses you.
 
 ## Write a Short Program: first
 
@@ -34,7 +34,7 @@ msg: .ascii "My first computer program!"
 8. We will see the following window if everything has gone well so far. The light red words _**My first computer program!**_ on the screen is what the program does.
 9. We have finished first program and had it run. Again we mentioned several terms in the above steps, do not worry these for now, we will see the next sections for the explanations.
 
-![&quot;Hello World Program&quot;](../.gitbook/assets/hello.jpg)
+![&quot;Hello World Program&quot;](.gitbook/assets/hello.jpg)
 
 ## Concepts: Terminal, Assembler, Linker and Emulator
 
@@ -103,7 +103,7 @@ Now it’s a great time to introduce the concept of bit. We already know that th
 
 The below figure also gives the definition of Low Byte, High Byte, Low Word, High Word etc..
 
-![Data Type Table](../.gitbook/assets/data-type.jpg)
+![Data Type Table](.gitbook/assets/data-type.jpg)
 
 ### Memory is just a pile of boxes
 
@@ -117,7 +117,7 @@ The text book tells us there are two main components inside of a CPU, the contro
 
 We briefly talked about the CPU, main memory and disks, to conclude the first overview of the computer architecture, we have a look at the following illustration.
 
-![](../.gitbook/assets/archi.jpg)
+![](.gitbook/assets/archi.jpg)
 
 The above illustration summaries well what have discussed so far. All the other devices we have not mentioned like monitor/screen, keyboard and mouse etc., plus the SSD or HDD and other secondary storage media are all call I/O devices. The reason why we put all these except the CPU and main memory/RAM into one category \(the I/O devices\) is the CPU treats all of these devices in a very similar way. The BUS is just like the high ways, that’s where the CPU, main memory, and I/O devices communicate through.
 
@@ -129,7 +129,7 @@ We learned that every kind of information stored in any kind of disks is just a 
 
 A ROM BIOS \(Basic Input/Output System\) is a set of programs permanently stored in a ROM \(Read-Only Memory\) chip located on the computer motherboard. These programs micro-manage the hardware devices installed on the computer. When we turn on the computer, the ROM BIOS initializes and tests these devices. The first job of a ROM BIOS is to initialize and configure the computer hardware when we turn on the computer \(system boot\). The BIOS runs a series of complex programs called the Power On Self Test \(POST\), which performs a number of tasks, including: \[8\] i. Test Random Access Memory \(RAM\) ii. Conduct an inventory of the hardware devices installed in the computer iii. Configure hard and floppy disks, keyboard, monitor, and serial and parallel ports iv. Configure other devices installed in the computer such as CD-ROM drives and sound cards v. Initialize computer hardware required for computer features such as Plug and Play and Power Management vi. Run Setup if requested vii. Load and run the Operating System The last task is to load the Operating System code usually from the disk. The executable file first.img is loaded into main memory and executed when the last command “sudo Qemu-system-x86\_64 -cpu max -drive format=raw,file=first.img” is executed.\[8\]
 
-![](../.gitbook/assets/layer.jpg)
+![](.gitbook/assets/layer.jpg)
 
 The above illustration explains well the layers for a computer system. ROM BIOS which is also called firmware sits in between the bare hardware and the Operating System. The application programs like a web browser, a word processing program, or a video player mount on the toppest layer.
 
