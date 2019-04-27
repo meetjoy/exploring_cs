@@ -1,6 +1,6 @@
 # First Chapter
 
- A Linux operating system is to be used as the platform for the experiments we are going to do in this book. Please move to section 1 if you already have any distribution of Linux installed on your personal computer, it can be running on a virtual machine or alongside with Windows or macOS.
+ A Linux operating system is to be used as the platform for the experiments we are going to do in this book. Please move to the next section if you already have any distribution of Linux installed on your personal computer, it can be running on a virtual machine or alongside with Windows or macOS.
 
 For these who do not currently have a Linux system in hand, or these who are even new to Linux system, Ubuntu desktop is recommended. Ubuntu is a free and open-source Linux distribution. It can be installed either on a virtual machine which is running on your current operating system or alongside with your current operating system. Please refer to [appendix A](../appendix-a-installing-ubuntu-desktop.md) for more information if you encounter some difficulties in installing Ubuntu desktop. It might take several hours if it’s your first time to install a system. Be patient and keep searching the answers whenever something confuses you.
 
@@ -33,6 +33,8 @@ msg: .ascii "My first computer program!"
 7. Run your program. Input or copy and paste the following command and press **Enter** key: `sudo Qemu-system-x86_64 -cpu max -drive format=raw,file=first.img`
 8. We will see the following window if everything has gone well so far. The light red words _**My first computer program!**_ on the screen is what the program does.
 9. We have finished first program and had it run. Again we mentioned several terms in the above steps, do not worry these for now, we will see the next sections for the explanations.
+
+![](../.gitbook/assets/hello.jpg)
 
 ## End of this page
 
