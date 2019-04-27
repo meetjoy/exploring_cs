@@ -34,14 +34,12 @@ ok_load:
     xor %esi, %esi
     xor %edi, %edi
     rep movsw
-    sti
     ljmp *head_offset
 
 # data region
 SYSLEN: .word 0x11      # less than 17 sector of program head
-head_segment:.word 0x0
 head_offset: .word 0x7E00
-
+head_segment:.word 0x0
 .org 510
 .word 0xAA55            # last 16 bits of first 512 bytes on disk
 
