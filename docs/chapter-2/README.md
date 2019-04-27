@@ -1,2 +1,26 @@
-# Chapter 2
+# Part 2 Multi-task Program in Protect Mode
+
+## Memory map, stack & segment, video colour text memory area, function, ASCII code, suffix, x86 assembly language
+
+In this section we are going to introduce some concepts then we start composing another piece of assembly code ep0.s.
+
+## Memory map for "Low" memory \(&lt; 1 MiB \)
+
+We have already introduced that once we power on the computer, the legacy BIOS runs a series of complex programs called Power On Self Test \(or POST\), then the BIOS transfers control to the boot sector. At this time, the first megabyte of memory looks like this :
+
+The first 1024 bytes \(1KiB\) stores the interrupt vector table, which has 256 records, each takes 4 bytes \(32 bits\). Each vector or record is a pointer \(point to the address of a handler, or function or procedure\) that tells the CPU the location where the code associated with the interrupt located. Then the following 256 bytes \(0.25 KiB, 0x400 to 0x4FF\) is a BIOS data area. From 0x0500 to 0x7BFF that’s 29.75 KiB is guaranteed for free use, usually called conventional memory. From 0x7C00 to 0x7DFF there are 512 bytes which is the boot sector. That’s the RAM area where our first program is loaded into. We will still write some code and load them here for a while. There are another 480.5 KiB for conventional use just before the 128 KiB Extended BIOS Data Area \(from 0x80000 to 0x9FFFF\). The EBDA is a variable-sized memory area \(on different BIOSes\). It is always immediately below 0xA0000 in memory if it exists. Also, it is guaranteed to be at most 128 KiB in size. The next 384 KiB is is reserved for graphics video data, ROM data and some other BIOS data. Inside of this part, there are 32 KiB for Colour Text Video Memory. We write the character code and its attributes into this memory area, then these will be displayed on the screen. We will learn how to do this in next section. We do not discuss the memory area above 1 MiB in this section.
+
+### Real mode, memory addressing and high memory Area
+
+Real Mode: Real Mode is a simplistic 16-bit mode that is present on all x86 processors. Real Mode was the first x86 mode design and was used by many early operating systems before the birth of Protected Mode. For compatibility purposes, all x86 processors begin execution in Real Mode. We will play for a while under this real mode until we switch from Real mode to Protected Mode for whose detail will be explained more later. Memory Addressing: You may already have a question why we only list the first megabyte when we discuss the memory map. That’s because we only can access about 1 MiB memory in Real mode. Firstly to see, if we only have 16 bits to store the address of the memory, these 16 bits area stored in a register called IP, see below figure. How many bytes of memory can be addressed? That’s 216=65,536 bytes which is 64 KiB. If we use another register, also 16 bits, stored in a register called CS, then every time we calculate the address we use 16 times the CS then plus the IP to get the physical address. To be simple, we actually can address 220= 1,048,576 bytes which is 1 MiB. Usually we call CS: IP the logical address, the address calculated using CS times 16 +IP the physical address. The address space in Real mode segmented model runs from 0x00000 to 0xFFFFF.
+
+![](../.gitbook/assets/generating-20-bit-physical-address-in-real-mode.jpg)
+
+High memory Area: Someone might argue that we can get address more than 0xFFFF, e.g., when CS=0xFFFF, IP=0xFFFF. We have to use the 21st address line to access any memory larger than 0xFFFFF. If we set segment register to a value of 0xFFFF, it points to an address that is 16 bytes below 1 MB. If we then use that segment register as a base, with an offset of 0x10 to 0xFFFF, we can access physical memory addresses from 0x100000 to 0x10FFEF. This \(almost 64 KiB\) area above 1 MiB is usually called the "High Memory Area" in Real Mode. Note that we have to have the A20 \(the 21st\) address line activated for this to work. We do not discuss more about A20 here. For now we are comfortable to limit our discussion on the 1 MiB address space in Real mode.
+
+### Stack & segment registers
+
+All x86 segment registers are 16 bits in size, irrespective of the CPU: • CS, code segment. Machine instructions exist at some offset into a code segment. The segment address of the code segment of the currently executing instruction is contained in CS. • DS, data segment. Variables and other data exist at some offset into a data segment. There may be many data segments, but the CPU may only use one at a time, by placing the segment address of that segment in register DS. • SS, stack segment. The stack is a very important component of the CPU used for temporary storage of data and addresses. Therefore, the stack has a segment address, which is contained in register SS. • ES, extra segment. The extra segment is exactly that: a spare segment that may be used for specifying a location in memory. • FS and GS are clones of ES, the extra segment. FS and GS both are just additional segments, no specialty here. Names FS and GS come from the fact that they were created after ES: E, F, G. They exist only in the 386 and later x86 CPUs. Extra segments ES, FS, and GS can be used for both data or code. 5
+
+![](../.gitbook/assets/6-segments.jpg)
 
