@@ -36,5 +36,17 @@ All x86 segment registers are 16 bits in size, irrespective of the CPU: • CS, 
 
 ![](../.gitbook/assets/real-mode-segmented-model.jpg)
 
+### Video colour text memory area
+
+We actually print a string in our very first program first. We understand as long as we put the address of the string and the attributes like colour attributes and then raise the interrupt, the CPU will call BIOS procedure to print the string onto the string.
+
+![](../.gitbook/assets/32-bit-alternate-general-purpose-register-names.jpg)
+
+There are generally two ways to access VGA text-mode for an application: through the Video BIOS interface \(which we have done in chapter 1\) or by directly accessing video RAM and I/O ports. The latter method is considerably faster, and allows quick reading of the text buffer, for which reason it is preferred for advanced TUI programs. The VGA text buffer is located at physical memory address 0xB8000. Since this is usually used by 16-bit x86 processes operating in real-mode, it is the first half of memory segment 0xB800. The text buffer data can be read and written, and bitwise operations can be applied. A part of text buffer memory above the scope of the current mode is accessible, but is not shown.8 Each screen character is actually represented by two bytes aligned as a 16-bit word accessible by the CPU in a single operation. The lower, or character, byte is the actual code point for the current character set, and the higher, or attribute, byte is a bit field used to select various video attributes such as colour, blinking, character set, and so forth.8
+
+### x86 general purpose registers, x86 instruction reference and RFLAGS registers
+
+We’ve briefly discussed the segment registers. Now we introduce the general purpose registers before we do more code. x86-64 has sixteen \(almost\) general purpose 64-bit integer registers. The above illustration shows the eight 32-bit general purpose register and their alternate names. In 64-bit mode there are another eight general purpose registers R8~R15, while we do not talk about these at the moment. Although the main registers \(with the exception of the instruction pointer\) are "general-purpose" in the 32-bit and 64-bit versions of the instruction set and can be used for anything, it was originally envisioned that they be used for the following purposes: • AL/AH/AX/EAX/RAX: Accumulator • BL/BH/BX/EBX/RBX: Base index \(for use with arrays\) • CL/CH/CX/ECX/RCX: Counter \(for use with loops and strings\) • DL/DH/DX/EDX/RDX: Extend the precision of the accumulator \(e.g. combine 32-bit EAX and EDX for 64-bit integer operations in 32-bit code\) • SI/ESI/RSI: Source index for string operations. • DI/EDI/RDI: Destination index for string operations. • SP/ESP/RSP: Stack pointer for top address of the stack. • BP/EBP/RBP: Stack base pointer for holding the address of the current stack frame. IP/EIP/RIP: Instruction pointer. Holds the program counter, the address of next instruction. The FLAGS register is the status register in Intel x86 microprocessors that contains the current state of the processor. This register is 16 bits wide. Its successors, the EFLAGS and RFLAGS registers, are 32 bits and 64 bits wide, respectively. The wider registers retain compatibility with their smaller predecessors.
+
 ## End
 
