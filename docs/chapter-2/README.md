@@ -4,7 +4,7 @@
 
 In this section we are going to introduce some concepts then we start composing another piece of assembly code ep0.s.
 
-## Memory map for "Low" memory \(&lt; 1 MiB \)
+### Memory map for "Low" memory \(&lt; 1 MiB \)
 
 We have already introduced that once we power on the computer, the legacy BIOS runs a series of complex programs called Power On Self Test \(or POST\), then the BIOS transfers control to the boot sector. At this time, the first megabyte of memory looks like this :
 
