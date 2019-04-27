@@ -145,5 +145,27 @@ Go read, write and run the program, you will see the program alternatively print
 
 
 
+## Protect Mode, IDT, GDT, Control Registers, TSS, LDT
 
+## Multitask Program in Protect Mode
+
+### Setup temporary IDT and GDT
+
+### Set Control Register CRO, Move to Protect Mode
+
+### Establish the IDT
+
+### Establish the GDT
+
+### Reset all Segment Registers
+
+### Set Timer Interrupt Chip
+
+### Set Timer Interrupt Gate and System Call Gate
+
+### Prepare the Interrupt Return Scene
+
+### Update all the previous Functions
+
+### Game over of this Multi-task program
 
