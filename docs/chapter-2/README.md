@@ -24,3 +24,17 @@ All x86 segment registers are 16 bits in size, irrespective of the CPU: • CS, 
 
 ![](../.gitbook/assets/6-segments.jpg)
 
+### Real mode Flat model diagram
+
+• The segment registers are all set to point to the beginning of the 64 KiB block of memory. • The operating system sets segment registers when it loads the program. • All segment registers point to that same place. • Physical segment assignments never change as long as the program is running. The segment registers are still functioning, but no work with segments is required.
+
+![](../.gitbook/assets/real-mode-flat-model-diagram.jpg)
+
+### Real mode segmented model5
+
+• Real mode segmented model was mainstream programming model throughout the MS-DOS era. • Used when Windows 9x machine is booted into MS-DOS mode. • Good choice to write code to run under MS-DOS. • Program has access to 1MB of memory. • The CPU handles transformations of segment:offset combinations into a full 20-bit address. • CS always points to the current code segment • The next instruction to be executed is pointed to by the CS:IP register pair. • Machine instructions called jumps can change CS to another code segment if necessary. • The program can span several code segments. • There is no direct CS manipulation to change from one code segment to another: when a jump instruction needs to take execution into a different code segment, it changes CS value for you. • There is only one stack segment for any single program. • A program has potential to destroy portions of memory that does not belong to its process. Careless use of segment registers will cause the operating system to crash.
+
+![](../.gitbook/assets/real-mode-segmented-model.jpg)
+
+## End
+
