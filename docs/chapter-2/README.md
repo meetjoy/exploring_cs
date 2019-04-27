@@ -93,6 +93,56 @@ An I/O port is usually used as a technical term for a specific address on the x8
 
 The PIT chip has three separate frequency dividers \(or 3 separate channels\) that are programmable. The output from PIT channel 0 generates an "IRQ 0", where IRQ which is short for Interrupt ReQuest . Firstly we send a byte to the control word register to the timer through port 43. A full list of the control word description could be found here Intel 8253 . Then we set the time interval to channel 0 through port 40. After settings these, the timer will raise an interrupt signal to CPU. If the CPU responses to the interrupt, a hander will be invoked to deal with the interrupt. By default, the hander address is 0x08 for legacy BIOS. Once the timer set up, we then prepare a handler timer\_interrupt and write its address to 8th record of the Interrupt Vector Table. Inside of the timer\_interrupt, we switch the tasks based on which task is currently running.
 
+## Legacy BIOS: Read from Disk into Memroy
+
+### Int 13/AH=02h - DISK - READ SECTOR\(S\) INTO MEMORY
+
+See below for a quick review over this function:
+
+
+
+```text
+AH = 02h
+AL = number of sectors to read (must be nonzero)
+CH = low eight bits of cylinder number
+CL = sector number 1-63 (bits 0-5)
+high two bits of cylinder (bits 6-7, hard disk only)
+DH = head number
+DL = drive number (bit 7 set for hard disk)
+ES:BX -> data buffer
+
+Return:
+CF set on error
+CF clear if successful
+AH = status
+AL = number of sectors transferred (only valid if CF set for some
+BIOSes)
+```
+
+For more information refer to this [page](http://www.ctyme.com/intr/rb-0607.htm).[1](2.7.md#fn1)
+
+1. Interruput Function List: [http://www.ctyme.com/intr/int.htm](http://www.ctyme.com/intr/int.htm)[↩](2.7.md#ref1)
+
+## Boot loader program function
+
+Source file: _boot0.s_
+
+We knew that the legacy BIOS only read in the first 512 bytes from the disk. This very first sector must be ended with 0xAA55 as well. You may already think out a problem, if we continue extending our previous program _ep3.s_ to a longer one, it might be more than 512 bytes, then we encounter a problem.
+
+The solution is inside of the first 512 bytes, we write some code to load the next sectors \(depends how many sectors our program has\) from disk to RAM, then jump to the beginning where we put the second sector, then we can start executing there, problem solved. Even we can not go beyond 1 MiB of the RAM if we are still playing under 16-bit real mode.
+
+Find the source program _boot0.s_ from the source files link.
+
+Inside of the first 512 bytes of the program, we use BIOS function \(Int 13/AH=02h\) to read the following 16 sectors just after the first sector from the disk into our memory.
+
+Then from the label **ok\_load** we copy the 16 sectors from the location 0x7E00 \(512 bytes after 0x7C00\) to the beginning of the memory. I planed the let the program jump to 0x0 to run, but as you might have seen, I failed to do so. Because our later program still need the Interrupt Vector Table, which sits in the beginning of the BIOS. Someone might say we have re-define the location of these interrupt procedures, I think so. But I support that would be a terrible task, I do not have any interest in digging deeper on the BIOS system. But I still keep this part **ok\_load** for now.
+
+At the end of the first sector, we jump to the beginning of the second sector. Then the whole program from here is very similar to our previous program _ep3_.
+
+Go read, write and run the program, you will see the program alternatively prints **C**s and **S**s:
+
+![](../.gitbook/assets/2.7.jpg)
+
 
 
 
