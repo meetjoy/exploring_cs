@@ -1,7 +1,7 @@
 # Table of contents
 
 * [Introduction](README.md)
-* [First Chapter](chapter-1/README.md)
+* [Part 1](chapter-1/README.md)
   * [Section](chapter-1/section.md)
   * [Section](chapter-1/section-1.md)
 * [Chapter 2](chapter-2/README.md)
