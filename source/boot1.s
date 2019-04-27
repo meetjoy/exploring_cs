@@ -269,4 +269,3 @@ tss1:   .long   0
 krn_stk1:
         .fill   128, 4, 0
 usr_stk1:
-# as boot1.s -o boot1.o;ld -o boot1 boot1.o  -Ttext=0x7c00 --oformat=binary;sudo qemu-system-x86_64 -drive format=raw,file=boot1,index=0,if=floppy -cpu max
