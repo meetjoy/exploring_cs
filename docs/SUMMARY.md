@@ -1,7 +1,11 @@
-# Table of contents
+# Table of Contents
 
-* [Introduction](README.md)
-* [Part 1: The First Assembly Program](chapter-1.md)
-* [Part 2 Multi-task Program in Protect Mode](chapter-2.md)
-* [Appendix A Installing Ubuntu Desktop](appendix-a-installing-ubuntu-desktop.md)
+* [Chapter 1]()
+    * [Section]()
+    * [Section]()
+* [Chapter 2]()
+    * [Section]()
+    * [Section]()
+    * [Legacy BIOS: Read from Disk into Memroy](2.7.md)
+    * [Boot loader program function](2.8.md)
 
