@@ -1,4 +1,6 @@
-# Appendix A Installing Ubuntu Desktop
+# Appendix
+
+## Appendix A Installing Ubuntu Desktop
 
 You may want to install the Ubuntu on a virtual machine which is running on your current operating system, Windows or macOS. Consider the following options for go and search in your browser on how to install a virtual machine on your current operating system. 
 
