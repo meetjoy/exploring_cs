@@ -1,5 +1,9 @@
 # Useful References
 
+## C reference
+
+[https://en.cppreference.com/w/c](https://en.cppreference.com/w/c)
+
 ## C keyword: volatile
 
 {% embed url="https://barrgroup.com/Embedded-Systems/How-To/C-Volatile-Keyword" %}
