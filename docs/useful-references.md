@@ -6,5 +6,9 @@
 
 ##  C keyword: \#define
 
-[https://www.techonthenet.com/c\_language/constants/create\_define.php](https://www.techonthenet.com/c_language/constants/create_define.php)
+{% embed url="https://www.techonthenet.com/c\_language/constants/create\_define.php" %}
+
+## What is POSIX?
+
+[https://en.wikipedia.org/wiki/POSIX](https://en.wikipedia.org/wiki/POSIX)
 
