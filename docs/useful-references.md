@@ -14,5 +14,9 @@
 
 ## What is POSIX?
 
-[https://en.wikipedia.org/wiki/POSIX](https://en.wikipedia.org/wiki/POSIX)
+{% embed url="https://en.wikipedia.org/wiki/POSIX" %}
+
+## Escape sequences in C
+
+[https://en.cppreference.com/w/c/language/escape](https://en.cppreference.com/w/c/language/escape)
 
