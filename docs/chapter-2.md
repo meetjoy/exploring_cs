@@ -1,4 +1,4 @@
-# Part 2: Multi-task Program in Protect Mode
+# Part 2: Multi-tasking Program in Protect Mode
 
 ## Memory map, stack & segment, video colour text memory area, function, ASCII code, suffix, x86 assembly language
 
