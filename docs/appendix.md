@@ -2,10 +2,10 @@
 
 ## Appendix A Installing Ubuntu Desktop
 
-You may want to install the Ubuntu on a virtual machine which is running on your current operating system, Windows or macOS. Consider the following options for go and search in your browser on how to install a virtual machine on your current operating system. 
+You may want to install the Ubuntu on a virtual machine which is running on your current operating system, Windows or macOS. Go and search in your browser on how to install a virtual machine on your current operating system. 
 
 * Install VMware WorkStation Player on Windows: [https://www.vmware.com/au/products/workstation-player/workstation-player-evaluation.html](https://www.vmware.com/au/products/workstation-player/workstation-player-evaluation.html)
-* Install VirtualBox on macOS or Windows: [https://www.virtualbox.org/wiki/Downloads](https://www.virtualbox.org/wiki/Downloads)
+* Or, install VirtualBox on macOS or Windows: [https://www.virtualbox.org/wiki/Downloads](https://www.virtualbox.org/wiki/Downloads)
 
 For these who prefer to install the Ubuntu alongside with your current operating system or who have already installed a virtual machine, please move to Ubuntu official website to download the Ubuntu desktop: [https://www.ubuntu.com/download/desktop](https://www.ubuntu.com/download/desktop)
 
