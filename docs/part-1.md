@@ -4,7 +4,7 @@
 
 For these who do not currently have a Linux system in hand, or these who are new to Linux system, **Ubuntu** desktop is recommended. Ubuntu is a free and open-source Linux distribution. It can be installed either on a virtual machine which is running on your current operating system or alongside with your current operating system. Please refer to [appendix A](appendix.md) for more information if you encounter some difficulties in installing Ubuntu desktop. It might take several hours if it’s your first time to install a system. Keep searching the answers whenever something confuses you.
 
-## Write a Short Program: first
+## Write a short program: first
 
 The best way to learn is by doing. Please note I am using Ubuntu 18.04.2 LTS, the commands or operations can be different from these given in this book if you are using any other distribution of Linux. In this case, I suppose you know how to properly change the commands or operations as you are an experienced Linux user. Log into Ubuntu desktop and do the following steps:
 
@@ -24,19 +24,19 @@ msg: .ascii "My first computer program!"
 .word 0xAA55
 ```
 
-1. **Write the first program.** Find the **Documents** folder and click into it. Create a text file and name it with **first.s**. Open it, copy and paste the above lines into the file then save and close. Congratulations! We have finished the hardest part of the whole chapter. Do not worry at the moment if you have no idea on what you have pasted, all these will be explained in the following sections. Please move to the next chapter, or skip any parts you’ve already known if you understand fully what the code does.
-2. **Open a terminal**. Right click on the blank area inside of **Documents** folder and then click Open **Terminal** in the context menu.
+1. **Write the first program.** Find the **Documents** folder and click into it. Create a text file and name it with **first.s**. Open it, copy and paste the above code into the file then save and close. Congratulations! We have finished the hardest step of this whole part. Do not worry at the moment if you have no idea on what you have pasted, all these will be explained in the following sections. Please move to the next part of this book if you already know the basics of assembly language and related tools like **as**, **ld** and **Qemu** on Linux, or skip quickly over this part for the topics you are already family with.
+2. **Open a terminal**. Right click on the blank area inside of **Documents** folder and then click **Open** **Terminal** in the context menu. Some terms in this section might be new for you, these will be explained in the next section. 
 3. Install **binutils** tool. Key in `sudo apt install binutils` and press **Enter** button. Input your password when asked. 
 4. Assemble the program: **first.s**. Inside of the **terminal**, input the following command and press **Enter** button:`as -o first.o first.s` 
 5. Generate the **first.img**. Input or copy and paste the following command and press **Enter** key: `ld -Ttext=0x7c00 -o first.img --oformat=binary first.o` 
 6. Install **Qemu** emulator. Key in `sudo apt install Qemu`. Input **Y** and press **Enter** key when asked _“Do you want to continue? \[Y/n\]”_. 
 7. Run your program. Input or copy and paste the following command and press **Enter** key: `sudo Qemu-system-x86_64 -cpu max -drive format=raw,file=first.img`
-8. We will see the following window if everything has gone well so far. The light red words _**My first computer program!**_ on the screen is what the program does.
-9. We have finished first program and had it run. Again we mentioned several terms in the above steps, do not worry these for now, we will see the next sections for the explanations.
+8. We will see the following window if everything has gone well so far. The  words in light red _**My first computer program!**_ on the screen is what the program does.
+9. We have finished first program and had it run. Again we mentioned several terms in the above steps, we will see the next sections for more on these.
 
 ![&quot;Hello World Program&quot;](.gitbook/assets/hello.jpg)
 
-## Concepts: Terminal, Assembler, Linker and Emulator
+## Concepts: terminal, assembler, linker and emulator
 
 We go though some basic concepts before we explain what exactly we have done in the last section.
 
@@ -46,15 +46,19 @@ New to Linux? Give yourself half an hour to click each icon or button you can fi
 
 ### Terminal and CLI
 
-On Linux desktop, the Terminal is a program where commands are used to interact with computer. Most people are familiar with GUI or graphical user interface. Instead of using mouse heavily to interact with all kinds of GUI items, we will use command-line interface or CLI to talk to computer. In case you are new to CLI, you may want to quickly go through chapter 2~4 of this book _The Linux Command Line_ \([http://linuxcommand.org/tlcl.php](http://linuxcommand.org/tlcl.php)\) written by Willian Shotts. Or search something like the most used 10 Linux commands and play with these commands for an hour. Both CLI and GUI are also called shell which in fact is a user interface for access to an operating system’s services. We call it a shell because it is the outermost layer outside of the most important part of the operating system: the kernel. Feel free to google any of these terms you are interested in while it’s good for now even it’s the first time we have heard any of these. We will have a more concrete understanding with time going on.
+On Linux desktop, the **Terminal** is a program where commands are used to interact with computer. Most people are familiar with GUI or graphical user interface. Instead of using mouse heavily to interact with all kinds of GUI items, we will use command-line interface or **CLI** to talk to the computer. In case you are new to **CLI**, you may want to quickly go through chapter 2~4 of this book _The Linux Command Line_ \([http://linuxcommand.org/tlcl.php](http://linuxcommand.org/tlcl.php)\) written by William Shotts. Or search something like _the most used 10 Linux commands_ and play with these commands for an hour or so. Both **CLI** and **GUI** are also called **shell** which in fact is a user interface for access to an operating system’s services. We call it a **shell** because it is the outermost layer outside of the most important part of the operating system: the **kernel**. Feel free to google any of these terms you are interested in while it’s good for now even it’s the first time we have heard any of these. We will have a more concrete understanding when we directly interact with them.
 
 ### Binutils, as and ld
 
-GNU Binutils are a collection of binary tools. The main ones are as and ld. The GNU assembler, commonly known as GAS or simply as. Assembler is a computer program which assembles assembly language to machine language. Assembly language is a more readable interpretation of a processor’s machine code, allowing easier understanding and programming by human \[2\]. Machine code is a computer program written in machine language instructions that can be executed directly by a computer's central processing unit or CPU. Each instruction causes the CPU to perform a very specific task \[3\]. CPUs can only understand machine code. Machine code is some combination of statuses which only use two symbols: typically, “0” and “1”. The ld is another program, called linker, that takes one or more object files generated by the assembler and combines them into a single executable, library file, or another object file \[4\].
+GNU **Binutils** are a collection of **binary** tools. The main ones are **as** and **ld**. The GNU assembler, commonly known as **GAS** or simply **as**. 
+
+> Assembler is a computer program which assembles assembly language to machine language. Assembly language is a more readable interpretation of a processor’s machine code, allowing easier understanding and programming by human. Machine code is a computer program written in machine language instructions that can be executed directly by a computer's central processing unit or CPU. Each instruction causes the CPU to perform a very specific task. CPU can only understand machine code. Machine code is some combination of statuses which only use two symbols: typically “0”s and “1”s. The **ld** is another program, called linker, that takes one or more object files generated by the assembler and combines them into a single executable, library file, or another object file.
+
+
 
 ### Qemu emulator
 
-Qemu is a generic and open source machine emulator and virtualizer. We will see we can this emulator is another computer which runs on your host operating system, Ubuntu here. We will write some programs, put these programs into the virtual “hard disk” of this emulator and make the emulator to run our programs. Just like our real PC runs the operating system which sits on the real disk usually.
+Qemu is a generic and open source machine emulator and virtualizer. We will see  this emulator is another computer which runs on your host operating system, Ubuntu here. We will write some programs, put these programs into the virtual “hard disk” or "floppy disk" of this emulator and make the emulator to run our programs. Just like our real PC runs the operating system which sits on the real disk usually.
 
 ## Programs explanation: apt, as, ld and Qemu
 
@@ -67,7 +71,7 @@ Qemu is a generic and open source machine emulator and virtualizer. We will see 
 7. The command in Step 7, sudo Qemu-system-x86\_64 -cpu max -drive format=raw,file=first.img, Qemu-sysem-x86\_64 is our brand new computer but without the operating system installed. Option -cpu max is used to enables all features supported by the accelerator in the current host machine. Option -drive format=raw,file=first.img is used to tell Linux to write the first.img into the disk of our brand new computer Qemu and then press the Power on button. Specifying format=raw avoids Qemu detecting the format and believe it’s a trusted format. file=first.img obviously tells Qemu which file to be loaded into the hard disk. You may have noticed the new term x86\_64, also known as x64, x86-64, AMD64 and Intel 64, is the 64-bit version of the x86 instruction set architecture. We have mentioned the smallest unit the CPU can execute is called an instruction. The set of all the instructions the CPU can understand is some kind of abstract model of a computer architecture. Almost all the PC and all kinds of Mac available in the shop in nowadays \(this documents written in 2019\) are using x86\_64 CPUs. Refer to the below link if you are interested in more information on x86\_64 and its family: [https://en.wikipedia.org/wiki/X86](https://en.wikipedia.org/wiki/X86)
 8. By now we have explained everything regarding the program and the commands we used so far but the most important part: what does the code in the text file mean. That’s the task for the following sections.
 
-## Concepts: Von neumann Architecture, Bit, Byte & Legacy BIOS
+## Concepts: Von neumann architecture, bit, byte & legacy BIOS
 
 Before we explain the code in the source file first.s line by line, a couple of concepts need to be introduced.
 
@@ -133,7 +137,7 @@ A ROM BIOS \(Basic Input/Output System\) is a set of programs permanently stored
 
 The above illustration explains well the layers for a computer system. ROM BIOS which is also called firmware sits in between the bare hardware and the Operating System. The application programs like a web browser, a word processing program, or a video player mount on the toppest layer.
 
-## Explanation of assembly source file first.s: Directives, instruction, label, interrupt, legacy BIOS attributes
+## Explanation of assembly source file first.s: directives, instruction, label, interrupt, legacy BIOS attributes
 
 Now let’s go through the assembly code we wrote in section 1. 
 
@@ -151,5 +155,5 @@ Now let’s go through the assembly code we wrote in section 1.
 12. In line 7, the address of the string, which is msg here, is assigned to register %bp. Then we raise an interrupt in line 9 int $0x10, the CPU then stop the current task \(which is our current program first\), move to some code which was already prepared by the BIOS before our program first runs. CPU based on the number which is %0x10 to check a table \(this table actually stored in the first 1024 bytes of the memory\), which pretty similar the way we check this page \([http://www.ctyme.com/intr/int.htm](http://www.ctyme.com/intr/int.htm)\), now follow me to click the number 10 in the above page, then we see another long list. Next step is to check the number in %ax, which is 0x1301 in our program. So we find the link Int 10/AH=13h \(h here indicate 13 is a hexadecimal number\) and click into this link. Read the page we eventually understand fully why we put those numbers into the four registers %ax, %bx, %cx, and %dx. We have to tell clearly the position, the string content, the colour attributes etc., to the interrupt program which is part of the BIOS in order let the service program \(the BIOS program called here\) know what to do. 
 13. I suppose we have examined every part of the whole assembly code we wrote in first.s.
 
-## End of this page
+## End of this part
 
