@@ -60,7 +60,7 @@ GNU **Binutils** are a collection of **binary** tools. The main ones are **as** 
 
 Qemu is a generic and open source machine emulator and virtualizer. We will see  this emulator is another computer which runs on your host operating system, Ubuntu here. We will write some programs, put these programs into the virtual “hard disk” or "floppy disk" of this emulator and make the emulator to run our programs. Just like our real PC runs the operating system which sits on the real disk usually.
 
-## Programs explanation: apt, as, ld and Qemu
+## Tools explanation: apt, as, ld and Qemu
 
 1. In step 1 of section 1, we composed a text file using assembly language. It’s OK for now if we do not really understand what the code means. We will examine these assembly code in the next sections and chapters. All we need to understand now is we wrote some assembly code and saved it as first.s, we call this file source file as it contains the source code. The suffix s here stands for source file. 
 2. In step 2, we opened a terminal window. The window will look like the below picture where jesse and ubuntu will be your user name and computer name. ~ indicate the current user’s home folder which is /home/your\_user\_name. Documents is just a folder under your home folder. We are now under Document folder because we right clicked in the blank area of this folder in the GUI. Believe you already tried to navigate to different folders following some books or web pages which tell the basic Linux commands usage. The place the cursor flashes is where we key in the commands to interact with the computer, just after the $ sign. `yourname@ubuntu:#/Documents$`
