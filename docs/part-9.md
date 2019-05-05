@@ -1,5 +1,9 @@
 # Part 9:
 
+## Download the run Bochs package
+
+[http://oldlinux.org/Linux.old/bochs/linux-0.12-080324.zip](%20http://oldlinux.org/Linux.old/bochs/linux-0.12-080324.zip)
+
 ## install tools
 
 install gcc install as86 & ld86: sudo apt-get install bin86 install make
