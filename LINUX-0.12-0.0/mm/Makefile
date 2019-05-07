@@ -1,6 +1,6 @@
 include ../Makefile_head
-CFLAGS	=-O -Wall -fstrength-reduce -fcombine-regs -fomit-frame-pointer \
-	-finline-functions -nostdinc -I../include
+CPP +=-I../include
+CFLAGS +=CFLAGS -finline-functions  -I../include
 
 
 .c.o:

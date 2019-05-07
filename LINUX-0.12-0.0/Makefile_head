@@ -4,3 +4,4 @@ CC	=gcc
 LD	=gld
 LDFLAGS	=-s -x
 CPP	=gcc -E -nostdinc -I../include
+CFLAGS	=-Wall -O -fstrength-reduce -fomit-frame-pointer -fcombine-regs -nostdinc

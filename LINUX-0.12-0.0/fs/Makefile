@@ -1,6 +1,6 @@
 include ../Makefile_head
-CFLAGS	=-Wall -O -fstrength-reduce -fcombine-regs -fomit-frame-pointer \
-	-fno-defer-pop -mstring-insns -nostdinc -I../include
+CPP +=-I../include
+CFLAGS +=CFLAGS -fno-defer-pop -mstring-insns  -I../include
 
 
 .c.s:
