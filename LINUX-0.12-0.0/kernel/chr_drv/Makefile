@@ -3,11 +3,6 @@ CPP +=-I../../include
 CFLAGS +=CFLAGS -finline-functions -mstring-insns  -I../../include
 AS += -c
 
-
-
-
-
-
 OBJS  = tty_io.o console.o keyboard.o serial.o rs_io.o \
 	tty_ioctl.o pty.o
 

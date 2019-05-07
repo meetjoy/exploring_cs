@@ -3,8 +3,6 @@ CPP +=-I../../include
 CFLAGS +=CFLAGS -finline-functions -mstring-insns  -I../../include
 AS += -c
 
-
-
 OBJS  = math_emulate.o error.o convert.o ea.o get_put.o \
 	add.o mul.o div.o compare.o
 

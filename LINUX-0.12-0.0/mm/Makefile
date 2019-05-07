@@ -3,10 +3,6 @@ CPP +=-I../include
 CFLAGS +=CFLAGS -finline-functions  -I../include
 
 
-
-
-
-
 OBJS	= memory.o swap.o page.o
 
 all: mm.o

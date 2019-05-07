@@ -3,11 +3,6 @@ CPP +=-I../../include
 CFLAGS +=CFLAGS -finline-functions -mstring-insns  -I../../include
 AS += -c
 
-
-
-
-
-
 OBJS  = ll_rw_blk.o floppy.o hd.o ramdisk.o
 
 blk_drv.a: $(OBJS)
