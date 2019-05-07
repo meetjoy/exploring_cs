@@ -12,8 +12,8 @@ CPP	=cpp -nostdinc -Iinclude
 CC	=gcc $(RAMDISK)
 AS	=as --32
 LD	=ld
-CFLAGS	= -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer \
-LDFLAGS	=-s -x -M
+CFLAGS	= -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer
+LDFLAGS	= -s -x -M
  
 #
 # ROOT_DEV specifies the default root-device when making the image.
