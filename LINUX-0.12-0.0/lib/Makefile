@@ -1,5 +1,5 @@
 include ../Makefile_head
-CPP +=-I../include
+CPP += -I../include
 CFLAGS +=CFLAGS -finline-functions -mstring-insns  -I../include
 AS += -c
 

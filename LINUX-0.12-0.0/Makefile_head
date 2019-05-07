@@ -1,9 +1,9 @@
 AR	=gar
-AS	=gas
+AS	=as
 CC	=gcc
-LD	=gld
+LD	=ld
 LDFLAGS	=-s -x
-CPP	=gcc -E -nostdinc -I../include
+CPP	=gcc -E -nostdinc
 CFLAGS	=-Wall -O -fstrength-reduce -fomit-frame-pointer -fcombine-regs -nostdinc
 
 .c.o:

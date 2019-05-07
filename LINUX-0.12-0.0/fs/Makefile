@@ -1,5 +1,5 @@
 include ../Makefile_head
-CPP +=-I../include
+CPP += -I../include
 CFLAGS +=CFLAGS -fno-defer-pop -mstring-insns  -I../include
 
 
