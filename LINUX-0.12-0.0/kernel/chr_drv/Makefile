@@ -1,7 +1,6 @@
 include ../../Makefile_head
 CPP += -I../../include
-CFLAGS +=CFLAGS -finline-functions -mstring-insns  -I../../include
-AS += -c
+CFLAGS += CFLAGS -finline-functions -I../../include
 
 OBJS  = tty_io.o console.o keyboard.o serial.o rs_io.o \
 	tty_ioctl.o pty.o

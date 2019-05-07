@@ -1,7 +1,7 @@
 include ../Makefile_head
 CPP += -I../include
-CFLAGS +=CFLAGS -finline-functions -mstring-insns  -I../include
-AS += -c
+CFLAGS += CFLAGS -finline-functions -I../include
+
 
 OBJS  = ctype.o _exit.o open.o close.o errno.o write.o dup.o setsid.o \
 	execve.o wait.o string.o malloc.o

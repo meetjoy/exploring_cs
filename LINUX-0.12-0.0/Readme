@@ -1,0 +1,3 @@
+# re-compile linux-0.12
+## Makefile_head for all 7 Makefiles in sub folders
+## Modify as per CLK book

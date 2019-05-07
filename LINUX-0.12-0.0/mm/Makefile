@@ -1,14 +1,13 @@
 include ../Makefile_head
 CPP += -I../include
-CFLAGS +=CFLAGS -finline-functions  -I../include
-
+CFLAGS += CFLAGS -finline-functions -I../include
 
 OBJS	= memory.o swap.o page.o
 
 all: mm.o
 
 mm.o: $(OBJS)
-	$(LD) -r -o mm.o $(OBJS)
+	$(LD)  -r -o mm.o $(OBJS)
 
 clean:
 	rm -f core *.o *.a tmp_make

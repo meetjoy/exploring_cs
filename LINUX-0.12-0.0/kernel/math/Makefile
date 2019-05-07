@@ -1,7 +1,7 @@
 include ../../Makefile_head
 CPP += -I../../include
-CFLAGS +=CFLAGS -finline-functions -mstring-insns  -I../../include
-AS += -c
+CFLAGS += CFLAGS -finline-functions -I../../include
+
 
 OBJS  = math_emulate.o error.o convert.o ea.o get_put.o \
 	add.o mul.o div.o compare.o

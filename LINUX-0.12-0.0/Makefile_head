@@ -4,7 +4,7 @@ CC	=gcc
 LD	=ld
 LDFLAGS	=-s -x
 CPP	=gcc -E -nostdinc
-CFLAGS	=-Wall -O -fstrength-reduce -fomit-frame-pointer -fcombine-regs -nostdinc
+CFLAGS	= -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer  -nostdinc
 
 .c.o:
 	$(CC) $(CFLAGS) \
