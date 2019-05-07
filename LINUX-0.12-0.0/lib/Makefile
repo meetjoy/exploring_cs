@@ -1,19 +1,8 @@
-#
-# Makefile for some libs needed in the kernel.
-#
-# Note! Dependencies are done automagically by 'make dep', which also
-# removes any old dependencies. DON'T put your own dependencies here
-# unless it's something special (ie not a .c file).
-#
+include ../Makefile_head
 
-AR	=gar
-AS	=gas
-LD	=gld
-LDFLAGS	=-s -x
-CC	=gcc
 CFLAGS	=-Wall -O -fstrength-reduce -fomit-frame-pointer -fcombine-regs \
 	-finline-functions -mstring-insns -nostdinc -I../include
-CPP	=gcc -E -nostdinc -I../include
+
 
 .c.s:
 	$(CC) $(CFLAGS) \

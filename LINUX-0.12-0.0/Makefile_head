@@ -1,0 +1,6 @@
+AR	=gar
+AS	=gas
+CC	=gcc
+LD	=gld
+LDFLAGS	=-s -x
+CPP	=gcc -E -nostdinc -I../include
