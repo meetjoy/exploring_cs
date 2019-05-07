@@ -1,10 +1,10 @@
 AR	=gar
-AS	=as
-CC	=gcc
-LD	=ld
-LDFLAGS	=-s -x
 CPP	=gcc -E -nostdinc
+CC	=gcc
+AS	=as
+LD	=ld
 CFLAGS	= -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer  -nostdinc
+LDFLAGS	=-s -x
 
 .c.o:
 	$(CC) $(CFLAGS) \
