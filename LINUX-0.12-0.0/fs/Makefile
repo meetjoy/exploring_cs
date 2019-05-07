@@ -3,14 +3,9 @@ CPP +=-I../include
 CFLAGS +=CFLAGS -fno-defer-pop -mstring-insns  -I../include
 
 
-.c.s:
-	$(CC) $(CFLAGS) \
-	-S -o $*.s $<
-.c.o:
-	$(CC) $(CFLAGS) \
-	-c -o $*.o $<
-.s.o:
-	$(AS) -o $*.o $<
+
+
+
 
 OBJS=	open.o read_write.o inode.o file_table.o buffer.o super.o \
 	block_dev.o char_dev.o file_dev.o stat.o exec.o pipe.o namei.o \

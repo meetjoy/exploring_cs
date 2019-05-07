@@ -5,3 +5,14 @@ LD	=gld
 LDFLAGS	=-s -x
 CPP	=gcc -E -nostdinc -I../include
 CFLAGS	=-Wall -O -fstrength-reduce -fomit-frame-pointer -fcombine-regs -nostdinc
+
+.c.o:
+	$(CC) $(CFLAGS) \
+	-c -o $*.o $<
+
+.c.s:
+	$(CC) $(CFLAGS) \
+	-S -o $*.s $<
+
+.s.o:
+	$(AS) -o $*.o $<

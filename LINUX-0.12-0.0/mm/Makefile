@@ -3,14 +3,9 @@ CPP +=-I../include
 CFLAGS +=CFLAGS -finline-functions  -I../include
 
 
-.c.o:
-	$(CC) $(CFLAGS) \
-	-c -o $*.o $<
-.s.o:
-	$(AS) -o $*.o $<
-.c.s:
-	$(CC) $(CFLAGS) \
-	-S -o $*.s $<
+
+
+
 
 OBJS	= memory.o swap.o page.o
 
