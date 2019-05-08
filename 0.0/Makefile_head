@@ -1,0 +1,20 @@
+AR	=gar
+CPP	=gcc -E -nostdinc
+CC	=gcc
+AS	=as --32
+LD	=ld
+CFLAGS	= -m32 -Wall -fstrength-reduce -fomit-frame-pointer \
+        -O0 -g3 -gdwarf-2 -fno-stack-protector -fno-builtin -nostdinc
+
+LDFLAGS	= -m elf_i386 #-s -x 
+
+.c.o:
+	$(CC) $(CFLAGS) \
+	-c -o $*.o $<
+
+.c.s:
+	$(CC) $(CFLAGS) \
+	-S -o $*.s $<
+
+.s.o:
+	$(AS) -o $*.o $<
