@@ -12,7 +12,10 @@ CPP	=cpp -nostdinc -Iinclude
 CC	=gcc $(RAMDISK)
 AS	=as --32
 LD	=ld
-CFLAGS	= -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer
+CFLAGS	= -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer #Original flags
+# -O0 -g3 -gdwarf-2 -fno-stack-protector -fno-builtin 
+# -fno-defer-pop for fs
+# -finline-functions for kernel and 3 sub folder, and lib and mm
 LDFLAGS	= -s -x -M
  
 #
@@ -30,12 +33,12 @@ LIBS	=lib/lib.a
 
 .c.s:
 	$(CC) $(CFLAGS) \
-	-nostdinc -Iinclude -S -o $*.s $<
+	 -nostdinc -Iinclude -S -o $*.s $<
 .s.o:
 	$(AS) -o $*.o $<
 .c.o:
 	$(CC) $(CFLAGS) \
-	-nostdinc -Iinclude -c -o $*.o $<
+	 -nostdinc -Iinclude -c -o $*.o $<
 
 all:	Image
 

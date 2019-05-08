@@ -3,7 +3,7 @@ CPP	=gcc -E -nostdinc
 CC	=gcc
 AS	=as --32
 LD	=ld
-CFLAGS	= -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer  -nostdinc
+CFLAGS	= -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer -nostdinc
 LDFLAGS	=-s -x
 
 .c.o:
