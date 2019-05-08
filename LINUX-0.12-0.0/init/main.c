@@ -20,10 +20,10 @@
  * won't be any messing with the stack from main(), but we define
  * some others too.
  */
-extern inline _syscall0(int,fork)				// changed to extern from static, 08May2109
-extern inline _syscall0(int,pause)  			// changed to extern from static, 08May2109
-extern inline _syscall1(int,setup,void *,BIOS)
-extern inline _syscall0(int,sync)   			// changed to extern from static, 08May2109
+static inline _syscall0(int,fork)				
+static inline _syscall0(int,pause)  			
+static inline _syscall1(int,setup,void *,BIOS)
+static inline _syscall0(int,sync)   			
 
 #include <linux/tty.h>
 #include <linux/sched.h>
@@ -176,7 +176,7 @@ void main(void)		/* This really IS void, no error here. */
 		__asm__("int $0x80"::"a" (__NR_pause):"ax");
 }
 
-extern int printf(const char *fmt, ...) //changed to extern from static
+static int printf(const char *fmt, ...) 
 {
 	va_list args;
 	int i;
