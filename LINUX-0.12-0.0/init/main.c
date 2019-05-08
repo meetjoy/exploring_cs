@@ -176,7 +176,7 @@ void main(void)		/* This really IS void, no error here. */
 		__asm__("int $0x80"::"a" (__NR_pause):"ax");
 }
 
-static int printf(const char *fmt, ...)
+extern int printf(const char *fmt, ...) //changed to extern from static
 {
 	va_list args;
 	int i;
