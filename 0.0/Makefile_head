@@ -1,4 +1,4 @@
-AR	=gar
+AR	=ar
 CPP	=gcc -E -nostdinc
 CC	=gcc
 AS	=as --32
