@@ -1,6 +1,6 @@
 include ../Makefile_head
 CPP += -I../include
-CFLAGS += CFLAGS -finline-functions -I../include
+CFLAGS +=  -finline-functions -I../include
 
 
 OBJS  = sched.o sys_call.o traps.o asm.o fork.o \

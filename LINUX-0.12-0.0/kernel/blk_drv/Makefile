@@ -1,6 +1,6 @@
 include ../../Makefile_head
 CPP += -I../../include
-CFLAGS += CFLAGS -finline-functions -I../../include
+CFLAGS +=  -finline-functions -I../../include
 
 OBJS  = ll_rw_blk.o floppy.o hd.o ramdisk.o
 
