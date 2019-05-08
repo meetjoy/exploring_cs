@@ -5,7 +5,7 @@ AS	=as --32
 LD	=ld
 CFLAGS	= -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer -nostdinc
 
-LDFLAGS	=-s -x -m elf_i386
+LDFLAGS	= -m elf_i386 #-s -x 
 
 .c.o:
 	$(CC) $(CFLAGS) \

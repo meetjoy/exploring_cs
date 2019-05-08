@@ -1,14 +1,13 @@
 include ../Makefile_head
 CPP += -I../include
 CFLAGS +=  -finline-functions -I../include
-LDFLAGS += -r
 
 OBJS  = sched.o sys_call.o traps.o asm.o fork.o \
 	panic.o printk.o vsprintf.o sys.o exit.o \
 	signal.o mktime.o
 
 kernel.o: $(OBJS)
-	$(LD)  -r -o kernel.o $(OBJS)
+	$(LD) $(LDFLAGS) -r -o kernel.o $(OBJS)
 	sync
 
 clean:
