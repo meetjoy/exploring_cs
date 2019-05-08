@@ -4,7 +4,8 @@ CC	=gcc
 AS	=as --32
 LD	=ld
 CFLAGS	= -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer -nostdinc
-LDFLAGS	=-s -x
+
+LDFLAGS	=-s -x -m elf_i386
 
 .c.o:
 	$(CC) $(CFLAGS) \

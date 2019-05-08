@@ -1,6 +1,7 @@
 include ../Makefile_head
 CPP += -I../include
 CFLAGS +=  -finline-functions -I../include
+LDFLAGS += -r
 
 OBJS	= memory.o swap.o page.o
 

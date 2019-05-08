@@ -12,12 +12,13 @@ CPP	=cpp -nostdinc -Iinclude
 CC	=gcc $(RAMDISK)
 AS	=as --32
 LD	=ld
-CFLAGS	= -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer #Original flags
-# -O0 -g3 -gdwarf-2 -fno-stack-protector -fno-builtin 
+CFLAGS	= -fno-builtin -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer #Original flags
+# -O0 -g3 -gdwarf-2 -fno-stack-protector  
 # -fno-defer-pop for fs
 # -finline-functions for kernel and 3 sub folder, and lib and mm
-LDFLAGS	= -s -x -M
- 
+# LDFLAGS	= -s -x -M # original flags
+LDFLAGS	= -s -x -M -m elf_i386
+
 #
 # ROOT_DEV specifies the default root-device when making the image.
 # This can be either FLOPPY, /dev/xxxx or empty, in which case the
