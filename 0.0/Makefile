@@ -13,10 +13,10 @@ CC	=gcc $(RAMDISK)
 AS	=as --32
 LD	=ld
 CFLAGS	= -m32 -Wall -fstrength-reduce -fomit-frame-pointer \
-        -O0 -g3 -gdwarf-2 -fno-stack-protector -fno-builtin
+        -g3 -O0 -fno-stack-protector -fno-builtin #-g3 -gdwarf-2 -m32 
 # -fno-defer-pop for fs
 # -finline-functions for kernel and 3 sub folder, and lib and mm
-LDFLAGS	= -m elf_i386  -Ttext 0 -e startup_32 #-s -x -M
+LDFLAGS	= -m i386linux -Ttext 0 -e startup_32 #-s -x -M
 
 #
 # ROOT_DEV specifies the default root-device when making the image.

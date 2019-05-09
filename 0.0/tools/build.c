@@ -197,7 +197,7 @@ int main(int argc, char ** argv)
 			die("Write call failed");
 	close(id);
 	fprintf(stderr,"System is %d bytes.\n",i);
-	if (i > SYS_SIZE*16)
+	if (i > SYS_SIZE*32) // 16->32 by Jesse 9May2019
 		die("System is too big");
 	return(0);
 }
