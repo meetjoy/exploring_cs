@@ -199,7 +199,7 @@ static void scrup(int currcons)
 				__asm__("cld\n\t"
 					"rep\n\t"
 					"movsl\n\t"
-					"movl _video_num_columns,%1\n\t"
+					"movl video_num_columns,%1\n\t"
 					"rep\n\t"
 					"stosw"
 					::"a" (video_erase_char),
@@ -224,7 +224,7 @@ static void scrup(int currcons)
 			__asm__("cld\n\t"
 				"rep\n\t"
 				"movsl\n\t"
-				"movl _video_num_columns,%%ecx\n\t"
+				"movl video_num_columns,%%ecx\n\t"
 				"rep\n\t"
 				"stosw"
 				::"a" (video_erase_char),
@@ -239,7 +239,7 @@ static void scrup(int currcons)
 		__asm__("cld\n\t"
 			"rep\n\t"
 			"movsl\n\t"
-			"movl _video_num_columns,%%ecx\n\t"
+			"movl video_num_columns,%%ecx\n\t"
 			"rep\n\t"
 			"stosw"
 			::"a" (video_erase_char),
@@ -260,7 +260,7 @@ static void scrdown(int currcons)
 			"rep\n\t"
 			"movsl\n\t"
 			"addl $2,%%edi\n\t"	/* %edi has been decremented by 4 */
-			"movl _video_num_columns,%%ecx\n\t"
+			"movl video_num_columns,%%ecx\n\t"
 			"rep\n\t"
 			"stosw"
 			::"a" (video_erase_char),
@@ -275,7 +275,7 @@ static void scrdown(int currcons)
 			"rep\n\t"
 			"movsl\n\t"
 			"addl $2,%%edi\n\t"	/* %edi has been decremented by 4 */
-			"movl _video_num_columns,%%ecx\n\t"
+			"movl video_num_columns,%%ecx\n\t"
 			"rep\n\t"
 			"stosw"
 			::"a" (video_erase_char),
