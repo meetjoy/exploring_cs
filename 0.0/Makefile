@@ -13,7 +13,7 @@ CC	=gcc $(RAMDISK)
 AS	=as --32
 LD	=ld
 CFLAGS	= -m32 -Wall -fstrength-reduce -fomit-frame-pointer \
-        -O0 -g3 -gdwarf-2 -fno-stack-protector -fno-builtin -nostdinc
+        -O0 -g3 -gdwarf-2 -fno-stack-protector -fno-builtin
 # -fno-defer-pop for fs
 # -finline-functions for kernel and 3 sub folder, and lib and mm
 LDFLAGS	= -s -x -M -m elf_i386  -Ttext 0 -e startup_32
