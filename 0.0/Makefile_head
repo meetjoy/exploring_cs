@@ -4,9 +4,9 @@ CC	=gcc
 AS	=as --32
 LD	=ld
 CFLAGS	= -m32 -Wall -fstrength-reduce -fomit-frame-pointer \
-        -g3 -O0  -fno-stack-protector -fno-builtin -nostdinc #-g3 -gdwarf-2
+        -O0  -fno-stack-protector -fno-builtin -nostdinc #-g3 -gdwarf-2
 
-LDFLAGS	= -m i386linux #-s -x elf_i386
+LDFLAGS	= -m elf_i386 #-s -x i386linux
 
 .c.o:
 	$(CC) $(CFLAGS) \
