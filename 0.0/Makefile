@@ -16,7 +16,7 @@ CFLAGS	= -m32 -Wall -fstrength-reduce -fomit-frame-pointer \
         -O0 -g3 -gdwarf-2 -fno-stack-protector -fno-builtin
 # -fno-defer-pop for fs
 # -finline-functions for kernel and 3 sub folder, and lib and mm
-LDFLAGS	= -s -x -M -m elf_i386  -Ttext 0 -e startup_32
+LDFLAGS	= -m elf_i386  -Ttext 0 -e startup_32 #-s -x -M
 
 #
 # ROOT_DEV specifies the default root-device when making the image.
