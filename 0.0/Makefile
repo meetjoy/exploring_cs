@@ -2,7 +2,7 @@
 # if you want the ram-disk device, define this to be the
 # size in blocks.
 #
-RAMDISK = #-DRAMDISK=512
+RAMDISK = -DRAMDISK=2048
 
 AS86	=as86 -0 -a
 LD86	=ld86 -0
@@ -23,8 +23,8 @@ LDFLAGS	= -m elf_i386 -Ttext 0 -e startup_32 #-s -x -M
 # This can be either FLOPPY, /dev/xxxx or empty, in which case the
 # default of /dev/hd6 is used by 'build'.
 #
-ROOT_DEV=/mnt/fdb
-SWAP_DEV=/mnt/fdc
+ROOT_DEV=FLOPPY#/dev/fd0
+SWAP_DEV=/dev/fd1#/mnt/fdc
 
 ARCHIVES=kernel/kernel.o mm/mm.o fs/fs.o
 DRIVERS =kernel/blk_drv/blk_drv.a kernel/chr_drv/chr_drv.a
