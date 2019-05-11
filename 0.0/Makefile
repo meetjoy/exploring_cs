@@ -2,7 +2,7 @@
 # if you want the ram-disk device, define this to be the
 # size in blocks.
 #
-RAMDISK = -DRAMDISK=2048
+RAMDISK = #-DRAMDISK=2048
 
 AS86	=as86 -0 -a
 LD86	=ld86 -0
@@ -13,17 +13,17 @@ CC	=gcc $(RAMDISK)
 AS	=as --32
 LD	=ld
 CFLAGS	= -m32 -Wall -fstrength-reduce -fomit-frame-pointer \
-        -O0 -fno-stack-protector -fno-builtin #-g3 -gdwarf-2 -m32 
+        -g3 -gdwarf-4 -O0 -fno-stack-protector -fno-builtin #-g3 -gdwarf-2 -m32 
 # -fno-defer-pop for fs
 # -finline-functions for kernel and 3 sub folder, and lib and mm
-LDFLAGS	= -m elf_i386 -Ttext 0 -e startup_32 #-s -x -M
+LDFLAGS	= -m elf_i386 -Ttext 0 -e startup_32#-s -x -M
 
 #
 # ROOT_DEV specifies the default root-device when making the image.
 # This can be either FLOPPY, /dev/xxxx or empty, in which case the
 # default of /dev/hd6 is used by 'build'.
 #
-ROOT_DEV=FLOPPY#/dev/fd0
+ROOT_DEV=/dev/fd1#/dev/fd0
 SWAP_DEV=/dev/fd1#/mnt/fdc
 
 ARCHIVES=kernel/kernel.o mm/mm.o fs/fs.o
@@ -43,8 +43,13 @@ LIBS	=lib/lib.a
 all:	Image
 
 Image: boot/bootsect boot/setup tools/system tools/build
-	tools/build boot/bootsect boot/setup tools/system $(ROOT_DEV) \
-		$(SWAP_DEV) > Image
+	cp tools/system debug/system
+	strip tools/system
+	#stools/build boot/bootsect boot/setup tools/system $(ROOT_DEV) $(SWAP_DEV) > Image
+	objcopy -O binary -R .note -R .comment tools/system tools/kernel
+	tools/build.sh boot/bootsect boot/setup tools/kernel kernel_Image $(ROOT_DEV) $(SWAP_DEV)
+	cp kernel_Image debug/kernel_Image
+	rm tools/kernel
 	sync
 
 disk: Image
@@ -63,7 +68,7 @@ tools/system:	boot/head.o init/main.o \
 	$(DRIVERS) \
 	$(MATH) \
 	$(LIBS) \
-	-o tools/system > System.map
+	-o tools/system # > System.map
 
 kernel/math/math.a:
 	(cd kernel/math; make)
@@ -104,6 +109,8 @@ clean:
 	rm -f Image System.map tmp_make core boot/bootsect boot/setup \
 		boot/bootsect.s boot/setup.s
 	rm -f init/*.o tools/system tools/build boot/*.o
+	rm -f kernel_Image
+	rm -f debug/kernel_Image
 	(cd mm;make clean)
 	(cd fs;make clean)
 	(cd kernel;make clean)

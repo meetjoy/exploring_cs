@@ -52,9 +52,9 @@ start:
 	mov	[10],bx
 	mov	[12],cx
 	mov	ax,#0x5019
-	cmp	bl,#0x10
-	je	novga
-	call	chsvga
+	cmp	bl,#0x10   !Address here is ox9020:0020
+	je	novga      !address 0023
+	call	chsvga !address 0025
 novga:	mov	[14],ax
 	mov	ah,#0x03	! read cursor pos
 	xor	bh,bh
@@ -195,7 +195,7 @@ end_move:
 ! absolute address 0x00000, in 32-bit protected mode.
 
 	mov	ax,#0x0001	! protected mode (PE) bit
-	lmsw	ax		! This is it!
+	lmsw	ax		! This is it! address: 0x9030f
 	jmpi	0,8		! jmp offset 0 of segment 8 (cs)
 
 ! This routine checks that the keyboard command queue is empty
@@ -212,7 +212,7 @@ empty_8042:
 ! and if it recognize one gives the choices of resolution it offers.
 ! If one is found the resolution chosen is given by al,ah (rows,cols).
 
-chsvga:	cld
+chsvga:	cld  ! address :0x90322
 	push	ds
 	push	cs
 	pop	ds
@@ -220,10 +220,10 @@ chsvga:	cld
 	mov	es,ax
 	lea	si,msg1
 	call	prtstr
-nokey:	in	al,#0x60
+nokey:	in	al,#0x60  ! address:90332
 	cmp	al,#0x82
 	jb	nokey
-	cmp	al,#0xe0
+	cmp	al,#0xe0     !these four lines commented by Jesse on 11-May-2019
 	ja	nokey
 	cmp	al,#0x9c
 	je	svga
