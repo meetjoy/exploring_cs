@@ -1,3 +1,5 @@
 # re-compile linux-0.12
 ## Makefile_head for all 7 Makefiles in sub folders
 ## Modify as per CLK book
+
+12-May-2019 liner address 0x68f3

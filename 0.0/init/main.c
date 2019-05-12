@@ -89,7 +89,7 @@ inb_p(0x71); \
 
 #define BCD_TO_BIN(val) ((val)=((val)&15) + ((val)>>4)*10)
 
-static void time_init(void)
+void time_init(void) //static taken off 
 {
 	struct tm time;
 

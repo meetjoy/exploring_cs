@@ -11,7 +11,7 @@ root_dev=$5
 swap_dev=$6
 
 # Set the biggest sys_size
-SYS_SIZE=$((0x3000*20))
+SYS_SIZE=$((0x3000*80))
 
 # set the default "device" file for root image file
 if [ -z "$root_dev" ]; then

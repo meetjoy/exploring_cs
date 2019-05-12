@@ -13,10 +13,10 @@ CC	=gcc $(RAMDISK)
 AS	=as --32
 LD	=ld
 CFLAGS	= -m32 -Wall -fstrength-reduce -fomit-frame-pointer \
-        -g3 -gdwarf-4 -O0 -fno-stack-protector -fno-builtin #-g3 -gdwarf-2 -m32 
+        -fno-pie -g3 -gdwarf-4 -O0 -fno-stack-protector -fno-builtin #-g3 -gdwarf-2 -m32 
 # -fno-defer-pop for fs
 # -finline-functions for kernel and 3 sub folder, and lib and mm
-LDFLAGS	= -m elf_i386 -Ttext 0 -e startup_32#-s -x -M
+LDFLAGS	= -no-pie -m elf_i386 -Ttext 0 -e startup_32#-s -x -M
 
 #
 # ROOT_DEV specifies the default root-device when making the image.
@@ -42,12 +42,13 @@ LIBS	=lib/lib.a
 
 all:	Image
 
-Image: boot/bootsect boot/setup tools/system tools/build
+Image: boot/bootsect boot/setup tools/system #tools/build
 	cp tools/system debug/system
 	strip tools/system
 	#stools/build boot/bootsect boot/setup tools/system $(ROOT_DEV) $(SWAP_DEV) > Image
 	objcopy -O binary -R .note -R .comment tools/system tools/kernel
 	tools/build.sh boot/bootsect boot/setup tools/kernel kernel_Image $(ROOT_DEV) $(SWAP_DEV)
+	tools/build.sh boot/bootsect boot/setup debug/system debug/dImage $(ROOT_DEV) $(SWAP_DEV)
 	cp kernel_Image debug/kernel_Image
 	rm tools/kernel
 	sync
@@ -55,9 +56,9 @@ Image: boot/bootsect boot/setup tools/system tools/build
 disk: Image
 	dd bs=8192 if=Image of=/dev/PS0
 
-tools/build: tools/build.c
-	$(CC) $(CFLAGS) \
-	-o tools/build tools/build.c
+#tools/build: tools/build.c
+#	$(CC) $(CFLAGS) \
+#	-o tools/build tools/build.c
 
 boot/head.o: boot/head.s
 
@@ -111,6 +112,7 @@ clean:
 	rm -f init/*.o tools/system tools/build boot/*.o
 	rm -f kernel_Image
 	rm -f debug/kernel_Image
+	rm -f debug/dImage
 	(cd mm;make clean)
 	(cd fs;make clean)
 	(cd kernel;make clean)
