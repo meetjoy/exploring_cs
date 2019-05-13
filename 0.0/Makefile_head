@@ -6,7 +6,7 @@ LD	=ld
 CFLAGS	= -m32 -Wall -fstrength-reduce -fomit-frame-pointer \
         -fno-pie -g3 -gdwarf-4 -O0  -fno-stack-protector -fno-builtin -nostdinc #
 
-LDFLAGS	= -no-pie -m elf_i386 -x -M #-s -x i386linux
+LDFLAGS	= -no-pie -m elf_i386 -x #-s -x i386linux -M 
 
 .c.o:
 	$(CC) $(CFLAGS) \
