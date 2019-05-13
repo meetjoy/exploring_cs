@@ -139,7 +139,7 @@ after_page_tables:
 	pushl $0
 	pushl $0
 	pushl $L6		# return address for main, if it decides to.
-	pushl $main
+	pushl $main     #
 	jmp setup_paging
 L6:
 	jmp L6			# main should never return here, but
@@ -212,7 +212,7 @@ setup_paging:
 1:	stosl			/* fill pages backwards - more efficient :-) */
 	subl $0x1000,%eax
 	jge 1b
-	xorl %eax,%eax		/* pg_dir is at 0x0000 */
+	xorl %eax,%eax		/* pg_dir is at 0x0000 */ /*0x5497 inside of head.s*/
 	movl %eax,%cr3		/* cr3 - page directory start */
 	movl %cr0,%eax
 	orl $0x80000000,%eax

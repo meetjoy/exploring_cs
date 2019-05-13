@@ -3,3 +3,9 @@
 ## Modify as per CLK book
 
 12-May-2019 liner address 0x68f3
+
+## when installing bochs with make install way
+apt-get install libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev
+
+0x5497 inside of head.s
+0x54a7 inside of head.s
