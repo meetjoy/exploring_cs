@@ -1015,7 +1015,7 @@ void console_print(const char * b)
 		__asm__("movb %2,%%ah\n\t"
 			"movw %%ax,%1\n\t"
 			::"a" (c),
-			"m" (*(short *)pos),
+			"m" (pos),//*(short *)
 			"m" (attr)
 			:);//"ax"
 		pos += 2;
