@@ -82,7 +82,7 @@ extern int fg_console;
 
 void rs_init(void);
 void con_init(void);
-void tty_init(void);
+extern void tty_init(void); // extern added by Jesse 14-may-2019
 
 int tty_read(unsigned c, char * buf, int n);
 int tty_write(unsigned c, char * buf, int n);

@@ -5,7 +5,7 @@ void verify_area(void * addr,int count);
 volatile void panic(const char * str);
 volatile void do_exit(long error_code);
 //int printf(const char * fmt, ...);
-int printk(const char * fmt, ...);
+extern int printk(const char * fmt, ...);//extern added by Jesse 14-May-2019
 void console_print(const char * str);
 int tty_write(unsigned ch,char * buf,int count);
 void * malloc(unsigned int size);

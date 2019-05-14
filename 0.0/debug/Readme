@@ -13,3 +13,4 @@ apt-get install libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev
 
 0x19e56 inside of tty_inti();
 0x19e74 inside of tty_init(), calling printk();
+0x1d2ec 
