@@ -6,7 +6,7 @@ volatile void panic(const char * str);
 volatile void do_exit(long error_code);
 //int printf(const char * fmt, ...);
 extern int printk(const char * fmt, ...);//extern added by Jesse 14-May-2019
-void console_print(const char * str);
+extern void console_print(const char * str);//extern added by Jesse 14-May-2019
 int tty_write(unsigned ch,char * buf,int count);
 void * malloc(unsigned int size);
 void free_s(void * obj, int size);
