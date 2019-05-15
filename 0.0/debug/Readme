@@ -17,4 +17,12 @@ apt-get install libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev
 0x1d2ec addressing wrong in 
 0x19e8b Okay to here
 0x6951 call wrong! After iret
+0x64b8 inside of fork()
 
+00007858 <system_call>
+7878
+7990 sys_fork
+799f call
+8770,8426
+8af5->8b32
+8418,in copy_mem(), the base of the data seg and code seg donot match
