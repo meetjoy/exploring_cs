@@ -1,6 +1,0 @@
-# Note
-## This copy from modified copy of linux-0.12 code by sky-big, originally by linus
-## gcc: 7.4
-   binutils: 2.3
-   as86,ld86: 0.16.17
-   Ubuntu:18.04

@@ -23,8 +23,8 @@ LDFLAGS	= -no-pie -m elf_i386 -Ttext 0 -e startup_32#-s -x -M
 # This can be either FLOPPY, /dev/xxxx or empty, in which case the
 # default of /dev/hd6 is used by 'build'.
 #
-ROOT_DEV=/dev/fd1#/dev/fd0
-SWAP_DEV=/dev/fd1#/mnt/fdc
+ROOT_DEV=0301
+SWAP_DEV=    
 
 ARCHIVES=kernel/kernel.o mm/mm.o fs/fs.o
 DRIVERS =kernel/blk_drv/blk_drv.a kernel/chr_drv/chr_drv.a
@@ -112,7 +112,7 @@ clean:
 	rm -f init/*.o tools/system tools/build boot/*.o
 	rm -f kernel_Image
 	rm -f debug/kernel_Image
-	rm -f debug/dImage
+	rm -f debug/dImage debug/system
 	(cd mm;make clean)
 	(cd fs;make clean)
 	(cd kernel;make clean)
