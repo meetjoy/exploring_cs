@@ -2,7 +2,7 @@
 
 ## Download the run Bochs package
 
-{% embed url="http://oldlinux.org/Linux.old/bochs/linux-0.12-080324.zip" %}
+{% embed url="http://oldlinux.org/Linux.old/bochs/linux-0.12-080324.zip" caption="" %}
 
 Play on Windows, install Bochs-2.3.6.exe, copy bochsrc-0.12-fd.bxrc,diska.img, rootimage-0.12-fd,debug.bat and bootimage-0.12-fd. Double click bochsrc-0.12-fd.bxrc to run.
 
@@ -20,11 +20,7 @@ install gcc install as86 & ld86: sudo apt-get install bin86 install make
 
 The following two commands put Kernel\_Image and rootimage\_0.12-fd \(which is a root disk\) in one image dd bs=8192 if=Kernel\_Image of=bootroot-0.12 dd bs=1024 if=rootimage-0.12-fd of=bootroot-0.12 seek=256 root disk downloaded from bottom link of [https://github.com/sky-big/Linux-0.12](https://github.com/sky-big/Linux-0.12)
 
-
-
 ## Draft: run final file bootroot-0.12 in emulator
 
 sudo qemu-system-x86\_64 -drive format=raw,file=bootroot-0.12,index=0,if=floppy -cpu max
-
-
 

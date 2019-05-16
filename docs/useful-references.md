@@ -6,15 +6,15 @@
 
 ## C keyword: volatile
 
-{% embed url="https://barrgroup.com/Embedded-Systems/How-To/C-Volatile-Keyword" %}
+{% embed url="https://barrgroup.com/Embedded-Systems/How-To/C-Volatile-Keyword" caption="" %}
 
-##  C keyword: \#define
+## C keyword: \#define
 
-{% embed url="https://www.techonthenet.com/c\_language/constants/create\_define.php" %}
+{% embed url="https://www.techonthenet.com/c\_language/constants/create\_define.php" caption="" %}
 
 ## What is POSIX?
 
-{% embed url="https://en.wikipedia.org/wiki/POSIX" %}
+{% embed url="https://en.wikipedia.org/wiki/POSIX" caption="" %}
 
 ## Escape sequences in C
 
