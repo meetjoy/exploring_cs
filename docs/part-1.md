@@ -154,6 +154,6 @@ Now let’s go through the assembly code we wrote in section 1.
 ```text
 [^1]: Von neumann architecture: https://en.wikipedia.org/wiki/Von_Neumann_architecture
 [^2]: Ed Jorgensen, x86-64 Assembly Language Programming with Ubuntu, version 1.1.28, 2019, www.egr.unlv.edu/~ed/assembly64.pdf
-[^2]: PhoenixBIOS 4.0 User Manual Revision 6
+[^3]: PhoenixBIOS 4.0 User Manual Revision 6
 ```
 
