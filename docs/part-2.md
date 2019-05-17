@@ -18,23 +18,59 @@ The first 1024 bytes \(1KiB\) stores the interrupt vector table, which has 256 r
 
 ![Generating 20-bit physical address in Real Mode \[^1\]](.gitbook/assets/generating-20-bit-physical-address-in-real-mode.jpg)
 
-High memory Area: Someone might argue that we can get address more than 0xFFFF, e.g., when CS=0xFFFF, IP=0xFFFF. We have to use the 21st address line to access any memory larger than 0xFFFFF. If we set segment register to a value of 0xFFFF, it points to an address that is 16 bytes below 1 MB. If we then use that segment register as a base, with an offset of 0x10 to 0xFFFF, we can access physical memory addresses from 0x100000 to 0x10FFEF. This \(almost 64 KiB\) area above 1 MiB is usually called the "High Memory Area" in Real Mode. Note that we have to have the A20 \(the 21st\) address line activated for this to work. We do not discuss more about A20 here. For now we are comfortable to limit our discussion on the 1 MiB address space in Real mode.
+**High memory Area**: Someone might argue that we can get address more than 0xFFFF, e.g., when CS=0xFFFF, IP=0xFFFF. We have to use the 21st address line to access any memory larger than 0xFFFFF. If we set segment register to a value of 0xFFFF, it points to an address that is 16 bytes below 1 MB. If we then use that segment register as a base, with an offset of 0x10 to 0xFFFF, we can access physical memory addresses from 0x100000 to 0x10FFEF. This \(almost 64 KiB\) area above 1 MiB is usually called the "High Memory Area" in Real Mode. Note that we have to have the A20 \(the 21st\) address line activated for this to work. We do not discuss more about A20 here. For now we are comfortable to limit our discussion on the 1 MiB address space in Real mode.
 
 ### Stack & segment registers
 
-All x86 segment registers are 16 bits in size, irrespective of the CPU: • CS, code segment. Machine instructions exist at some offset into a code segment. The segment address of the code segment of the currently executing instruction is contained in CS. • DS, data segment. Variables and other data exist at some offset into a data segment. There may be many data segments, but the CPU may only use one at a time, by placing the segment address of that segment in register DS. • SS, stack segment. The stack is a very important component of the CPU used for temporary storage of data and addresses. Therefore, the stack has a segment address, which is contained in register SS. • ES, extra segment. The extra segment is exactly that: a spare segment that may be used for specifying a location in memory. • FS and GS are clones of ES, the extra segment. FS and GS both are just additional segments, no specialty here. Names FS and GS come from the fact that they were created after ES: E, F, G. They exist only in the 386 and later x86 CPUs. Extra segments ES, FS, and GS can be used for both data or code. 5
+All x86 segment registers are 16 bits in size, irrespective of the CPU: 
+
+• CS, code segment. Machine instructions exist at some offset into a code segment. The segment address of the code segment of the currently executing instruction is contained in CS. 
+
+• DS, data segment. Variables and other data exist at some offset into a data segment. There may be many data segments, but the CPU may only use one at a time, by placing the segment address of that segment in register DS. 
+
+• SS, stack segment. The stack is a very important component of the CPU used for temporary storage of data and addresses. Therefore, the stack has a segment address, which is contained in register SS. 
+
+• ES, extra segment. The extra segment is exactly that: a spare segment that may be used for specifying a location in memory. 
+
+• FS and GS are clones of ES, the extra segment. FS and GS both are just additional segments, no specialty here. Names FS and GS come from the fact that they were created after ES: E, F, G. They exist only in the 386 and later x86 CPUs. Extra segments ES, FS, and GS can be used for both data or code. 5
 
 ![](.gitbook/assets/6-segments.jpg)
 
 ### Real mode Flat model diagram
 
-• The segment registers are all set to point to the beginning of the 64 KiB block of memory. • The operating system sets segment registers when it loads the program. • All segment registers point to that same place. • Physical segment assignments never change as long as the program is running. The segment registers are still functioning, but no work with segments is required.
+• The segment registers are all set to point to the beginning of the 64 KiB block of memory. 
+
+• The operating system sets segment registers when it loads the program. • All segment registers point to that same place. 
+
+• Physical segment assignments never change as long as the program is running. The segment registers are still functioning, but no work with segments is required.
 
 ![](.gitbook/assets/real-mode-flat-model-diagram.jpg)
 
 ### Real mode segmented model5
 
-• Real mode segmented model was mainstream programming model throughout the MS-DOS era. • Used when Windows 9x machine is booted into MS-DOS mode. • Good choice to write code to run under MS-DOS. • Program has access to 1MB of memory. • The CPU handles transformations of segment:offset combinations into a full 20-bit address. • CS always points to the current code segment • The next instruction to be executed is pointed to by the CS:IP register pair. • Machine instructions called jumps can change CS to another code segment if necessary. • The program can span several code segments. • There is no direct CS manipulation to change from one code segment to another: when a jump instruction needs to take execution into a different code segment, it changes CS value for you. • There is only one stack segment for any single program. • A program has potential to destroy portions of memory that does not belong to its process. Careless use of segment registers will cause the operating system to crash.
+• Real mode segmented model was mainstream programming model throughout the MS-DOS era. 
+
+• Used when Windows 9x machine is booted into MS-DOS mode. 
+
+• Good choice to write code to run under MS-DOS. 
+
+• Program has access to 1MB of memory. 
+
+• The CPU handles transformations of segment:offset combinations into a full 20-bit address. 
+
+• CS always points to the current code segment 
+
+• The next instruction to be executed is pointed to by the CS:IP register pair. 
+
+• Machine instructions called jumps can change CS to another code segment if necessary. 
+
+• The program can span several code segments. 
+
+• There is no direct CS manipulation to change from one code segment to another: when a jump instruction needs to take execution into a different code segment, it changes CS value for you. 
+
+• There is only one stack segment for any single program. 
+
+• A program has potential to destroy portions of memory that does not belong to its process. Careless use of segment registers will cause the operating system to crash.
 
 ![](.gitbook/assets/real-mode-segmented-model.jpg)
 
@@ -48,7 +84,23 @@ There are generally two ways to access VGA text-mode for an application: through
 
 ### x86 general purpose registers, x86 instruction reference and RFLAGS registers
 
-We’ve briefly discussed the segment registers. Now we introduce the general purpose registers before we do more code. x86-64 has sixteen \(almost\) general purpose 64-bit integer registers. The above illustration shows the eight 32-bit general purpose register and their alternate names. In 64-bit mode there are another eight general purpose registers R8~R15, while we do not talk about these at the moment. Although the main registers \(with the exception of the instruction pointer\) are "general-purpose" in the 32-bit and 64-bit versions of the instruction set and can be used for anything, it was originally envisioned that they be used for the following purposes: • AL/AH/AX/EAX/RAX: Accumulator • BL/BH/BX/EBX/RBX: Base index \(for use with arrays\) • CL/CH/CX/ECX/RCX: Counter \(for use with loops and strings\) • DL/DH/DX/EDX/RDX: Extend the precision of the accumulator \(e.g. combine 32-bit EAX and EDX for 64-bit integer operations in 32-bit code\) • SI/ESI/RSI: Source index for string operations. • DI/EDI/RDI: Destination index for string operations. • SP/ESP/RSP: Stack pointer for top address of the stack. • BP/EBP/RBP: Stack base pointer for holding the address of the current stack frame. IP/EIP/RIP: Instruction pointer. Holds the program counter, the address of next instruction. The FLAGS register is the status register in Intel x86 microprocessors that contains the current state of the processor. This register is 16 bits wide. Its successors, the EFLAGS and RFLAGS registers, are 32 bits and 64 bits wide, respectively. The wider registers retain compatibility with their smaller predecessors.
+We’ve briefly discussed the segment registers. Now we introduce the general purpose registers before we do more code. x86-64 has sixteen \(almost\) general purpose 64-bit integer registers. The above illustration shows the eight 32-bit general purpose register and their alternate names. In 64-bit mode there are another eight general purpose registers R8~R15, while we do not talk about these at the moment. Although the main registers \(with the exception of the instruction pointer\) are "general-purpose" in the 32-bit and 64-bit versions of the instruction set and can be used for anything, it was originally envisioned that they be used for the following purposes: 
+
+• AL/AH/AX/EAX/RAX: Accumulator 
+
+• BL/BH/BX/EBX/RBX: Base index \(for use with arrays\) 
+
+• CL/CH/CX/ECX/RCX: Counter \(for use with loops and strings\) 
+
+• DL/DH/DX/EDX/RDX: Extend the precision of the accumulator \(e.g. combine 32-bit EAX and EDX for 64-bit integer operations in 32-bit code\) 
+
+• SI/ESI/RSI: Source index for string operations. 
+
+• DI/EDI/RDI: Destination index for string operations. 
+
+• SP/ESP/RSP: Stack pointer for top address of the stack. 
+
+• BP/EBP/RBP: Stack base pointer for holding the address of the current stack frame. IP/EIP/RIP: Instruction pointer. Holds the program counter, the address of next instruction. The FLAGS register is the status register in Intel x86 microprocessors that contains the current state of the processor. This register is 16 bits wide. Its successors, the EFLAGS and RFLAGS registers, are 32 bits and 64 bits wide, respectively. The wider registers retain compatibility with their smaller predecessors.
 
 For a full list of x86 instruction reference, please refer to x86 and amd64 instruction reference .
 
@@ -76,26 +128,28 @@ In this part, we firstly add a new function system\_interrupt, which for now jus
 
 ### Interrupt Vector Table
 
-In case some of us need to learn more about the Interrupt Vector Table. On the x86 architecture, the Interrupt Vector Table \(IVT\) is a table that specifies the addresses of all the 256 interrupt handlers used in real mode.12 This website gives us a great idea on more details on the handers when an interrupt occurs.
+In case some of us need to learn more about the Interrupt Vector Table. On the x86 architecture, the Interrupt Vector Table \(IVT\) is a table that specifies the addresses of all the 256 interrupt handlers used in real mode. This website gives us a great idea on more details on the handlers when an interrupt occurs.
 
-## ep2: add two functions task0 and task1
+Legacy BIOS Interrupt Vector Table: [http://www.ctyme.com/intr/int.htm](http://www.ctyme.com/intr/int.htm)
+
+## ep2: Add two functions task0 and task1
 
 In this part we add two function, task0 to set a green colour, set code point to 67, then it raises an interrupt. This function will let the program keep printing character “C” in green to screen. The second function task1 will keep printing a magenta “S” to screen. I found a little problem at first the program runs, it does not print a whole screen character as supposed. I go back to write\_char function and figure out we need to adjust the value of scn\_pos \(plus 1 each time after we print 1 character\).
 
-## ep3: Programable interval timer, interrupt request and multi-task
+## ep3: Programmable interval timer, interrupt request and multi-task
 
-In program ep2, we created two tasks. If we run any of these two tasks, the computer will continue printing character C or S onto screen until we terminate the emulator. Can we switch the tasks from one to another, so forth every certain time interval task0 and task1 are being executed alternatively? Say in the first one tenth second, screen prints C, in the next one tenth second, S is printed. We then think a timer or something like that will be required. The PIT which is short for Programable interval timer chip, or 8253/8254 chip is something we are looking for. We will firstly brief some concepts before we write and run the program ep3.
+In program ep2, we created two tasks. If we run any of these two tasks, the computer will continue printing character C or S onto screen until we terminate the emulator. Can we switch the tasks from one to another, so forth every certain time interval task0 and task1 are being executed alternatively? Say in the first one tenth second, screen prints C, in the next one tenth second, S is printed. We then think a timer or something like that will be required. The PIT which is short for Programmable interval timer chip, or 8253/8254 chip is something we are looking for. We will firstly brief some concepts before we write and run the program ep3.
 
 ### I/O Ports
 
 The x86 architecture separates the address space in two programmatically distinct groups: memory and ports. In ancient history, memory was used as the storage of data where reads and writes would not have side-effects, and ports were used to control external hardware, which needed different timings to work. Which is also why accessing ports is so much slower than accessing memory. Many other common architectures have a unified space, where devices run at the same speed as memory, or where the address space is divided into blocks with separately configurable properties. Modern x86 hardware tends more and more toward the unified space, but still contains the port for legacy reasons.  
-An I/O port is usually used as a technical term for a specific address on the x86's IO bus. This bus provides communication with devices in a fixed order and size, and was used as an alternative to memory access. On many other architectures, there is no predefined bus for such communication and all communication with hardware is done via memory-mapped IO. This also increasingly happens on modern x86 hardware. The below map gives a list of the functions of the ports. For now we only need to study more in the following sub sections about the ports 0x40 to 0x47 which is for the Programable interval timer.
+An I/O port is usually used as a technical term for a specific address on the x86's IO bus. This bus provides communication with devices in a fixed order and size, and was used as an alternative to memory access. On many other architectures, there is no predefined bus for such communication and all communication with hardware is done via memory-mapped IO. This also increasingly happens on modern x86 hardware. The below map gives a list of the functions of the ports. For now we only need to study more in the following sub sections about the ports 0x40 to 0x47 which is for the Programmable interval timer.
 
-### Programable interval timer
+### Programmable interval timer
 
-The PIT chip has three separate frequency dividers \(or 3 separate channels\) that are programmable. The output from PIT channel 0 generates an "IRQ 0", where IRQ which is short for Interrupt ReQuest . Firstly we send a byte to the control word register to the timer through port 43. A full list of the control word description could be found here Intel 8253 . Then we set the time interval to channel 0 through port 40. After settings these, the timer will raise an interrupt signal to CPU. If the CPU responses to the interrupt, a hander will be invoked to deal with the interrupt. By default, the hander address is 0x08 for legacy BIOS. Once the timer set up, we then prepare a handler timer\_interrupt and write its address to 8th record of the Interrupt Vector Table. Inside of the timer\_interrupt, we switch the tasks based on which task is currently running.
+The PIT chip has three separate frequency dividers \(or 3 separate channels\) that are programmable. The output from PIT channel 0 generates an "IRQ 0", where IRQ which is short for **Interrupt** **ReQuest** . Firstly we send a byte to the control word register to the timer through port 43. A full list of the control word description could be found here Intel 8253 . Then we set the time interval to channel 0 through port 40. After settings these, the timer will raise an interrupt signal to CPU. If the CPU responses to the interrupt, a hander will be invoked to deal with the interrupt. By default, the handler address is 0x08 for legacy BIOS. Once the timer set up, we then prepare a handler timer\_interrupt and write its address to 8th record of the Interrupt Vector Table. Inside of the **timer\_interrupt**, we switch the tasks based on which task is currently running.
 
-## Legacy BIOS: Read from Disk into Memroy
+## Legacy BIOS: Read from Disk into Memory
 
 ### Int 13/AH=02h - DISK - READ SECTOR\(S\) INTO MEMORY
 
@@ -121,9 +175,7 @@ AL = number of sectors transferred (only valid if CF set for some
 BIOSes)
 ```
 
-For more information refer to this [page](http://www.ctyme.com/intr/rb-0607.htm).[1]()
-
-1. Interruput Function List: [http://www.ctyme.com/intr/int.htm](http://www.ctyme.com/intr/int.htm)[↩]()
+For more information refer to this [page](http://www.ctyme.com/intr/rb-0607.htm).\[^2\]
 
 ## Boot loader program function
 
@@ -147,33 +199,36 @@ Go read, write and run the program, you will see the program alternatively print
 
 
 
-## Protect Mode, IDT, GDT, Control Registers, TSS, LDT
+## Protect Mode, IDT, GDT, control registers, TSS, LDT
 
-## Multitask Program in Protect Mode
+## Multitask program in protect mode
 
 ### Setup temporary IDT and GDT
 
-### Set Control Register CRO, Move to Protect Mode
+### Set control register CRO, move to protect mode
 
 ### Establish the IDT
 
 ### Establish the GDT
 
-### Reset all Segment Registers
+### Reset all segment registers
 
-### Set Timer Interrupt Chip
+### Set timer interrupt chip
 
-### Set Timer Interrupt Gate and System Call Gate
+### Set timer interrupt gate and system call gate
 
-### Prepare the Interrupt Return Scene
+### Prepare the interrupt return scene
 
-### Update all the previous Functions
+### Update all the previous functions
 
-### Game over of this Multi-task program
+### Game over of this multi-task program
 
 
 
 ```text
 [^1]: http://www.cjump.com/CIS77/ASM/Memory/lecture.html#M77_0020_seg_reg
+[^2]. Interrupput Function List: 
+http://www.ctyme.com/intr/int.htm↩
+
 ```
 
