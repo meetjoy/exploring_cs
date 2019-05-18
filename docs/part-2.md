@@ -199,36 +199,14 @@ Go read, write and run the program, you will see the program alternatively print
 
 
 
-## Protect Mode, IDT, GDT, control registers, TSS, LDT
-
 ## Multitask program in protect mode
 
-### Setup temporary IDT and GDT
+In this section we are going to extend our program from real mode to protected mode. Refer to the Concepts part for the introduction of Protect mode, IDT, GDT, control registers, TSS and LDT etc..
 
-### Set control register CRO, move to protect mode
-
-### Establish the IDT
-
-### Establish the GDT
-
-### Reset all segment registers
-
-### Set timer interrupt chip
-
-### Set timer interrupt gate and system call gate
-
-### Prepare the interrupt return scene
-
-### Update all the previous functions
-
-### Game over of this multi-task program
-
-
+After reviewing these concepts. We can review the extended program _**boot1.s**_ line by line. It might take hours to get ourselves to familiar with if you are new to these concepts. 
 
 ```text
 [^1]: http://www.cjump.com/CIS77/ASM/Memory/lecture.html#M77_0020_seg_reg
-[^2]. Interrupput Function List: 
-http://www.ctyme.com/intr/int.htm↩
-
+[^2]: Interrupput Function List: http://www.ctyme.com/intr/int.htm↩
 ```
 
