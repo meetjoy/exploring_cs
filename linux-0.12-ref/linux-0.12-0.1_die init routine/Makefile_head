@@ -1,0 +1,27 @@
+AR	=ar
+CPP	=gcc -E -nostdinc
+CC	=gcc
+AS	=as --32
+LD	=ld
+CFLAGS	= -m32 -Wall -fstrength-reduce -fomit-frame-pointer \
+        -fno-pie -g3 -gdwarf-4 -O0  -fno-stack-protector -fno-builtin -nostdinc #
+
+LDFLAGS	= -no-pie -m elf_i386 -x #-s -x i386linux -M 
+
+.c.o:
+	$(CC) $(CFLAGS) \
+	-c -o $*.o $<
+
+.c.s:
+	$(CC) $(CFLAGS) \
+	-S -o $*.s $<
+
+.s.o:
+	$(AS) -o $*.o $<
+
+# Note
+## This copy from modified copy of linux-0.12 code by sky-big, originally by linus
+## gcc: 7.4
+##   binutils: 2.3
+##   as86,ld86: 0.16.17
+##   Ubuntu:18.04
