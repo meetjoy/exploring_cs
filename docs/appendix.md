@@ -1,4 +1,4 @@
-# Appendix
+# Appendices
 
 ## Appendix A Installing Ubuntu Desktop
 
