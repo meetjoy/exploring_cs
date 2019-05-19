@@ -1,17 +1,17 @@
 ! SYS_SIZE is the number of clicks (16 bytes) to be loaded.
 ! 0x4000 is 0x40000 bytes = 256KiB, more than enough for now.
-! DEF_INITSEG	0x9000							//引导扇区程序将被移动到得段值。
-! DEF_SYSSEG	0x1000							//引导扇区程序把系统模块加载到内存的段值。
-! DEF_SETUPSEG	0x9020							//setup程序所处内存段位置。
-! DEF_SYSSIZE	0x3000							//内核系统模块默认最大节数（16字节=1节）。
+! DEF_INITSEG	0x9000							
+! DEF_SYSSEG	0x1000							
+! DEF_SETUPSEG	0x9020							
+! DEF_SYSSIZE	0x4000							
 #include <linux/config.h>
-SYSSIZE = DEF_SYSSIZE             				!定义一个标号或符号。指明编译连接后system模块的大小。
+SYSSIZE = DEF_SYSSIZE             				
 !
 !	bootsect.s		(C) 1991 Linus Torvalds
 !	modified by Drew Eckhardt
 !
 ! bootsect.s is loaded at 0x7c00 by the bios-startup routines, and moves
-! iself out of the way to address 0x90000, and jumps there.
+! itelf out of the way to address 0x90000, and jumps there.
 !
 ! It then loads 'setup' directly after itself (0x90200), and the system
 ! at 0x10000, using BIOS interrupts.
@@ -25,18 +25,6 @@ SYSSIZE = DEF_SYSSIZE             				!定义一个标号或符号。指明编�
 ! read errors will result in a unbreakable loop. Reboot by hand. It
 ! loads pretty fast by getting whole sectors at a time whenever possible.
 !
-!	bootsect.s		(C) 1991 Linus Torvalds
-!	Drew Eckhardt修改
-!
-! bootsect.S被ROM BIOS启动子程序加载至0x7c00（32KB）处，并将自己移到了地址0x90000
-! （576KB）处，并跳转至那里。
-!
-! 它然后使用BIOS中断将'setup'直接加载到自己的后面（0x90200）（576.5KB），并将system
-! 加载到地址0x10000处。
-!
-! 注意！目前的内核系统最大长度限制为（8*65536）（512KB）B，即使是在将来这也应该没有问题
-! 的。我想让他保持简单明了。这样512KB的最大内核长度应该足够了，尤其是这里没有像MINIX中
-! 一样包含缓冲区高速缓冲。
 .globl begtext, begdata, begbss, endtext, enddata, endbss
 .text
 begtext:
@@ -44,46 +32,33 @@ begtext:
 begdata:
 .bss
 begbss:
+
 .text
 
 SETUPLEN = 4				! nr of setup-sectors
-							! setup程序占用的扇区数
 BOOTSEG  = 0x07c0			! original address of boot-sector
-							! bootsect代码所在内存原始段地址
 INITSEG  = DEF_INITSEG		! we move boot here - out of the way
-							! 将bootsect移到位置0x90000 避开系统模块占用处
 SETUPSEG = DEF_SETUPSEG		! setup starts here
-							! setup程序从内存0x90200处开始
 SYSSEG   = DEF_SYSSEG		! system loaded at 0x10000 (65536).
-							! system模块加载到0x10000（64KB）处
 ENDSEG   = SYSSEG + SYSSIZE	! where to stop loading
-							! 停止加载的段地址
 
-! ROOT_DEV & SWAP_DEV are now written by "build".
-! 根文件系统设备号ROOT_DEV和交换设备号SWAP_DEV现在由tools目录下的build程序写入
-ROOT_DEV = 0				!根文件系统设备使用与系统引导是同样的设备
-SWAP_DEV = 0				!交换设备使用与系统引导是同样的设备
+! ROOT_DEV & SWAP_DEV are now written by "build". Actually we use a shell tool. Will see.
+ROOT_DEV = 0				
+SWAP_DEV = 0				
 
-
-entry start					! 告知连接程序,程序从start标号开始执行
+entry start					
 start:
-    mov	ax, #BOOTSEG		! 将DS段寄存器置为0x07c0
+    mov	ax, #BOOTSEG		
 	mov	ds, ax
-	mov	ax, #INITSEG		! 将ES段寄存器置为0x9000
+	mov	ax, #INITSEG		
 	mov	es, ax
-	mov	cx, #256			! 设置移动计数值=256字（512字节）
-	sub	si, si				! 源地址    ds:si = 0x07c0:0x0000
-	sub	di, di				! 目的地址  es:di = 0x9000:0x0000
-	rep						! 重复执行并递减cx的值，直到cx=0为止
-	movw					! 即movs指令。从内存[si]处移动cx个字到[di]处
-	jmpi	go, INITSEG		! 段间跳转（Jump Intersegment)。这里INITSEG指出跳转到得段地址，
-							! 标号go是段内偏移地址
+	mov	cx, #256			
+	sub	si, si				
+	sub	di, di				
+	rep						
+	movw					
+	jmpi	go, INITSEG		
 
-! 从现在开始，CPU移动到0x90000位置处的代码中执行。
-! 这段代码设置几个寄存器，包括栈寄存器ss和sp。栈指针sp只要指向远大于512字节偏移（即地址0x90200）处都可以。因为
-! 从0x90200地址开始出还要开始放置setup程序，而此时setup程序大约为４个扇区，因此sp要指向大于（0x200+0x200*4+堆栈大小）位置处。
-! 这里sp设置为0x9ff00-12（参数表长度），即sp=0xfef4。在此之上位置会存放一个自建的驱动器参数表。实际上BIOS把引导扇区加载到0x7c00处
-! 并把执行权交给引导程序时，ss=0x00，sp=0xfffe。
 go:	mov	ax,cs
 	mov	dx, #0xfef4			! arbitrary value >>512 - disk parm size
 
@@ -108,50 +83,34 @@ go:	mov	ax,cs
  *	Segments are as follows: ds=es=ss=cs - INITSEG,
  *		fs = 0, gs = parameter table segment
  */
-/*
- *
- *	对于多扇区操作说读的扇区数超过默认磁盘参数表中指定的最大扇区数时，很多BIOS将不能进行正确识别。再某些情况下是7个扇区。
- *
- *	由于单扇区读操作太慢，不予考虑，因此我们必须通过在内存中重创建新的参数表（为第1个驱动器）来解决这个问题。我们将把其中
- *	最大扇区数设置为18，即在1.44MB磁盘上会碰到的最大数值。
- *
- *	这个数值大了不会出问题，但是太小就不行了。
- *
- *
- *	段寄存器将被设置成：ds=es=ss=cs 都为INITSEG（0X9000）
- *	fs = 0, gs = 参数表所在的段值。
- */
-
-	push	#0				! 设置段寄存器fs = 0
-	pop	fs					! fs:bx指向存有软驱参数表地址出(指针的指针)
+	push	#0				
+	pop	fs					
 	mov	bx, #0x78			! fs:bx is parameter table address
-	 ! 下面指令表示下一条语句的操作数在fs段寄存器所指的段中。它只影响其下一条语句。这里把fs:bx所指内存位置处的表地址放到寄存器对gs:si
-	 ! 中作为原地址。寄存器对es:di = 0x9000:0xfef4为目的地址。
 	seg fs
 	lgs	si, (bx)			! gs:si is source
 
 	mov	di, dx				! es:di is destination  ! dx=0xfef4
 	mov	cx, #6				! copy 12 bytes
-	cld						! 清方向标志.复制时指针递增.
+	cld						
 
-	rep						! 复制12字节的软驱参数表到0x9000:0xfef4处.
+	rep						
 	seg gs
 	movw
 
-	mov	di, dx				! es:di指向新表，然后修改表中偏移4处的最大扇区数。
+	mov	di, dx				
 	movb 4(di), *18			! patch sector count
 
-	seg fs					! 让中断向量0x1E的值指向新表
+	seg fs					
 	mov	(bx), di
 	seg fs
 	mov	2(bx), es
 
-	mov ax, cs				! 设置fs = gs = 0x9000
+	mov ax, cs				
 	mov	fs, ax
 	mov	gs, ax
 
-	xor	ah, ah				! reset FDC ! 复位软盘控制器,让其采用新参数.
-	xor	dl, dl				! dl = 0 ,第1个软驱.
+	xor	ah, ah				! reset FDC 
+	xor	dl, dl				! dl = 0 
 	int 0x13
 
 ! load the setup-sectors directly after the bootblock.
