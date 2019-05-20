@@ -15,3 +15,11 @@ The main process and functions of bootsect.S includes:
 7. Sets root device number and swap device number.
 8. Finishes. Jumps to the 0x90200, which is the beginning of program setup.
 
+### Assembly syntax of bootsect.S: as86 style
+
+If you have already read part 1 and part 2, we have already got familiar with GNU systax of x86 assembly. Bootsect is written in another style of syntax: as86. The main difference is the positions of the source operands and the destination operands are exactly the opposite. 
+
+### The C preprocessor: cpp
+
+When we go through the code, we will note there is one line `#include  <linux/config.h>.` **cpp** or C preprocessor is a macro processor which is used here for transforming the source code bootsect.S to bootsect.s. During the proccess of the **cpp**, it copies the declarations inside of file, config.h under linux folder for this particular program, into our assembly program bootsect.S and save it as bootsect.s. 
+
