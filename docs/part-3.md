@@ -57,7 +57,7 @@ Program setup.S reads in information from BIOS and put it in memory from 0x90000
 
 ### Changes to /boot/Makefile
 
-We induced some new features in the Makefile. Line for file setup.S added as well. 
+We induced some new features in the Makefile. Lines for file setup.S added as well. 
 
 ### Tree structure of our project now
 
