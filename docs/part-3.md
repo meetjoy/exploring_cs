@@ -2,11 +2,11 @@
 
 From today, we are diving deeper to see how an operating system works. We start from 0, gradually we get an minial operating system. 
 
-## Day 1: Boot loader program bootsect.S
+## Day 1: Boot loader, bootsect.S
 
 The main process and functions of bootsect.S includes:
 
-1.  Copies the whole boot sector \(512 bytes\) from address 0x7c00 to 0x90000.
+1. Copies the whole boot sector \(512 bytes\) from address 0x7c00 to 0x90000.
 2. Jumps to 0x90000 and initializes the segments registers: ds, es, ss and stack pointer sp.
 3. Copies the floppy parameter table from 0x78 to 0x9fef4. Patches the sector number to 18. Resets the floppy disk controller.
 4. Loads the setup-sectors \(4 sectors which is 2KiB\) directly after the bootblock \(0x90200\). Setup program is the next part just after the boot loader program. We are going to talk it very shortly. 
@@ -46,4 +46,8 @@ It might be the first time we hear the word **Makefile** or program **make**. Fo
 We knew as the ld in part 1 and part 2 of this book. as86 and ld86 are exactly the counterparts of as and ld. as86 assembles the source files written in as86 syntan to objective files. ld86 will link the objective files into a runnable binary file. We already brielfly introduced cpp in last paragraph. For options used in this Makefile please see the comments lines in Makefile. 
 
 That's it. See you in Day 2.
+
+## Day 2: Collecting information from BIOS, setup.S
+
+
 
