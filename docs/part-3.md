@@ -74,3 +74,45 @@ day2
         └── config.h
 ```
 
+## Day 3: Head of system module, head.s
+
+### Main functions of program head.s
+
+File head.s is written in AT&T style syntax of x86 assembly. It mainly covers:
+
+1. Loads IDT and GDT.
+2. Sets all the segment registers.
+3. Checks A20 line.
+4. Checks math chip.
+5. Setups the page tables and page directory.
+6. Jumps to function main. 
+
+### Update to Makefile
+
+Another two lines added: 
+
+`head.o: head.s`
+
+    `as --32 -o head.o head.s`
+
+`head.o` added at the end the all: bootsect setup
+
+### Files Tree
+
+For now we have finished 3 source files under folder boot and one Makefile. 
+
+```text
+├── boot
+│   ├── bootsect.S
+│   ├── head.s
+│   ├── Makefile
+│   └── setup.S
+└── include
+    └── linux
+        └── config.h
+```
+
+Both bootsect.S and setup.S are assembled and linked into single runnable files: bootsect and setup.
+
+While head.o only is assembled into an objective file. It references symbols from other files. So it can only be linked at a later stage. We will get there. See you next day. 
+
