@@ -2,7 +2,6 @@
 #define _UNISTD_H
 
 /* ok, this may be a joke, but I'm working on it */
-/* ok，这也许是个玩笑，但我正在着手处理 */
 // 下面符号常数指出符合IEEE标准1003.1实现的版本号，是一个整数值。
 #define _POSIX_VERSION 198808L
 
