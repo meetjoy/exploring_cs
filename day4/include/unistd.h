@@ -20,7 +20,6 @@
 #endif
 
 /* access */    
-// 以下定义的符号常数用于access()函数。
 #define F_OK	0               // 检测文件是否存在。
 #define X_OK	1               // 检测是否可执行（搜索）。
 #define W_OK	2               // 检测是否可写。
