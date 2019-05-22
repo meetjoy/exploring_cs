@@ -2,31 +2,24 @@
 #define _UNISTD_H
 
 /* ok, this may be a joke, but I'm working on it */
-// 下面符号常数指出符合IEEE标准1003.1实现的版本号，是一个整数值。
+// IEEE 1003.1 version number
 #define _POSIX_VERSION 198808L
 
-// chown()和fchown()的使用受限于进程的权限。 /* 只有超级用户可以执行chown（我想..） */
 #define _POSIX_CHOWN_RESTRICTED	/* only root can do a chown (I think..) */
-// 长于（NAME_MAX）的路径名将产生错误，而不会自动截断。 /* 路径名不截断（但是请看内核代码）*/
 #define _POSIX_NO_TRUNC		/* no pathname truncation (but see in kernel) */
-// 下面这个符号将定义成字符值,该值禁止终端对其的处理. /* 禁止像^C这样的字符 */
-// _POSIX_VDISABLE用于控制终端某些特殊字符的功能.当一个终端termios结构中c_cc[]数组某项字符代码值等于_POSIX_VDISABLE的值时,表示
-// 禁止使用相应的特殊字符.
 #define _POSIX_VDISABLE '\0'	/* character to disable things like ^C */
-// 系统实现支持作业控制。
 #define _POSIX_JOB_CONTROL
-// 每个进程都有一保存的set-user-ID和一保存的set-group-ID。 /* 已经实现。 */
 #define _POSIX_SAVED_IDS	/* Implemented, for whatever good it is */
 
-#define STDIN_FILENO	0       // 标准输入文件句柄（描述符）号。
-#define STDOUT_FILENO	1       // 标准输出文件句柄号。
-#define STDERR_FILENO	2       // 标准出错文件句柄号。
+#define STDIN_FILENO	0       
+#define STDOUT_FILENO	1       
+#define STDERR_FILENO	2       
 
 #ifndef NULL
-#define NULL    ((void *)0)     // 定义空指针。
+#define NULL    ((void *)0)     // null pointer
 #endif
 
-/* access */    /* 文件访问 */
+/* access */    
 // 以下定义的符号常数用于access()函数。
 #define F_OK	0               // 检测文件是否存在。
 #define X_OK	1               // 检测是否可执行（搜索）。
