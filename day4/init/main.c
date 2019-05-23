@@ -36,7 +36,7 @@ _syscall0(int, sync)
 #include <asm/system.h>								
 #include <asm/io.h>									
 
-#include <stddef.h>                     			// 标准定义头文件。定义了NULL，offsetof(TYPE,MEMBER)。
+#include <stddef.h>                     			
 #include <stdarg.h>									// 标准参数头文件.以宏的形式定义变量参数列表.主要说明了一个类型(va_list)和三个
 													// 宏(va_start,va_arg和va_end),vsprintf,vprintf,vfprintf.
 #include <unistd.h>
