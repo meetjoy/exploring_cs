@@ -33,8 +33,8 @@ _syscall0(int, sync)
 
 #include <linux/tty.h>                  			
 #include <linux/sched.h>							
-#include <asm/system.h>								// 系统头文件.定义了设置或修改描述符/中断门等的嵌入式汇编宏.
-#include <asm/io.h>									//　io头文件.以宏的嵌入汇编程序形式定义对io端口操作的函数.
+#include <asm/system.h>								
+#include <asm/io.h>									
 
 #include <stddef.h>                     			// 标准定义头文件。定义了NULL，offsetof(TYPE,MEMBER)。
 #include <stdarg.h>									// 标准参数头文件.以宏的形式定义变量参数列表.主要说明了一个类型(va_list)和三个
