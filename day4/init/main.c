@@ -32,9 +32,7 @@ _syscall1(int, setup, void *, BIOS)
 _syscall0(int, sync)
 
 #include <linux/tty.h>                  			
-#include <linux/sched.h>							// 调度程序头文件,定义了任务结构task_struct,第1个初始任务的数据.还有一些以宏的
-													// 形式定义的有关描述符参数设置和获取的嵌入式汇编函数程序.
-//#include <linux/head.h>
+#include <linux/sched.h>							
 #include <asm/system.h>								// 系统头文件.定义了设置或修改描述符/中断门等的嵌入式汇编宏.
 #include <asm/io.h>									//　io头文件.以宏的嵌入汇编程序形式定义对io端口操作的函数.
 
@@ -43,6 +41,7 @@ _syscall0(int, sync)
 													// 宏(va_start,va_arg和va_end),vsprintf,vprintf,vfprintf.
 #include <unistd.h>
 #include <fcntl.h>                      			// 文件控制头文件.用于文件及其描述符的操作控制常数符号的定义
+//#include <linux/head.h>
 //#include <sys/types.h>
 
 #include <linux/fs.h>								// 文件系统头文件.定义文件表结构(file,buffer_head,m_inode等).
