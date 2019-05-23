@@ -46,9 +46,9 @@ _syscall0(int, sync)
 
 #include <linux/fs.h>								
 													
-#include <linux/kernel.h>							// 内核头文件
+#include <linux/kernel.h>							
 
-#include <string.h>									// 字符串头文件.主要定义了一些有关内存或字符串操作的嵌入函数.
+#include <string.h>									
 
 static char printbuf[1024];							// 静态字符串数组,用作内核显示信息的缓存.
 
