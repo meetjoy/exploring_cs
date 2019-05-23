@@ -37,8 +37,8 @@ _syscall0(int, sync)
 #include <asm/io.h>									
 
 #include <stddef.h>                     			
-#include <stdarg.h>									// 标准参数头文件.以宏的形式定义变量参数列表.主要说明了一个类型(va_list)和三个
-													// 宏(va_start,va_arg和va_end),vsprintf,vprintf,vfprintf.
+#include <stdarg.h>									
+													
 #include <unistd.h>
 #include <fcntl.h>                      			// 文件控制头文件.用于文件及其描述符的操作控制常数符号的定义
 //#include <linux/head.h>
