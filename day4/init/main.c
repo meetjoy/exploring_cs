@@ -39,8 +39,8 @@ _syscall0(int, sync)
 #include <stddef.h>                     			
 #include <stdarg.h>									
 													
-#include <unistd.h>
-#include <fcntl.h>                      			// 文件控制头文件.用于文件及其描述符的操作控制常数符号的定义
+// #include <unistd.h>
+#include <fcntl.h>                      			
 //#include <linux/head.h>
 //#include <sys/types.h>
 
