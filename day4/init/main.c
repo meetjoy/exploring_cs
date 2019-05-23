@@ -1,15 +1,7 @@
 /*
  *  linux/init/main.c
- *
  *  (C) 1991  Linus Torvalds
  */
-#ifndef EM
-#define EM
-#endif
-
-#define __LIBRARY__#include <unistd.h>
-#include <time.h>			
-
 /*
  * we need this inline - forking from kernel space will result
  * in NO COPY ON WRITE (!!!), until an execve is executed. This
@@ -22,9 +14,19 @@
  * won't be any messing with the stack from main(), but we define
  * some others too.
  */
+
 // __attribute__((always_inline))
 // int fork(void) __attribute__((always_inline));
 // int pause(void) __attribute__((always_inline));
+
+#ifndef _EM
+#define _EM
+#endif
+
+#define __LIBRARY__
+#include <unistd.h>
+#include <time.h>
+
 _syscall0(int, fork)
 _syscall0(int, pause)
 _syscall1(int, setup, void *, BIOS)
@@ -49,34 +51,31 @@ _syscall0(int, sync)
 
 #include <string.h>									
 
-static char printbuf[1024];							// 静态字符串数组,用作内核显示信息的缓存.
+static char printbuf[1024];							
 
 extern char *strcpy();
-extern int vsprintf();								// 送格式化输出到一字符串中(vsprintf.c)
-extern void init(void);								// 函数原型,初始化
-extern void blk_dev_init(void);						// 块设备初始化子程序(blk_drv/ll_rw_blk.c)
-extern void chr_dev_init(void);						// 字符设备初始化(chr_drv/tty_io.c)
-extern void hd_init(void);							// 硬盘初始化程序(blk_drv/hd.c)
-extern void floppy_init(void);						// 软驱初始化程序(blk_drv/floppy.c)
-extern void mem_init(long start, long end);			// 内存管理初始化(mm/memory.c)
-extern long rd_init(long mem_start, int length);	// 虚拟盘初始化(blk_drv/ramdisk.c)
-extern long kernel_mktime(struct tm * tm);			// 计算系统开机启动时间(秒)
+extern int vsprintf();								
+extern void init(void);								
+extern void blk_dev_init(void);						
+extern void chr_dev_init(void);						
+extern void hd_init(void);							
+extern void floppy_init(void);						
+extern void mem_init(long start, long end);			
+extern long rd_init(long mem_start, int length);	
+extern long kernel_mktime(struct tm * tm);			
 
-// fork系统调用函数,该函数作为static inline表示内联函数，主要用来在进程0里面创建进程1的时候内联，使进程0在生成进程1的时候
-// 不使用自己的用户堆栈
 static inline long fork_for_process0() {
 	long __res;
 	__asm__ volatile (
-		"int $0x80\n\t"  														/* 调用系统中断0x80 */
-		: "=a" (__res)  														/* 返回值->eax(__res) */
-		: "0" (2));  															/* 输入为系统中断调用号__NR_name */
-	if (__res >= 0)  															/* 如果返回值>=0,则直接返回该值 */
+		"int $0x80\n\t"  														
+		: "=a" (__res)  														
+		: "0" (2));  															
+	if (__res >= 0)  															
 		return __res;
-	errno = -__res;  															/* 否则置出错号,并返回-1 */
+	errno = -__res;  															
 	return -1;
 }
 
-// 内核专用sprintf()函数.该函数用于产生格式化信息并输出到指定缓冲区str中.参数'*fmt'指定输出将采用格式.
 static int sprintf(char * str, const char *fmt, ...)
 {
 	va_list args;
@@ -91,17 +90,12 @@ static int sprintf(char * str, const char *fmt, ...)
 /*
  * This is set up by the setup-routine at boot-time
  */
-/*
- * 以下这些数据是在内核引导期间由setup.s程序设置的.
- */
- // 下面三行分别将指定的线性地址强行转换为给定数据类型的指针,并获取指针所指内容.由于内核代码段被映射到从物理地址零开始的地方,因此
- // 这些纯属地址正好也是对应的物理地址.
-#define EXT_MEM_K (*(unsigned short *)0x90002)							// 1MB以后的扩展内存大小(KB).
-#define CON_ROWS ((*(unsigned short *)0x9000e) & 0xff)					// 选定的控制台屏幕行,列数
+#define EXT_MEM_K (*(unsigned short *)0x90002)							
+#define CON_ROWS ((*(unsigned short *)0x9000e) & 0xff)					
 #define CON_COLS (((*(unsigned short *)0x9000e) & 0xff00) >> 8)
-#define DRIVE_INFO (*((struct drive_info *)0x90080))					// 硬盘参数表32字节内容.
-#define ORIG_ROOT_DEV (*(unsigned short *)0x901FC)						// 根文件系统所在设备号.
-#define ORIG_SWAP_DEV (*(unsigned short *)0x901FA)						// 交换文件所在设备号.
+#define DRIVE_INFO (*((struct drive_info *)0x90080))					
+#define ORIG_ROOT_DEV (*(unsigned short *)0x901FC)						
+#define ORIG_SWAP_DEV (*(unsigned short *)0x901FA)						
 
 /*
  * Yeah, yeah, it's ugly, but I cannot find how to do this correctly
@@ -109,64 +103,51 @@ static int sprintf(char * str, const char *fmt, ...)
  * clock I'd be interested. Most of this was trial and error, and some
  * bios-listing reading. Urghh.
  */
-// 这段宏读取CMOS实时时钟信息.outb_p和inb_p是include/asm/io.h中定义的端口输入输出
 #define CMOS_READ(addr) ({ \
-	outb_p(0x80 | addr, 0x70); 					/* 0x70是写地址端口号,0x80|addr是要读取的CMOS内存地址.*/\
-	inb_p(0x71); 								/* 0x71是读数据端口号.*/\
+	outb_p(0x80 | addr, 0x70); 					\
+	inb_p(0x71); 								\
 })
 
-// 定义宏.将BCD码转换成二进制值.BCD码利用半个字节(4位)表示一个10进制数,因此一个字节表示2个10进制数.(val)&15取BCD
-// 表示的10进制个位数,而(val)>>4取BCD表示的10进制十位数,再乘以10.因此最后两者相加就是一个字节BCD码的实际二进制数值.
 #define BCD_TO_BIN(val) ((val) = ((val)&15) + ((val) >> 4) * 10)
 
-// 该函数取CMOS实时钟信息作为开机时间,并保存到全局变量startup_time(秒)中.其中调用的函数kernel_mktime()用于计算从
-// 1970年1月1日0时起到开机当日经过的秒数,作为开机时间.
 static void time_init(void)
 {
-	struct tm time;								// 时间结构tm定义在include/time.h中
-	// CMOS的访问速度很慢.为了减小时间误差,在读取了下面循环中所有数值后,若此时CMOS中秒值了变化,那么就重新读取所有值.这样内核
-	// 就能把与CMOS时间误差控制在1秒之内.
+	struct tm time;								
 	do {
-		time.tm_sec = CMOS_READ(0);				// 当前时间秒值(均是BCD码值)
-		time.tm_min = CMOS_READ(2);				// 当前分钟值.
-		time.tm_hour = CMOS_READ(4);			// 当前小时值.
-		time.tm_mday = CMOS_READ(7);			// 一月中的当天日期.
-		time.tm_mon = CMOS_READ(8);				// 当前月份(1-12)
-		time.tm_year = CMOS_READ(9);			// 当前年份.
+		time.tm_sec = CMOS_READ(0);				
+		time.tm_min = CMOS_READ(2);				
+		time.tm_hour = CMOS_READ(4);			
+		time.tm_mday = CMOS_READ(7);			
+		time.tm_mon = CMOS_READ(8);				
+		time.tm_year = CMOS_READ(9);			
 	} while (time.tm_sec != CMOS_READ(0));
-	BCD_TO_BIN(time.tm_sec);					// 转换成进进制数值.
+	BCD_TO_BIN(time.tm_sec);					
 	BCD_TO_BIN(time.tm_min);
 	BCD_TO_BIN(time.tm_hour);
 	BCD_TO_BIN(time.tm_mday);
 	BCD_TO_BIN(time.tm_mon);
 	BCD_TO_BIN(time.tm_year);
-	time.tm_mon--;								// tm_mon中月份范围是0~11.
-	startup_time = kernel_mktime(&time);		// 计算开机时间.kernel/mktime.c
+	time.tm_mon--;								
+	startup_time = kernel_mktime(&time);		
 }
 
- // 下面定义一些局部变量.
-static long memory_end = 0;						// 机器具有的物理内存容量(字节数).
-static long buffer_memory_end = 0;				// 高速缓冲区末端地址.
-static long main_memory_start = 0;				// 主内存(将用于分页)开始的位置.
-static char term[32];							// 终端设置字符串(环境参数).
+static long memory_end = 0;						
+static long buffer_memory_end = 0;				
+static long main_memory_start = 0;				
+static char term[32];							
 
-// 读取并执行/etc/rc文件时所使用的命令行参数和环境参数.
-static char * argv_rc[] = { "/bin/sh", NULL };		// 调用执行程序时参数的字符串数组.
-static char * envp_rc[] = { "HOME=/", NULL ,NULL };	// 调用执行程序时的环境字符串数组.
+static char * argv_rc[] = { "/bin/sh", NULL };		
+static char * envp_rc[] = { "HOME=/", NULL ,NULL };	
 
-// 运行登录shell时所使用的命令行参数和环境参数.
-static char * argv[] = { "-/bin/sh",NULL };			// 字符"-"是传递给shell程序sh的一个标志.通过识别该标志,sh程序会作为登录
-													// shell执行.其执行过程与shell提示符下执行sh不一样.
+static char * argv[] = { "-/bin/sh",NULL };			
+													
 static char * envp[] = { "HOME=/usr/root", NULL, NULL };
 
-struct drive_info { char dummy[32]; } drive_info;	// 用于存放硬盘参数表信息.
+struct drive_info { char dummy[32]; } drive_info;	
 
-// 内核初始化主程序.初始化结束后将以任务0(idle任务即空闲任务)的身份运行.
-// 英文注释含义是"这里确实是void,没错.在startup程序(head.s)中就是这样假设的".参见head.h程序代码.
-int main(void)										/* This really IS void, no error here. */
-{													/* The startup routine assumes (well, ...) this */
-#ifdef EM
-	// 开启仿真协处理器
+int main(void)	/* This really IS void, no error here. */
+{				/* The startup routine assumes (well, ...) this */
+#ifdef _EM
 	__asm__("movl %cr0,%eax \n\t" \
 	        "xorl $6,%eax \n\t" \
 	        "movl %eax,%cr0");
@@ -174,9 +155,6 @@ int main(void)										/* This really IS void, no error here. */
 	/*
 	 * Interrupts are still disabled. Do necessary setups, then
 	 * enable them
-	 */
-	/*
-	 * 此时中断仍被禁止着,做完必要的设置后就将其开启.
 	 */
 	// 首先保存根文件系统设备和交换文件设备号,并根据setup.s程序中获取的信息设置控制台终端屏幕行,列数环境变量TERM,并用其设置初始init进程
 	// 中执行etc/rc文件和shell程序使用的环境变量,以及复制内存0x90080处的硬盘表.
