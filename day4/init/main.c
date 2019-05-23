@@ -31,7 +31,7 @@ _syscall0(int, pause)
 _syscall1(int, setup, void *, BIOS)
 _syscall0(int, sync)
 
-#include <linux/tty.h>                  			// tty头文件，定义了有关tty_io，串行通信方面的参数，常数
+#include <linux/tty.h>                  			
 #include <linux/sched.h>							// 调度程序头文件,定义了任务结构task_struct,第1个初始任务的数据.还有一些以宏的
 													// 形式定义的有关描述符参数设置和获取的嵌入式汇编函数程序.
 //#include <linux/head.h>
