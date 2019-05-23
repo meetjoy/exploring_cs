@@ -7,8 +7,7 @@
 #define EM
 #endif
 
-#define __LIBRARY__
-#include <unistd.h>
+#define __LIBRARY__#include <unistd.h>
 #include <time.h>			
 
 /*
