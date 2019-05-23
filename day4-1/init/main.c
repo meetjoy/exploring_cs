@@ -44,9 +44,8 @@ _syscall0(int, sync)
 //#include <linux/head.h>
 //#include <sys/types.h>
 
-#include <linux/fs.h>								// 文件系统头文件.定义文件表结构(file,buffer_head,m_inode等).
-													// 其中有定义:extern int ROOT_DEV.
-
+#include <linux/fs.h>								
+													
 #include <linux/kernel.h>							// 内核头文件
 
 #include <string.h>									// 字符串头文件.主要定义了一些有关内存或字符串操作的嵌入函数.
