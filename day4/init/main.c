@@ -151,28 +151,25 @@ int main(void)	/* This really IS void, no error here. */
 	__asm__("movl %cr0,%eax \n\t" \
 	        "xorl $6,%eax \n\t" \
 	        "movl %eax,%cr0");
+	// bit 2, EM, If set, no x87 floating-point unit present
+	// If the EM bit is set, all FPU and vector operations will cause a #UD so they can be EMulated in software. 
+	// bit 1, MP	Monitor co-processor, Controls interaction of WAIT/FWAIT instructions with TS flag in CR0
+	// This does little else other than saying if an FWAIT opcode is exempted from responding to the TS bit. 
+	// Since FWAIT will force serialisation of exceptions, it should normally be set to the inverse of the EM bit, 
+	// so that FWAIT will actually cause a FPU state update when FPU instructions are asynchronous, and not when they are emulated. 
 #endif
 	/*
-	 * Interrupts are still disabled. Do necessary setups, then
-	 * enable them
+	 * Interrupts are still disabled. Do necessary setups, then enable them
 	 */
-	// 首先保存根文件系统设备和交换文件设备号,并根据setup.s程序中获取的信息设置控制台终端屏幕行,列数环境变量TERM,并用其设置初始init进程
-	// 中执行etc/rc文件和shell程序使用的环境变量,以及复制内存0x90080处的硬盘表.
-	// 其中ROOT_DEV已在前面包含进的include/linux/fs.h文件上被声明为extern_int
-	// 而SWAP_DEV在include/linux/mm.h文件内也作了相同声明.这里mm.h文件并没有显式地列在本程序前部,因为前面包含进的include/linux/sched.h
-	// 文件中已经含有它.
- 	ROOT_DEV = ORIG_ROOT_DEV;										// ROOT_DEV定义在fs/super.c
- 	SWAP_DEV = ORIG_SWAP_DEV;										// SWAP_DEV定义在mm/swap.c
+ 	ROOT_DEV = ORIG_ROOT_DEV;										// ROOT_DEV in fs/super.c
+ 	SWAP_DEV = ORIG_SWAP_DEV;										// SWAP_DEV in mm/swap.c
    	sprintf(term, "TERM=con%dx%d", CON_COLS, CON_ROWS);
 	envp[1] = term;
 	envp_rc[1] = term;
-    drive_info = DRIVE_INFO;										// 复制内存0x90080处的硬盘参数表.
+    drive_info = DRIVE_INFO;										// copy hard disk table from 0x90080
 
-	// 接着根据机器物理内存容量设置高速缓冲区和主内存的位置和范围.
-	// 高速缓存末端地址->buffer_memory_end;机器内存容量->memory_end;主内存开始地址->main_memory_start.
-	// 设置物理内存大小
-	memory_end = (1 << 20) + (EXT_MEM_K << 10);						// 内存大小=1MB + 扩展内存(k)*1024字节.
-	memory_end &= 0xfffff000;										// 忽略不到4KB(1页)的内存数.
+	memory_end = (1 << 20) + (EXT_MEM_K << 10);						// 1 MiB + EXT_MEM_K * 1024
+	memory_end &= 0xfffff000;										// Ignore the tail part less than 2^12 = 4k
 	if (memory_end > 16 * 1024 * 1024)								// 如果内存量超过16MB,则按16MB计.
 		memory_end = 16 * 1024 * 1024;
 	// 根据物理内存的大小设置高速缓冲去的末端大小
