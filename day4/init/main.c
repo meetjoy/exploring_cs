@@ -147,6 +147,7 @@ struct drive_info { char dummy[32]; } drive_info;
 
 int main(void)	/* This really IS void, no error here. */
 {				/* The startup routine assumes (well, ...) this */
+	// we can try to change the return type to void see what happens
 #ifdef _EM
 	__asm__("movl %cr0,%eax \n\t" \
 	        "xorl $6,%eax \n\t" \
