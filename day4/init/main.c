@@ -170,40 +170,34 @@ int main(void)	/* This really IS void, no error here. */
 
 	memory_end = (1 << 20) + (EXT_MEM_K << 10);						// 1 MiB + EXT_MEM_K * 1024
 	memory_end &= 0xfffff000;										// Ignore the tail part less than 2^12 = 4k
-	if (memory_end > 16 * 1024 * 1024)								// 如果内存量超过16MB,则按16MB计.
+	if (memory_end > 16 * 1024 * 1024)								//
 		memory_end = 16 * 1024 * 1024;
-	// 根据物理内存的大小设置高速缓冲去的末端大小
-	if (memory_end > 12 * 1024 * 1024) 								// 如果内存>12MB,则设置缓冲区末端=4MB
+	if (memory_end > 12 * 1024 * 1024) 								//
 		buffer_memory_end = 4 * 1024 * 1024;
-	else if (memory_end > 6 * 1024 * 1024)							// 否则若内存>6MB,则设置缓冲区末端=2MB
+	else if (memory_end > 6 * 1024 * 1024)							//
 		buffer_memory_end = 2 * 1024 * 1024;
 	else
-		buffer_memory_end = 1 * 1024 * 1024;						// 否则则设置缓冲区末端=1MB
-	// 根据高速缓冲区的末端大小设置主内存区的起始地址
-	main_memory_start = buffer_memory_end;							// 主内存起始位置 = 缓冲区末端
-	// 如果在Makefile文件中定义了内存虚拟盘符号RAMDISK,则初始化虚拟盘.此时主优点将减少.
-	// 参见kernel/blk_drv/ramdisk.c.
+		buffer_memory_end = 1 * 1024 * 1024;						//
+	main_memory_start = buffer_memory_end;							// 
+	// kernel/blk_drv/ramdisk.c.
 #ifdef RAMDISK
 	main_memory_start += rd_init(main_memory_start, RAMDISK * 1024);
 #endif
-	// 以下是内核进行所有方面的初始化工作.
-	mem_init(main_memory_start, memory_end);						// 主内存区初始化.(mm/memory.c)
-	trap_init();                                    				// 陷阱门(硬件中断向量)初始化.(kernel/traps.c)
-	blk_dev_init();													// 块设备初始化.(blk_drv/ll_rw_blk.c)
-	chr_dev_init();													// 字符设备初始化.(chr_drv/tty_io.c)
- 	tty_init();														// tty初始化(chr_drv/tty_io.c)
-	time_init();													// 设置开机启动时间.
- 	sched_init();													// 调度程序初始化(加载任务0的tr,ldtr)(kernel/sched.c)
-	buffer_init(buffer_memory_end);									// 缓冲管理初始化,建内存链表等.(fs/buffer.c)
-	hd_init();														// 硬盘初始化.	(blk_drv/hd.c)
-	floppy_init();													// 软驱初始化.	(blk_drv/floppy.c)
-	sti();															// 所有初始化工作都完了,于是开启中断.
-	// 打印内核初始化完毕
-	Log(LOG_INFO_TYPE, "<<<<< Linux0.12 Kernel Init Finished, Ready Start Process0 >>>>>\n");
-	// 下面过程通过在堆栈中设置的参数,利用中断返回指令启动任务0执行.
-	move_to_user_mode();											// 移到用户模式下执行.(include/asm/system.h)
+	mem_init(main_memory_start, memory_end);						// (mm/memory.c)
+	trap_init();                                    				// (kernel/traps.c)
+	blk_dev_init();													// (blk_drv/ll_rw_blk.c)
+	chr_dev_init();													// (chr_drv/tty_io.c)
+ 	tty_init();														// tty init (chr_drv/tty_io.c)
+	time_init();													// set startup time
+ 	sched_init();													// (load task 0: tr,ldtr)(kernel/sched.c)
+	buffer_init(buffer_memory_end);									// (fs/buffer.c)
+	hd_init();														// (blk_drv/hd.c)
+	floppy_init();													// (blk_drv/floppy.c)
+	sti();															// 
+	Log(LOG_INFO_TYPE, "<<<<< Linux-0.12 Kernel init finished, ready to start process 0 >>>>>\n");
+	move_to_user_mode();											// (include/asm/system.h)
 	if (!fork_for_process0()) {										/* we count on this going ok */
-		init();														// 在新建的子进程(任务1即init进程)中执行.
+		init();														// 
 	}
 	/*
 	 *   NOTE!!   For any other task 'pause()' would mean we have to get a
@@ -212,15 +206,8 @@ int main(void)	/* This really IS void, no error here. */
 	 * can run). For task0 'pause()' just means we go check if some other
 	 * task can run, and if not we return here.
 	 */
-	/*
-	 * 注意!!对于任何其他任务,'pause()'将意味着我们必须等待收到一个信号才会返回就绪态,但任务0(task0)是唯一例外情况(参见'schedule()'),因为
-	 * 任务0在任何空闲时间里都会被激活(当没有其他任务在运行时),因此对于任务0'pause()'仅意味着我们返回来查看是否有其他任务可以运行,如果没有的话
-	 * 我们就回到这里,一直循环执行'pause()'.
-	 */
-	// pause()系统调用(kernel/sched.c)会把任务0转换成可中断等待状态,再执行调度函数.但是调度函数只要发现系统中没有其他任务可以运行时就会切换
-	// 到任务0,是不信赖于任务0的状态.
 	for(;;)
-		__asm__("int $0x80"::"a" (__NR_pause):);					// 即执行系统调用pause().
+		__asm__("int $0x80"::"a" (__NR_pause):);					
 }
 
 // 下面函数产生格式化信息并输出到标准输出设备stdout(1),这里是指屏幕上显示.参数'*fmt'指定输出将采用的格式,参见标准C语言书籍.
