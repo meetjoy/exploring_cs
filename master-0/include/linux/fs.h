@@ -87,21 +87,19 @@ void buffer_init(long buffer_end);						// 高速缓冲区初始化函数.
 
 typedef char buffer_block[BLOCK_SIZE];          		// 块缓冲区。
 
-// 缓冲块头数据结构.(极为重要!!!)
-// 在程序中常用bh来表示buffer_head类型的缩写.
 struct buffer_head {
-	char * b_data;										/* pointer to data block (1024 bytes) */	// 指针
-	unsigned long b_blocknr;							/* block number */	// 块号.
-	unsigned short b_dev;								/* device (0 = free) */	// 数据源的设备号.
-	unsigned char b_uptodate;       					// 更新标志:表示数据是否已更新.
-	unsigned char b_dirt;								/* 0-clean,1-dirty */	// 修改标志:0未修改,1已修改.
-	unsigned char b_count;								/* users using this block */	// 使用用户数.
-	unsigned char b_lock;								/* 0 - ok, 1 -locked */	// 缓冲区是否被锁定.
-	struct task_struct * b_wait;						// 指向等待该缓冲区解锁的任务.
-	struct buffer_head * b_prev;						// hash队列上前一块(这四个指针用于缓冲区的管理).
-	struct buffer_head * b_next;						// hash队列上下一块.
-	struct buffer_head * b_prev_free;					// 空闲表上前一块.
-	struct buffer_head * b_next_free;					// 空闲表上后一块.
+	char * b_data;					  /* pointer to data block (1024 bytes) */	
+	unsigned long b_blocknr;		  /* block number */	
+	unsigned short b_dev;			  /* device (0 = free) */	
+	unsigned char b_uptodate;         
+	unsigned char b_dirt;			  /* 0-clean,1-dirty */	
+	unsigned char b_count;			  /* users using this block */	
+	unsigned char b_lock;			  /* 0 - ok, 1 -locked */	
+	struct task_struct * b_wait;	  
+	struct buffer_head * b_prev;	  
+	struct buffer_head * b_next;	  
+	struct buffer_head * b_prev_free; 
+	struct buffer_head * b_next_free; 
 };
 
 // 磁盘上的索引节点(i节点)数据结构.

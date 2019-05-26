@@ -140,7 +140,6 @@ static char * argv_rc[] = { "/bin/sh", NULL };
 static char * envp_rc[] = { "HOME=/", NULL ,NULL };	
 
 static char * argv[] = { "-/bin/sh",NULL };			
-													
 static char * envp[] = { "HOME=/usr/root", NULL, NULL };
 
 struct drive_info { char dummy[32]; } drive_info;	

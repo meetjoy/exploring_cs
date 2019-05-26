@@ -709,33 +709,22 @@ void do_no_page(unsigned long error_code, unsigned long address)
 	oom();
 }
 
-// 物理内存管理初始化.
-// 该函数对1MB以上内存区域以页面为单位进行管理前的初始化设置工作.一个页面长度为4KB字节.该函数 1MB以上所有物理内存划分成一个个页面,并
-// 使用一个页面映射字节数组mem_map[]来管理所有这些页面.对于具有16MB内存容量的机器,该数组共有3840项((16MB-1MB)/4KB),即可管理3840
-// 个物理页面.每当一个物理内存页面被占用时就把mem_map[]中对应的字节值增1;若释放一个物理页面,就把对应字节值减1.若字节值为0,则表示对应页面空闲;
-// 若字节值大于或等于1,则表示对应页面被占用或被不同程序共享占用.在该版本的Linux内核中,最多能管理16MB的物理内存,大于16MB的内存将弃置
-// 不用.对于具有16MB内存的PC系统,在没有设置虚拟盘RAMDISK的情况下,共有3072个物理页面可供分配.而范围0~1MB内存空间用于内核系统(其实内核
-// 只使用0~640KB,剩下的部分被部分高速缓冲和设备内存占用).
-// 参数start_mem是可用作页面分配的主内存区起始地址(已去除RAMDISK所占内存空间).end_mem是实际物理内存最大地址.而地址范围start_mem到
-// end_mem是主内存区.
-void mem_init(long start_mem, long end_mem)
+// 3840 pages from 1MiB to 16MiB, 1 page = 4KiB
+// size of mem_map[] = 3840, 1 byte to indicate the usage status of the page
+// main memory area: 5MiB to 16MiB = 12MiB; 12MiB = 256 * 12 = 3072 pages
+// area before main memory area: 1MiB to end of 4MiB = 3 MiB = 256 * 3 = 768 pages
+// 0 ~ end of 1MiB = 1 MiB = 256 pages
+void mem_init(long start_mem, long end_mem)//aug: start and end address of main memory
 {
 	int i;
-
-	// 首先将1MB到16MB范围内所有内存页面对应的内存映射字节数组项置为已占用状态,即各项字节值全部设置成USED(100).PAGING_PAGES被定义为(
-	// PAGING_MEMORY>>12),即1MB以上所有物理内存分页后的内存页面数(15MB/4KB = 3840).
-	HIGH_MEMORY = end_mem;									// 设置内存最高端(16MB).
-	for (i = 0; i < PAGING_PAGES; i++)
-		mem_map[i] = USED;
-	// 然后计算主内存区起始内存start_mem处页面对应内存映射字节数组中项号i和主内存区页面数.此时mem_map[]数组的第i项正对应主内存区中第1个页面.
-	// 最后将主内存区中页面对应的数组项清零(表示空闲).对于具有16MB物理内存的系统,mem_map[]中对应4MB~16MB主内存区的项被清零.
-	i = MAP_NR(start_mem);									// 主内存区起始位置处页面号.
-	end_mem -= start_mem;
-	// 得到主内存区的页面的数量
-	end_mem >>= 12;											// 主内存区中的总页面数.
-	// 将主内存区对应的页面数的应用数置零
+	HIGH_MEMORY = end_mem;		// end = 16MiB, start = 4MiB							
+	for (i = 0; i < PAGING_PAGES; i++) // PAGING_PAGES (3840) = PAGING_MEMORY (15MiB) >> 12
+		mem_map[i] = USED;   	// set 100(USED) to all 3840 pages
+	i = MAP_NR(start_mem);		// find the page number i for start_mem 
+	end_mem -= start_mem;       // 
+	end_mem >>= 12;			    // nr of pages in main memory area (4MiB ~16MiB)
 	while (end_mem-- > 0)
-		mem_map[i++] = 0;									// 主内存区页面对应字节值清零.
+		mem_map[i++] = 0;	    // set 0 for all pages in main memory area
 }
 
 // 显示系统内存信息.

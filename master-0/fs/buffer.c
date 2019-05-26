@@ -6,14 +6,16 @@
 
 /*
  *  'buffer.c' implements the buffer-cache functions. Race-conditions have
- * been avoided by NEVER letting a interrupt change a buffer (except for the
+ * been avoided by NEVER letting an interrupt change a buffer (except for the
  * data, of course), but instead letting the caller do it. NOTE! As interrupts
  * can wake up a caller, some cli-sti sequences are needed to check for
  * sleep-on-calls. These should be extremely quick, though (I hope).
  */
 /*
- * 'buffer.c'用于实现缓冲区高速缓存功能.通过不让中断处理过程改变缓冲区,而是让调用者来执行,避免了竞争条件(当然除改变数据外).
- * 注意!由于中断可以唤醒一个调用者,因此就需要开关中断指令(cli-sti)序列来检测由于调用而睡眠.但需要非常快(我希望是这样).
+ * 'buffer.c'用于实现缓冲区高速缓存功能.通过不让中断处理过程改变缓冲区,而是让调用者来执行,避免了竞争条件
+ * (当然除改变数据外).
+ * 注意!由于中断可以唤醒一个调用者,因此就需要开关中断指令(cli-sti)序列来检测由于调用而睡眠.
+ * 但需要非常快(我希望是这样).
  */
 
 /*
@@ -22,7 +24,8 @@
  * invalidate changed floppy-disk-caches.
  */
 /*
- * 注意!有一个程序应不属于这里:检测软盘是否更换.但我想这里是放置该程序最好的地方了,因为它需要使已更换软盘缓冲失效.
+ * 注意!有一个程序应不属于这里:检测软盘是否更换.但我想这里是放置该程序最好的地方了,
+ * 因为它需要使已更换软盘缓冲失效.
  */
 
 #include <stdarg.h>
@@ -33,32 +36,36 @@
 #include <asm/system.h>
 //#include <asm/io.h>
 
-// 变量end是由编译时的连接程序ld生成,用于表明内核代码的末端,即指明内核模块末端位置.也可以从编译时生成的System.map文件中查出.这里用它
+// 变量end是由编译时的连接程序ld生成,用于表明内核代码的末端,即指明内核模块末端位置.
+// 也可以从编译时生成的System.map文件中查出.这里用它
 // 来表明高速缓冲区开始于内核代码末端位置.
-// buffer_wait变量是等待空闲缓冲块而睡眠的任务队列头指针.它与缓冲块头部结构中b_wait指针的作用不同.当任务申请一个缓冲块而正好遇到系统
-// 缺乏可用空闲缓冲块时,当前任务就会被添加到buffer_wait睡眠等待队列中.而b_wait则是专门供等待指定缓冲块(即b_wait对应的缓冲块)的任务
+// buffer_wait变量是等待空闲缓冲块而睡眠的任务队列头指针.它与缓冲块头部结构中b_wait指针的作用不同.
+// 当任务申请一个缓冲块而正好遇到系统
+// 缺乏可用空闲缓冲块时,当前任务就会被添加到buffer_wait睡眠等待队列中.
+// 而b_wait则是专门供等待指定缓冲块(即b_wait对应的缓冲块)的任务
 // 使用的等待队列头指针.
 extern int end;
-struct buffer_head * start_buffer = (struct buffer_head *) &end;
-struct buffer_head * hash_table[NR_HASH];							// NR_HASH = 307项.
-static struct buffer_head * free_list;								// 空闲缓冲块链表头指针.
-static struct task_struct * buffer_wait = NULL;						// 等待空闲缓冲块而睡眠的任务队列.
-// 下面定义系统缓冲区中含有的缓冲块个数.这里,NR_BUFFERS是一个定义在linux/fs.h头文件的宏,其值即是变量名nr_buffers,并且在fs.h文件声明
+struct buffer_head *start_buffer = (struct buffer_head *)&end;
+struct buffer_head *hash_table[NR_HASH];	   // NR_HASH = 307
+static struct buffer_head *free_list;		   // 
+static struct task_struct *buffer_wait = NULL; // 
+// 下面定义系统缓冲区中含有的缓冲块个数.这里,NR_BUFFERS是一个定义在linux/fs.h头文件的宏,
+// 其值即是变量名nr_buffers,并且在fs.h文件声明
 // 为全局变量.
 // 大写名称通常都是一个宏名称,Linus这样编写代码是为了利用这个大写名称来隐含地表示nr_buffers是一个在内核初始化之后不再改变的"常量".它将在
 // 初始化函数buffer_init()中被设置.
-int NR_BUFFERS = 0;													// 系统含有缓冲块个数.
+int NR_BUFFERS = 0; // 系统含有缓冲块个数.
 
 // 等待指定缓冲块解锁
 // 如果指定的缓冲块bh已经上锁就让进程不可中断地睡眠在该缓冲块的等待队列b_wait中.在缓冲块解锁时,其等待队列上的所有进程将被唤醒.虽然是在关闭
 // 中断(cli)之后去睡眠的,但这样做并不会影响在其他进程上下文中响应中断.因为每个进程都在自己的TSS段中保存了标志寄存器EFLAGS的值,所在在进程
 // 切换时CPU中当前EFLAGS的值也随之改变.使用sleep_on()进入睡眠状态的进程需要用wake_up()明确地唤醒.
-static inline void wait_on_buffer(struct buffer_head * bh)
+static inline void wait_on_buffer(struct buffer_head *bh)
 {
-	cli();							// 关中断
-	while (bh->b_lock)				// 如果已被上锁则进程进入睡眠,等待其解锁.
+	cli();			   // 关中断
+	while (bh->b_lock) // 如果已被上锁则进程进入睡眠,等待其解锁.
 		sleep_on(&bh->b_wait);
-	sti();							// 开中断.
+	sti(); // 开中断.
 }
 
 // 设备数据同步。
@@ -66,16 +73,17 @@ static inline void wait_on_buffer(struct buffer_head * bh)
 int sys_sync(void)
 {
 	int i;
-	struct buffer_head * bh;
+	struct buffer_head *bh;
 
 	// 首先调用i节点同步函数，把内在i节点表中所有修改过的i节点写入高速缓冲中。然后扫描所有高速缓冲区，对已被修改的缓冲块
 	// 产生写盘请求，将缓冲中数据写入盘中，做到高速缓冲中的数据与设备中的同步。
-	sync_inodes();							/* write out inodes into buffers */
-	bh = start_buffer;      				// bh指向缓冲开始处。
-	for (i = 0 ; i < NR_BUFFERS ; i++, bh++) {
-		wait_on_buffer(bh);             	// 等待缓冲区解锁（如果已上锁的话）。
+	sync_inodes();	 /* write out inodes into buffers */
+	bh = start_buffer; // bh指向缓冲开始处。
+	for (i = 0; i < NR_BUFFERS; i++, bh++)
+	{
+		wait_on_buffer(bh); // 等待缓冲区解锁（如果已上锁的话）。
 		if (bh->b_dirt)
-			ll_rw_block(WRITE, bh);  		// 产生写设备块请求。
+			ll_rw_block(WRITE, bh); // 产生写设备块请求。
 	}
 	return 0;
 }
@@ -86,17 +94,18 @@ int sys_sync(void)
 int sync_dev(int dev)
 {
 	int i;
-	struct buffer_head * bh;
+	struct buffer_head *bh;
 
 	// 首先对参数指定的设备执行数据同步操作，让设备上的数据与高速缓冲区中的数据同步。方法是扫描高速缓冲区中所有缓冲块，
 	// 对指定设备dev的缓冲块，先检测其是否已被上锁，若已被锁就睡眠等待其解锁。然后再判断一次该缓冲块是否还是指定设备的
 	// 缓冲块并且已修改过（b_dirt标志置位），若是就对其执行写盘操作。因为在我们睡眠期间该缓冲块有可能已被释放或者被挪
 	// 作它用，所以在继续执行前需要再次判断一下该缓冲块是否还是指定设备的缓冲块。
-	bh = start_buffer;                      		// bf指向缓冲区开始处。
-	for (i = 0 ; i < NR_BUFFERS ; i++, bh++) {
-		if (bh->b_dev != dev)           			// 不是设备dev的缓冲块则继续。
+	bh = start_buffer; // bf指向缓冲区开始处。
+	for (i = 0; i < NR_BUFFERS; i++, bh++)
+	{
+		if (bh->b_dev != dev) // 不是设备dev的缓冲块则继续。
 			continue;
-		wait_on_buffer(bh);             			// 等待缓冲区解锁（如果已上锁的话）。
+		wait_on_buffer(bh); // 等待缓冲区解锁（如果已上锁的话）。
 		if (bh->b_dev == dev && bh->b_dirt)
 			ll_rw_block(WRITE, bh);
 	}
@@ -106,7 +115,8 @@ int sync_dev(int dev)
 	// 冲区同步操作可以让内核中许多“脏块”变干净，使得i节点的同步操作能够高效执行。本次缓冲区同步操作则把那些由于i节点
 	// 同步操作而又变脏的缓冲块与设备中数据同步。
 	bh = start_buffer;
-	for (i = 0 ; i < NR_BUFFERS ; i++, bh++) {
+	for (i = 0; i < NR_BUFFERS; i++, bh++)
+	{
 		if (bh->b_dev != dev)
 			continue;
 		wait_on_buffer(bh);
@@ -121,13 +131,14 @@ int sync_dev(int dev)
 void invalidate_buffers(int dev)
 {
 	int i;
-	struct buffer_head * bh;
+	struct buffer_head *bh;
 
 	bh = start_buffer;
-	for (i = 0 ; i < NR_BUFFERS ; i++, bh++) {
-		if (bh->b_dev != dev)           // 如果不是指定设备的缓冲块，则继续扫描下一块。
+	for (i = 0; i < NR_BUFFERS; i++, bh++)
+	{
+		if (bh->b_dev != dev) // 如果不是指定设备的缓冲块，则继续扫描下一块。
 			continue;
-		wait_on_buffer(bh);             // 等待该缓冲区解锁（如果已被上锁）。
+		wait_on_buffer(bh); // 等待该缓冲区解锁（如果已被上锁）。
 		// 由于进程执行过睡眠等待，所以需要再判断一下缓冲区是否是指定设备的。
 		if (bh->b_dev == dev)
 			bh->b_uptodate = bh->b_dirt = 0;
@@ -170,11 +181,11 @@ void check_disk_change(int dev)
 		return;
 	// 软盘已更换，所以释放对应设备的i节点位图和逻辑位图所占的高速缓冲区；并使该设备的i节点和数据块信息所占据的高速缓冲
 	// 块无效。
-	for (i = 0 ; i < NR_SUPER ; i++)
+	for (i = 0; i < NR_SUPER; i++)
 		if (super_block[i].s_dev == dev)
 			put_super(super_block[i].s_dev);
-	invalidate_inodes(dev);         // 释放设备dev在内存i节点表中的所有i节点
-	invalidate_buffers(dev);        //
+	invalidate_inodes(dev);  // 释放设备dev在内存i节点表中的所有i节点
+	invalidate_buffers(dev); //
 }
 
 // 下面两行代码是hash(散列)函数定义和hash表项的计算宏.
@@ -187,7 +198,7 @@ void check_disk_change(int dev)
 
 // 从hash队列和空闲缓冲队列中移走缓冲块.
 // hash队列是双向链表结构,空闲缓冲块队列是双向循环链表结构.
-static inline void remove_from_queues(struct buffer_head * bh)
+static inline void remove_from_queues(struct buffer_head *bh)
 {
 	/* remove from hash-queue */
 	/* 从hash队列中移除缓冲块 */
@@ -210,7 +221,7 @@ static inline void remove_from_queues(struct buffer_head * bh)
 }
 
 // 将缓冲块插入空闲链表尾部,同时放入hash队列中.
-static inline void insert_into_queues(struct buffer_head * bh)
+static inline void insert_into_queues(struct buffer_head *bh)
 {
 	/* put at end of free list */
 	/* 放在空闲链表末尾处 */
@@ -229,18 +240,18 @@ static inline void insert_into_queues(struct buffer_head * bh)
 	// 请注意当hash表某项第1次插入项时,hash()计算值肯定为NULL,因此此时hash(bh->b_dev,bh->b_blocknr)得到的bh->b_next肯定是NULL,
 	// 所以bh->b_next->b_prev = bh应该在bh->b_next不为NULL时才能给b_pev赋bh值.即bh->b_next->b_prev = bh前应该增加判断"
 	// if(bh->b_next)".该错误到0.96版后才被纠正.
-	if(bh->b_next)
-		bh->b_next->b_prev = bh;			// 此句前应添加"if(bh->b_next)"判断.
+	if (bh->b_next)
+		bh->b_next->b_prev = bh; // 此句前应添加"if(bh->b_next)"判断.
 }
 
 // 利用hash表在高速缓冲中寻找给定设备和指定块号的缓冲区块.
 // 如果找到则返回缓冲区块的指针,否则返回NULL.
-static struct buffer_head * find_buffer(int dev, int block)
+static struct buffer_head *find_buffer(int dev, int block)
 {
-	struct buffer_head * tmp;
+	struct buffer_head *tmp;
 
 	// 搜索hash表,寻找指定设备与和块号的缓冲块.
-	for (tmp = hash(dev, block) ; tmp != NULL ; tmp = tmp->b_next)
+	for (tmp = hash(dev, block); tmp != NULL; tmp = tmp->b_next)
 		if (tmp->b_dev == dev && tmp->b_blocknr == block)
 			return tmp;
 	return NULL;
@@ -258,11 +269,12 @@ static struct buffer_head * find_buffer(int dev, int block)
  * 发生一些问题(例如一个读错误将导致该缓冲块出错).目前这种情况实际上是不会发生的,但处理的代码已经准备好了.
  */
 // 利用hash表在高速缓冲区中寻找指定的缓冲块.若找到则对该缓冲块上锁并返回块头指针.
-struct buffer_head * get_hash_table(int dev, int block)
+struct buffer_head *get_hash_table(int dev, int block)
 {
-	struct buffer_head * bh;
+	struct buffer_head *bh;
 
-	for (;;) {
+	for (;;)
+	{
 		// 在高速缓冲中寻找给定设备和指定块的缓冲区块,如果没有找到则返回NULL,退出.
 		if (!(bh = find_buffer(dev, block)))
 			return NULL;
@@ -294,9 +306,9 @@ struct buffer_head * get_hash_table(int dev, int block)
 // 取高速缓冲中指定的缓冲块.
 // 检查指定(设备号和块号)的缓冲区是否已经在高速缓冲中.如果指定块已经在高速缓冲中,则返回对应缓冲区头指针退出;如果不在,就需要在高速中
 // 中设置一个对应设备号和块号的新项.返回相应缓冲区头指针.
-struct buffer_head * getblk(int dev, int block)
+struct buffer_head *getblk(int dev, int block)
 {
-	struct buffer_head * tmp, * bh;
+	struct buffer_head *tmp, *bh;
 
 repeat:
 	if (bh = get_hash_table(dev, block))
@@ -304,7 +316,8 @@ repeat:
 	// 扫描空闲数据块链表,寻找空闲缓冲区.
 	// 首先让tmp指向空闲链表的第一个空闲缓冲区头.
 	tmp = free_list;
-	do {
+	do
+	{
 		// 如果该缓冲区正在被使用(引用计数不等于0),则继续扫描下一项.对于b_count=0的块,即高速缓冲中当前没有引用的块不一定就是干净的(b_dirt=0)
 		// 或没有锁定的(b_lock=0).因此,我们还是需要继续下面的判断和选择.例如当一个任务改写过一块内容后就释放了,于是该块b_count=0,但b_lock不等于0;
 		// 当一个任务执行breada()预读几个块时,只要ll_rw_block()命令发出后,它就会递减b_count;但此时实际上硬盘访问操作可能还在进行,因此此时
@@ -314,29 +327,32 @@ repeat:
 		// 如果缓冲头指针bh为空,或者tmp所指缓冲头的标志(修改,锁定)权重小于bh头标志的权重,则让bh指向tmp缓冲块头.如果该tmp缓冲块头表明缓冲
 		// 块既没有修改也没有锁定标志置位,则说明已为指定设备上的块取得对应的高速缓冲块,则退出循环.否则我们就继续执行本循环,看看能否找到一个BADNESS()
 		// 最小的缓冲块.
-		if (!bh || BADNESS(tmp) < BADNESS(bh)) {
+		if (!bh || BADNESS(tmp) < BADNESS(bh))
+		{
 			bh = tmp;
 			if (!BADNESS(tmp))
 				break;
 		}
-	/* and repeat until we find something good */	/* 重复操作直到找到适合的缓冲块 */
+		/* and repeat until we find something good */ /* 重复操作直到找到适合的缓冲块 */
 	} while ((tmp = tmp->b_next_free) != free_list);
 	// 如果循环检查发现所有缓冲块都正在被使用(所有缓冲块的状况引用计数者>0)中,则睡眠等待有空闲缓冲区可用.当有空闲缓冲块可用时本各会被明确地唤醒.然后
 	// 我们就跳转到函数开始处重新查找空闲缓冲块.
-	if (!bh) {
+	if (!bh)
+	{
 		sleep_on(&buffer_wait);
 		goto repeat;
 	}
 	// 执行到这里,说明我们已经找到了一个比较适合的空闲缓冲块了.于是先等待该缓冲区解锁(如果已被上锁的话).如果在我们睡眠阶段该缓冲区又被其他任务使用的话,
 	// 只好重复上述寻找过程.
 	wait_on_buffer(bh);
-	if (bh->b_count)	// 又被占用??
+	if (bh->b_count) // 又被占用??
 		goto repeat;
 	// 如果该缓冲区已被修改,则将数据写盘,并再次等待缓冲区解锁.同样地,若该缓冲区又被其他任务使用的话,只好再重复上述寻找过程.
-	while (bh->b_dirt) {
+	while (bh->b_dirt)
+	{
 		sync_dev(bh->b_dev);
 		wait_on_buffer(bh);
-		if (bh->b_count)	// 又被占用??
+		if (bh->b_count) // 又被占用??
 			goto repeat;
 	}
 	/* NOTE!! While we slept waiting for this block, somebody else might */
@@ -364,9 +380,9 @@ repeat:
 
 // 释放指定缓冲块.
 // 等待该缓冲块解锁.然后引用计数递减1,并明确地唤醒等待空闲缓冲块的进程.
-void brelse(struct buffer_head * buf)
+void brelse(struct buffer_head *buf)
 {
-	if (!buf)						// 如果缓冲头指针无效则返回.
+	if (!buf) // 如果缓冲头指针无效则返回.
 		return;
 	wait_on_buffer(buf);
 	if (!(buf->b_count--))
@@ -384,9 +400,9 @@ void brelse(struct buffer_head * buf)
 // 从设备上读取数据块.
 // 该函数根据指定的设备号dev和数据块号block,首先在高速缓冲区中申请一块缓冲块.如果该缓冲块中经包含有有效的数据就直接返回该缓冲块指针,否则就从设备中
 // 读取指定的数据块到该缓冲块中并返回缓冲块指针.
-struct buffer_head * bread(int dev, int block)
+struct buffer_head *bread(int dev, int block)
 {
-	struct buffer_head * bh;
+	struct buffer_head *bh;
 
 	// 从高速缓冲区中申请一块缓冲块.如果返回值是NULL,则表示内核出错,停机.否则我们判断其中是否已有可用数据.
 	if (!(bh = getblk(dev, block)))
@@ -406,16 +422,16 @@ struct buffer_head * bread(int dev, int block)
 
 // 复制内存块.
 // 从from地址复制一块(1024字节)数据到to位置(重写的是先将edi,esi寄存器入栈保存起来，拷贝完毕后再还原，避免edi,esi寄存器的污染)
-#define COPYBLK(from, to) \
-__asm__("cld\n\t" \
-		"pushl %%edi\n\t" \
-		"pushl %%esi\n\t" \
-		"rep\n\t" \
-		"movsl\n\t" \
-		"popl %%esi\n\t" \
-		"popl %%edi\n\t" \
-	::"c" (BLOCK_SIZE/4),"S" (from),"D" (to) \
-	:)
+#define COPYBLK(from, to)                           \
+	__asm__("cld\n\t"                               \
+			"pushl %%edi\n\t"                       \
+			"pushl %%esi\n\t"                       \
+			"rep\n\t"                               \
+			"movsl\n\t"                             \
+			"popl %%esi\n\t"                        \
+			"popl %%edi\n\t" ::"c"(BLOCK_SIZE / 4), \
+			"S"(from), "D"(to)                      \
+			:)
 
 //#define COPYBLK(from,to) \
 	__asm__("cld\n\t" \
@@ -438,29 +454,32 @@ __asm__("cld\n\t" \
 // 该函数仅用于mm/memory.c文件的do_no_page()函数中.
 void bread_page(unsigned long address, int dev, int b[4])
 {
-	struct buffer_head * bh[4];
+	struct buffer_head *bh[4];
 	int i;
 
 	// 该函数循环执行4次,根据放在数组b[]中的4个块号从设备dev中读取一页内容放到指定内存位置address处.对于参数b[i]给出的
 	// 有效块号,函数首先从高速缓冲中取指定设备和块号的的缓冲块.如果缓冲块中数据无效(未更新)则产生读设备请求从设备上读取相
 	// 应数据块.对于b[i]无效的块号则不用处理它了.因此本函数其实可以根据指定的b[]中的块号随意读取1-4个数据块.
-	for (i = 0 ; i < 4 ; i++)
-		if (b[i]) {
+	for (i = 0; i < 4; i++)
+		if (b[i])
+		{
 			// 先给该逻辑块号申请一个缓存块
 			if (bh[i] = getblk(dev, b[i]))
 				// 如果该缓冲块没有更新,则从块设备中读取出来
 				if (!bh[i]->b_uptodate)
 					ll_rw_block(READ, bh[i]);
-		} else
+		}
+		else
 			bh[i] = NULL;
 	// 随后将4个缓冲块上的内容顺序复制到指定地址处.在进行复制(使用)缓冲块之前我们先要睡眠等待缓冲块解锁(若被上锁的话).另外,
 	// 因为可能睡眠过了,所以我们还需要在复制之前再检查一下缓冲块中的数据是否是有效的.复制完后我们还需要释放缓冲块.
-	for (i = 0 ; i < 4 ; i++, address += BLOCK_SIZE)
-		if (bh[i]) {
-			wait_on_buffer(bh[i]);						// 等待缓冲块解锁(若被上锁的话).
-			if (bh[i]->b_uptodate)						// 若缓冲块中数据有效的话则复制.
-				COPYBLK((unsigned long) bh[i]->b_data, address);
-			brelse(bh[i]);								// 释放该缓冲区.
+	for (i = 0; i < 4; i++, address += BLOCK_SIZE)
+		if (bh[i])
+		{
+			wait_on_buffer(bh[i]); // 等待缓冲块解锁(若被上锁的话).
+			if (bh[i]->b_uptodate) // 若缓冲块中数据有效的话则复制.
+				COPYBLK((unsigned long)bh[i]->b_data, address);
+			brelse(bh[i]); // 释放该缓冲区.
 		}
 }
 
@@ -474,10 +493,10 @@ void bread_page(unsigned long address, int dev, int b[4])
  */
 // 从指定设备读取指定的一些块.
 // 函数参数个数可变,是一系列指定的块号.成功时返回第1块的缓冲块头指针,否则返回NULL.
-struct buffer_head * breada(int dev, int first, ...)
+struct buffer_head *breada(int dev, int first, ...)
 {
 	va_list args;
-	struct buffer_head * bh, *tmp;
+	struct buffer_head *bh, *tmp;
 
 	// 首先取可变参数表中第1个参数(块号).接着从调整缓冲区中取指定设备和块号的缓冲块.如果该缓冲块数据无效(更新标志未置位),则
 	// 发出读设备数据块请求.
@@ -489,12 +508,14 @@ struct buffer_head * breada(int dev, int first, ...)
 	// 然后顺序取可变参数表中其他预读块号,并作与上面同样处理,但不引用.注意,336行上有一个bug.其中的bh应该是tmp.这个bug直到在0.96
 	// 版的内核代码中才被纠正过来.另外,因为这里是预读随后的数据块,只需读进调整缓冲区但并不马上就使用,所以第337行语句需要将其引用计数
 	// 递减释放掉该块(因为getblk()函数会增加缓冲块引用计数值).
-	while ((first = va_arg(args, int)) >= 0) {
+	while ((first = va_arg(args, int)) >= 0)
+	{
 		tmp = getblk(dev, first);
-		if (tmp) {
+		if (tmp)
+		{
 			if (!tmp->b_uptodate)
 				ll_rw_block(READA, tmp);
-			tmp->b_count--;					// 暂时释放掉该预读块.
+			tmp->b_count--; // 暂时释放掉该预读块.
 		}
 	}
 	// 此时可变参数表中所有参数处理完毕.于是等待第1个缓冲区解锁(如果已被上锁).在等待退出之后如果缓冲区中数据仍然有效,则返回缓冲区头指针
@@ -507,46 +528,45 @@ struct buffer_head * breada(int dev, int first, ...)
 	return (NULL);
 }
 
-// 缓冲区初始化函数
-// 参数buffer_end是缓冲区内存末端.对于具有16M内存的系统,缓冲区末端被设置为4MB.对于有8MB内存的系统,缓冲区末端被设置2MB.该函数从缓冲区开始位置
-// start_buffer处和缓冲区末端buffer_end处分别同时设置(初始化)缓冲块头结构和对应的数据块.直到缓冲区中所有内存被分配完毕.
 void buffer_init(long buffer_end)
 {
-	struct buffer_head * h = start_buffer;
-	void * b;
+	struct buffer_head *h = start_buffer;
+	void *b;
 	int i;
 
-	// 首先根据参数提供的缓冲区高端位置确定实际缓冲区高端位置b.如果缓冲区高端等于1MB,则因为从640KB-1MB被显示内存和BIOS占用,所以实际可用缓冲区内存
-	// 高端位置应该是640KB.否则缓冲区内存高端一定大于1MB.
+	// 640KiB ~ 1MiB, video memory and BIOS
 	if (buffer_end == 1 << 20)
-		b = (void *) (640 * 1024);
+		b = (void *)(640 * 1024);
 	else
-		b = (void *) buffer_end;
-	// 这段代码用于初始化缓冲区,建立空闲缓冲块循环链表,并获取系统中缓冲块数目.操作的过程是从缓冲区高端开始划分1KB大小的缓冲块,与此同时在缓冲区低端建立
+		b = (void *)buffer_end;
+	// 这段代码用于初始化缓冲区,建立空闲缓冲块循环链表,并获取系统中缓冲块数目.
+	// 操作的过程是从缓冲区高端开始划分1KB大小的缓冲块,与此同时在缓冲区低端建立
 	// 描述该缓冲块的结构buffer_head,并将这些buffer_head组成双向链表.
-	// h是指向缓冲头结构的指针,而h+1是指向内存地址连续的下一个缓冲头地址,也可以说是指向h缓冲有头的末端外.为了保证有足够长度的内存来存储一个缓冲头结构,
+	// h是指向缓冲头结构的指针,而h+1是指向内存地址连续的下一个缓冲头地址,也可以说是指向h缓冲有头的末端外.
+	// 为了保证有足够长度的内存来存储一个缓冲头结构,
 	// 需要b所指向的内存块地址>=h缓冲头的末端,即要求>=h+1.
-	while ( (b -= BLOCK_SIZE) >= ((void *) (h + 1)) ) {
-		h->b_dev = 0;								// 使用该缓冲块的设备号.
-		h->b_dirt = 0;								// 脏标志,即缓冲块修改标志.
-		h->b_count = 0;								// 缓冲块引用计数.
-		h->b_lock = 0;								// 缓冲块锁定标志.
-		h->b_uptodate = 0;							// 缓冲块更新标志(或称数据有效标志).
-		h->b_wait = NULL;							// 指向等待该缓冲块解锁的进程.
-		h->b_next = NULL;							// 指向具有相同hash值的下一个缓冲头.
-		h->b_prev = NULL;							// 指向具有相同hash值的前一个缓冲头.
-		h->b_data = (char *) b;						// 指向对应缓冲块数据块(1024字节).
-		h->b_prev_free = h - 1;						// 指向链表中前一项.
-		h->b_next_free = h + 1;						// 指向链表中下一项.
-		h++;										// h指向下一新缓冲头位置.
-		NR_BUFFERS++;								// 缓冲区块数累加.
-		if (b == (void *) 0x100000)					// 若b递减到等于1MB,则跳过384KB
-			b = (void *) 0xA0000;					// 让b指向地址0xA0000(640KB)处.
+	while ((b -= BLOCK_SIZE) >= ((void *)(h + 1)))
+	{
+		h->b_dev = 0;			   // 使用该缓冲块的设备号.
+		h->b_dirt = 0;			   // 脏标志,即缓冲块修改标志.
+		h->b_count = 0;			   // 缓冲块引用计数.
+		h->b_lock = 0;			   // 缓冲块锁定标志.
+		h->b_uptodate = 0;		   // 缓冲块更新标志(或称数据有效标志).
+		h->b_wait = NULL;		   // 指向等待该缓冲块解锁的进程.
+		h->b_next = NULL;		   // 指向具有相同hash值的下一个缓冲头.
+		h->b_prev = NULL;		   // 指向具有相同hash值的前一个缓冲头.
+		h->b_data = (char *)b;	   // 指向对应缓冲块数据块(1024字节).
+		h->b_prev_free = h - 1;	   // 指向链表中前一项.
+		h->b_next_free = h + 1;	   // 指向链表中下一项.
+		h++;					   // h指向下一新缓冲头位置.
+		NR_BUFFERS++;			   // 缓冲区块数累加.
+		if (b == (void *)0x100000) // 若b递减到等于1MB,则跳过384KB
+			b = (void *)0xA0000;   // 让b指向地址0xA0000(640KB)处.
 	}
-	h--;											// 让h指向最后一个有效缓冲块头.
-	free_list = start_buffer;						// 让空闲链表头指向头一个缓冲块.
-	free_list->b_prev_free = h;     				// 链表头的b_prev_free指向前一项（即最后一项）。
-	h->b_next_free = free_list;     				// h的下一项指针指向第一项，形成一个环链。
+	h--;						// 让h指向最后一个有效缓冲块头.
+	free_list = start_buffer;   // 让空闲链表头指向头一个缓冲块.
+	free_list->b_prev_free = h; // 链表头的b_prev_free指向前一项（即最后一项）。
+	h->b_next_free = free_list; // h的下一项指针指向第一项，形成一个环链。
 	// 最后初始化hash表(哈希表、散列表),置表中所有指针为NULL。
 	for (i = 0; i < NR_HASH; i++)
 		hash_table[i] = NULL;

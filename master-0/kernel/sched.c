@@ -578,17 +578,21 @@ void sched_init(void)
 	int i;
 	struct desc_struct * p;										// 描述符表结构指针
 
-	// Linux系统开发之初,内核不成熟.内核代码会被经常修改.Linus怕无意中修改了这些关键性的数据结构,造成与POSIX标准的不兼容.这里加入下面这个判断
+	// Linux系统开发之初,内核不成熟.内核代码会被经常修改.Linus怕无意中修改了这些关键性的数据结构,
+	// 造成与POSIX标准的不兼容.这里加入下面这个判断
 	// 语句并无必要,纯粹是为了提醒自己以及其他修改内核代码的人.
-	if (sizeof(struct sigaction) != 16)							// sigaction是存放有关信号状态的结构.
+	if (sizeof(struct sigaction) != 16)	// sigaction是存放有关信号状态的结构.
 		panic("Struct sigaction MUST be 16 bytes");
 	// 在全局描述符表中设置初始任务(任务0)的任务状态段描述符和局部数据表描述符.
-	// FIRST_TSS_ENTRY和FIRST_LDT_ENTRY的值分别是4和5,定义在include/linux/sched.h中.gdt是一个描述符表数组(include/linux/head.h),
-	// 实际上对应程序head.s中的他已描述符表基址(gdt).因此gdt+FIRST_TSS_ENTRY即为gdt[FIRST_TSS_ENTRY](即是gdt[4]),即gdt数组第4项的地址
+	// FIRST_TSS_ENTRY和FIRST_LDT_ENTRY的值分别是4和5,定义在include/linux/sched.h中.
+	// gdt是一个描述符表数组(include/linux/head.h),
+	// 实际上对应程序head.s中的他已描述符表基址(gdt).因此gdt+FIRST_TSS_ENTRY即为gdt
+	// [FIRST_TSS_ENTRY](即是gdt[4]),即gdt数组第4项的地址
 	// 参见include/asm/system.h
 	set_tss_desc(gdt + FIRST_TSS_ENTRY, &(init_task.task.tss));
 	set_ldt_desc(gdt + FIRST_LDT_ENTRY, &(init_task.task.ldt));
-	// 清任务数组和描述符表项(注意i=1开始,所以初始任务的描述符还在).描述符项结构定义在文件include/linux/head.h中.
+	// 清任务数组和描述符表项(注意i=1开始,所以初始任务的描述符还在).描述符项结构定义在文件
+	// include/linux/head.h中.
 	p = gdt + 2 + FIRST_TSS_ENTRY;
 	// 初始化除进程一以外的其他进程指针
 	for(i = 1; i < NR_TASKS; i++) {
@@ -600,20 +604,24 @@ void sched_init(void)
 	}
 	/* Clear NT, so that we won't have troubles with that later on */
 	/* 清除标志寄存器中的位NT,这样以后就不会有麻烦 */
-	// EFLAGS中的NT标志位用于控制任务的嵌套调用.当NT位置位时,那么当前中断任务执行IRET指令时就会引起任务切换.NT指出TSS中的back_link字段是否有效.
+	// EFLAGS中的NT标志位用于控制任务的嵌套调用.当NT位置位时,那么当前中断任务执行IRET指令
+	// 时就会引起任务切换.NT指出TSS中的back_link字段是否有效.
 	// NT=0时无效.
 	__asm__("pushfl ; andl $0xffffbfff,(%esp) ; popfl");
-	// 将任务0的TSS段选择符加载到任务寄存器tr.将局部描述符表段选择符加载到局部描述符表寄存器ldtr中.注意!!是将GDT中相应LDT描述符的选择符加载到ldtr.
+	// 将任务0的TSS段选择符加载到任务寄存器tr.将局部描述符表段选择符加载到局部描述符表寄存器ldtr中.
+	// 注意!!是将GDT中相应LDT描述符的选择符加载到ldtr.
 	// 只明确加这一次,以后新任务LDT的加载,是CPU根据TSS中的LDT项自动加载.
 	ltr(0);								// 定义在include/linux/sched.h
 	lldt(0);							// 其中参数(0)是任务号.
-	// 下面代码用于初始化8253定时器.通道0,选择工作方式3,二进制计数方式.通道0的输出引脚接在中断控制主芯片的IRQ0上,它每10毫秒发出一个IRQ0请求.
+	// 下面代码用于初始化8253定时器.通道0,选择工作方式3,二进制计数方式.
+	// 通道0的输出引脚接在中断控制主芯片的IRQ0上,它每10毫秒发出一个IRQ0请求.
 	// LATCH是初始定时计数值.
 	outb_p(0x36, 0x43);					/* binary, mode 3, LSB/MSB, ch 0 */
 	outb_p(LATCH & 0xff, 0x40);			/* LSB */	// 定时值低字节
 	outb(LATCH >> 8, 0x40);				/* MSB */	// 定时值高字节
 	// 设置时钟中断处理程序句柄(设置时钟中断门).修改中断控制器屏蔽码,允许时钟中断.
-	// 然后设置系统调用中断门.这两个设置中断描述衔表IDT中描述符的宏定义在文件include/asm/system.h中.两者的区别参见system.h文件开始处的说明.
+	// 然后设置系统调用中断门.这两个设置中断描述衔表IDT中描述符的宏定义在文件include/asm/system.h中.
+	// 两者的区别参见system.h文件开始处的说明.
 	set_intr_gate(0x20, &timer_interrupt);
 	outb(inb_p(0x21) & ~0x01, 0x21);
 	set_system_gate(0x80, &system_call);

@@ -561,7 +561,6 @@ void do_tty_interrupt(int tty)
 	copy_to_cooked(TTY_TABLE(tty));
 }
 
-//字符设备初始化函数.空,为以后扩展做准备.
 void chr_dev_init(void)
 {
 }
@@ -572,7 +571,8 @@ void tty_init(void)
 {
 	int i;
 
-	// 首先初始化所有终端的缓冲队列结构,设置初值.对于串行终端的读/写缓冲队列,将它们的data字段设置为串行端口基地址值.串中1是0x3f8,
+	// 首先初始化所有终端的缓冲队列结构,设置初值.对于串行终端的读/写缓冲队列,
+	// 将它们的data字段设置为串行端口基地址值.串1是0x3f8,
 	// 串口2是0x2f8.然后先初步设置所有终端的tty结构.
 	// 其中特殊字符数组c_cc[]设置的初值定义在include/linux/tty.h文件中.
 	for (i = 0 ; i < QUEUES ; i++)

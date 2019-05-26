@@ -39,14 +39,15 @@ __asm__("movl %%eax,%%cr3"::"a" (0))
 /* these are not to be changed without changing head.s etc */
 /* 下面定义若需要改动,则需要与head.s等文件 的相关信息一起改变 */
 // Linux0.12内核默认支持的最大内存容量是16MB,可以修改这些定义以适合更多的内存.
-#define LOW_MEM 0x100000			             // 机器物理内存低端(1MB)
+#define LOW_MEM 0x100000			             // 机器物理内存低端(1MiB)
 extern unsigned long HIGH_MEMORY;		         // 存放实际物理内存最高端地址.
 #define PAGING_MEMORY (15 * 1024 * 1024)         // 分页内存15MB.主内存区最多15MB.
 #define PAGING_PAGES (PAGING_MEMORY >> 12)	     // 分页后的物理内存页面数(3840).
-#define MAP_NR(addr) (((addr) - LOW_MEM) >> 12)	 // 指定内存地址映射为页面号.
+#define MAP_NR(addr) (((addr) - LOW_MEM) >> 12)	 //  addr to page nr
 #define USED 100				                 // 页面被占用标志.
 
-// 内存映射字节图(1字节代表1页内存).每个页面对应的字节用于标志页面当前被引用(占用)次数.它最大可以映射15MB的内存空间.在初始化函数
+// 内存映射字节图(1字节代表1页内存).每个页面对应的字节用于标志页面当前被引用
+// (占用)次数.它最大可以映射15MB的内存空间.在初始化函数
 // mem_init()中,对于不能用作主内存区页面的位置均都参选被设置成USED(100).
 extern unsigned char mem_map [ PAGING_PAGES ];
 

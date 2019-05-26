@@ -31,7 +31,8 @@
  * read/write completion.
  */
 /*
- * OK,下面是request结构的一个扩展形式,因而当实现以后我们就可以在分页请求中使用同样的request结构.在分页处理中'bh'是NULL,
+ * OK,下面是request结构的一个扩展形式,因而当实现以后我们就可以在分页请求中使用同样的request结构.
+ * 在分页处理中'bh'是NULL,
  * 而'waiting'则用于等待读/写的完成.
  */
 struct request {

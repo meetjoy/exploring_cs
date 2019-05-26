@@ -71,7 +71,8 @@ void parallel_interrupt(void);				// int39(kernel/sys_call.s)
 void irq13(void);							// int45协处理器中断处理(kernel/asm.s)
 void alignment_check(void);					// int46(kernel/asm.s)
 
-// 该子程序用来打印出错中断的名称,出错号,调用程序的EIP,EFLAGS,ESP,fs段寄存器值,段的基址,段的长度,进程号pid,任务号,10字节指令码.如果
+// 该子程序用来打印出错中断的名称,出错号,调用程序的EIP,EFLAGS,ESP,fs段寄存器值,段的基址,段的长度,
+// 进程号pid,任务号,10字节指令码.如果
 // 堆栈在用户数据段,则还打印16字节堆栈内容.这些信息可用于程序调试.
 static void die(char * str, long esp_ptr, long nr)
 {
@@ -79,7 +80,6 @@ static void die(char * str, long esp_ptr, long nr)
 	int i;
 
 	printk("%s: %04x\n\r",str, nr & 0xffff);
-	// 下行打印语句显示当前调用进程的CS:EIP,EFLAGS和SS:ESP的值.
 	// (1) EIP:\t%04x:%p\n	-- esp[1]是段选择符(cs),esp[0]是eip
 	// (2) EFLAGS:\t%p	-- esp[2]是eflags
 	// (2) ESP:\t%04x:%p\n	-- esp[4]是原ss,esp[3]是原esp
@@ -203,22 +203,19 @@ void do_reserved(long esp, long error_code)
 	die("reserved (15,17-47) error", esp, error_code);
 }
 
-// 下面是异常(陷阱)中断程序初始化子程序.设置它们的中断调用门(中断向量).
-// set_trap_gate()与set_system_gate()都使用了中断描述符表IDT中的陷阱门(Trap Gate),它们之间的主要区别在于前者设置的特权级为0,
-// 后者是3.因此断点陷阱中断int3,溢出中断overflow和边界出错中断bounds可以由任何程序调用.这两个函数均是嵌入式汇编宏程序,参见
 // include/asm/system.h
 void trap_init(void)
 {
 	int i;
 
-	set_trap_gate(0, &divide_error);							// 设置除操作出错的中断向量值.
+	set_trap_gate(0, &divide_error);			
 	set_trap_gate(1, &debug);
 	set_trap_gate(2, &nmi);
-	set_system_gate(3, &int3);									/* int3-5 can be called from all */
+	set_system_gate(3, &int3);	/* int3-5 can be called from all */
 	set_system_gate(4, &overflow);
 	set_system_gate(5, &bounds);
 	set_trap_gate(6, &invalid_op);
-	set_trap_gate(7, &device_not_available);					// 函数未实现
+	set_trap_gate(7, &device_not_available); // function not implemented
 	set_trap_gate(8, &double_fault);
 	set_trap_gate(9, &coprocessor_segment_overrun);
 	set_trap_gate(10, &invalid_TSS);
@@ -227,14 +224,12 @@ void trap_init(void)
 	set_trap_gate(13, &general_protection);
 	set_trap_gate(14, &page_fault);
 	set_trap_gate(15, &reserved);
-	set_trap_gate(16, &coprocessor_error);						// 函数未实现
+	set_trap_gate(16, &coprocessor_error); // function not implemented
 	set_trap_gate(17, &alignment_check);
-	// 下面把int17-47的陷阱门先均设置为reserved,以后各硬件初始化时会重新设置自己的陷阱门.
 	for (i = 18; i < 48; i++)
 		set_trap_gate(i, &reserved);
-	// 设置协处理器中断0x2d(45)陷阱门描述符,并允许其产生中断请求.设置并行口中断描述符.
 	set_trap_gate(45, &irq13);
-	outb_p(inb_p(0x21)&0xfb, 0x21);								// 允许8259A主芯片的IRQ2中断请求(连接从芯片)
-	outb(inb_p(0xA1)&0xdf, 0xA1);								// 允许8259A从芯片的IRQ13中断请求(协处理器中断)
-	set_trap_gate(39, &parallel_interrupt);						// 设置并行口1的中断0x27陷阱门描述符.
+	outb_p(inb_p(0x21)&0xfb, 0x21);	// 允许8259A主芯片的IRQ2中断请求(连接从芯片)
+	outb(inb_p(0xA1)&0xdf, 0xA1);   // 允许8259A从芯片的IRQ13中断请求(协处理器中断)
+	set_trap_gate(39, &parallel_interrupt);	// 设置并行口1的中断0x27陷阱门描述符.
 }
