@@ -78,12 +78,12 @@ static inline long fork_for_process0() {
 
 static int sprintf(char * str, const char *fmt, ...)
 {
-	va_list args;
+	va_list args; // va_list defined to be a char pointer
 	int i;
 
-	va_start(args, fmt);
+	va_start(args, fmt);	// set args to be the address for next aug after fmt
 	i = vsprintf(str, fmt, args);
-	va_end(args);
+	va_end(args);	// do nothing?
 	return i;
 }
 
@@ -161,8 +161,8 @@ int main(void)	/* This really IS void, no error here. */
 	/*
 	 * Interrupts are still disabled. Do necessary setups, then enable them
 	 */
- 	ROOT_DEV = ORIG_ROOT_DEV;										// ROOT_DEV in fs/super.c
- 	SWAP_DEV = ORIG_SWAP_DEV;										// SWAP_DEV in mm/swap.c
+ 	ROOT_DEV = ORIG_ROOT_DEV;										// ROOT_DEV defined in fs/super.c
+ 	SWAP_DEV = ORIG_SWAP_DEV;										// SWAP_DEV defined in mm/swap.c
    	sprintf(term, "TERM=con%dx%d", CON_COLS, CON_ROWS);
 	envp[1] = term;
 	envp_rc[1] = term;

@@ -110,10 +110,10 @@ static inline long fork_for_process0() {
 // 内核专用sprintf()函数.该函数用于产生格式化信息并输出到指定缓冲区str中.参数'*fmt'指定输出将采用格式.
 static int sprintf(char * str, const char *fmt, ...)
 {
-	va_list args;
+	va_list args;	// va_list defined to be a char pointer
 	int i;
 
-	va_start(args, fmt);
+	va_start(args, fmt); // 
 	i = vsprintf(str, fmt, args);
 	va_end(args);
 	return i;
