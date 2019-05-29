@@ -713,8 +713,8 @@ void do_no_page(unsigned long error_code, unsigned long address)
 // size of mem_map[] = 3840, 1 byte to indicate the usage status of the page
 // main memory area: 5MiB to 16MiB = 12MiB; 12MiB = 256 * 12 = 3072 pages
 // area before main memory area: 1MiB to end of 4MiB = 3 MiB = 256 * 3 = 768 pages
-// 0 ~ end of 1MiB = 1 MiB = 256 pages
-void mem_init(long start_mem, long end_mem)//aug: start and end address of main memory
+// 								 0 ~ end of 1MiB = 1 MiB = 256 pages
+void mem_init(long start_mem, long end_mem) //aug: start and end address of main memory
 {
 	int i;
 	HIGH_MEMORY = end_mem;		// end = 16MiB, start = 4MiB							
@@ -722,9 +722,9 @@ void mem_init(long start_mem, long end_mem)//aug: start and end address of main 
 		mem_map[i] = USED;   	// set 100(USED) to all 3840 pages
 	i = MAP_NR(start_mem);		// find the page number i for start_mem 
 	end_mem -= start_mem;       // 
-	end_mem >>= 12;			    // nr of pages in main memory area (4MiB ~16MiB)
+	end_mem >>= 12;			    // nr of pages in main memory area (4MiB ~16MiB) = 3072 pages
 	while (end_mem-- > 0)
-		mem_map[i++] = 0;	    // set 0 for all pages in main memory area
+		mem_map[i++] = 0;	    // set 0 for all pages in main memory area: available
 }
 
 // 显示系统内存信息.

@@ -183,7 +183,8 @@ int main(void)	/* This really IS void, no error here. */
 #ifdef RAMDISK
 	main_memory_start += rd_init(main_memory_start, RAMDISK * 1024);
 #endif
-	mem_init(main_memory_start, memory_end);						// (mm/memory.c)
+	mem_init(main_memory_start, memory_end);						// (mm/memory.c); 
+	// HIGH_MEMORY = 16MiB, mem_map[] = 3840 pages, last 3074 pages is available
 	trap_init();                                    				// (kernel/traps.c)
 	blk_dev_init();													// (blk_drv/ll_rw_blk.c)
 	chr_dev_init();													// (chr_drv/tty_io.c)

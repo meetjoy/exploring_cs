@@ -75,7 +75,6 @@ void do_rd_request(void)
 /*
  * Returns amount of memory which needs to be reserved.
  */
-/* 返回内存虚拟盘ramdisk所需的内存量 */
 // 虚拟盘初始化函数.
 // 该函数首先设置虚拟盘设备的请求项处理函数指针指向do_rd_request(),然后确定虚拟盘在物理内存中的起始地址,占用字节长度
 // 值.并对整个虚拟盘区清零.最后返回盘区长度.当linux/Makefile文件中设置过RAMDISK值不为零时,表示系统中会创建RAM虚拟盘

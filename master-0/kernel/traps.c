@@ -207,7 +207,8 @@ void do_reserved(long esp, long error_code)
 void trap_init(void)
 {
 	int i;
-
+	// gates 0 - 17, 39, 45 set; 
+	// other geates in 18-47 reserved; 
 	set_trap_gate(0, &divide_error);			
 	set_trap_gate(1, &debug);
 	set_trap_gate(2, &nmi);
