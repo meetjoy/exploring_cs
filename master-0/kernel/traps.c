@@ -72,30 +72,28 @@ void irq13(void);							// int45协处理器中断处理(kernel/asm.s)
 void alignment_check(void);					// int46(kernel/asm.s)
 
 // 该子程序用来打印出错中断的名称,出错号,调用程序的EIP,EFLAGS,ESP,fs段寄存器值,段的基址,段的长度,
-// 进程号pid,任务号,10字节指令码.如果
-// 堆栈在用户数据段,则还打印16字节堆栈内容.这些信息可用于程序调试.
+// 进程号pid,任务号,10字节指令码.如果堆栈在用户数据段,则还打印16字节堆栈内容.这些信息可用于程序调试.
 static void die(char * str, long esp_ptr, long nr)
 {
 	long * esp = (long *) esp_ptr;
 	int i;
 
 	printk("%s: %04x\n\r",str, nr & 0xffff);
-	// (1) EIP:\t%04x:%p\n	-- esp[1]是段选择符(cs),esp[0]是eip
-	// (2) EFLAGS:\t%p	-- esp[2]是eflags
-	// (2) ESP:\t%04x:%p\n	-- esp[4]是原ss,esp[3]是原esp
+	// (1) EIP:\t%04x:%p\n	-- esp[1] selector (cs),esp[0] eip
+	// (2) EFLAGS:\t%p	-- esp[2] eflags
+	// (2) ESP:\t%04x:%p\n	-- esp[4] ss,esp[3] esp
 	printk("EIP:\t%04x:%p\nEFLAGS:\t%p\nESP:\t%04x:%p\n",
 		esp[1], esp[0], esp[2], esp[4], esp[3]);
 	printk("fs: %04x\n", _fs());
 	printk("base: %p, limit: %p\n", get_base(current->ldt[1]), get_limit(0x17));
-	if (esp[4] == 0x17) {						// 或原ss值为0x17(用户栈),则还打印出用户栈的4个长字值(16字节).
+	if (esp[4] == 0x17) {						
 		printk("Stack: ");
 		for (i = 0; i < 4; i++)
 			printk("%p ", get_seg_long(0x17, i + (long *)esp[3]));
 		printk("\n");
 	}
-	str(i);										// 取当前运行任务的任务号(include/linux/sched.h).
+	str(i);										// (include/linux/sched.h).
 	printk("Pid: %d, process nr: %d\n\r", current->pid, 0xffff & i);
-                        						// 进程号,任务号.
 	for(i = 0; i < 10; i++)
 		printk("%02x ", 0xff & get_seg_byte(esp[1], (i+(char *)esp[0])));
 	printk("\n\r");
@@ -209,7 +207,10 @@ void trap_init(void)
 	int i;
 	// gates 0 - 17, 39, 45 set; 
 	// other geates in 18-47 reserved; 
-	set_trap_gate(0, &divide_error);			
+	// gates  0-31 by intel
+	// gates 32-47 for hardware
+	// gates 48-255 available for operating system
+	set_trap_gate(0, &divide_error);	// _set_gate(&idt[n], 15, 0, addr)		
 	set_trap_gate(1, &debug);
 	set_trap_gate(2, &nmi);
 	set_system_gate(3, &int3);	/* int3-5 can be called from all */

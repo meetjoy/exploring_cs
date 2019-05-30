@@ -24,13 +24,12 @@ __asm__ (\
 
 #define iret() __asm__ ("iret"::)									// 中断返回
 
-// 设置门描述符宏.
-// 根据参数中的中断或异常过程地址addr,门描述符类型type和特权级信息dpl,设置位于地址gate_addr处的门描述符.(注意:下面"偏移"值是相对于内核代码或数据
-// 段来说的).
-// 参数:gate_addr - 描述符地址;type - 描述符类型域值;dpl - 描述符特权级;addr - 偏移地址.
-// %0 - (由dpl,type组合成的类型标志字); %1 - (描述符低4字节地址);
-// %2 - (描述符高4字节地址); %3 - edx(程序偏移地址addr); %4 - eax(高字中含有内核代码段选择符0x8).
 
+// %0	byte 5-6	P|DPL|0 1111
+// %1	gate address of lower 4 bytes
+// %2	gate address of higher 4 bytes
+// %3	handler offset address
+// %4 	kernel selector 0x8
 #define _set_gate(gate_addr, type, dpl, addr) \
 __asm__ (\
 	"movw %%dx, %%ax\n\t"  		/* addr to %ax */\

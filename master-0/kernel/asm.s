@@ -10,13 +10,8 @@
  * file also handles (hopefully) fpu-exceptions due to TS-bit, as
  * the fpu must be properly saved/resored. This hasn't been tested.
  */
-/*
- * asm.s程序中包括大部分的硬件故障(或出错)处理的低层次代码.页异常由内存管理程序mm处理,所以不在这里.
- *
- */
 
-# 本代码文件主要涉及对Intel保留中断int0--int16的处理(int17-int31留作今后使用).
-# 以下是一些全局函数名的声明,其原型在traps.c中说明.
+
 .globl divide_error, debug, nmi, int3, overflow, bounds, invalid_op
 .globl double_fault, coprocessor_segment_overrun
 .globl invalid_TSS, segment_not_present, stack_segment
@@ -27,29 +22,25 @@
 divide_error:
 	pushl $do_divide_error						# 
 no_error_code:									# 
-	xchgl %eax, (%esp)							# do_divide_error->eax
+	xchgl %eax, (%esp)							# 
 	pushl %ebx
 	pushl %ecx
 	pushl %edx
 	pushl %edi
 	pushl %esi
 	pushl %ebp
-	push %ds									# 16位的段寄存器入栈后也要占用4个字节.
+	push %ds									# 4 bytes taken even for 16-bit segment registers
 	push %es
 	push %fs
-	pushl $0   # "error code"	# 将数值0作为出错码入栈.
-	lea 44(%esp), %edx	# 取有效地址,即栈中原调用返回地址处的栈指针位置,并压入堆栈.
+	pushl $0   # "error code"
+	lea 44(%esp), %edx	#
 	pushl %edx
-	movl $0x10, %edx							# 初始化段寄存器ds,es和fs,加载内核数据段选择符.
+	movl $0x10, %edx							
 	mov %dx, %ds
 	mov %dx, %es
 	mov %dx, %fs
-	# 下行上的'*'号表示调用操作数指定地址处的函数,称为间接调用.
-	# 这句的含义是调用引起本次异常的C处理函数,例如do_divide_error()等.
 	call *%eax
-	# 下行将堆栈指针加8相当于执行两次pop操作,弹出(丢弃)最后入堆栈的两个C函数参数,
-	# 让堆栈指针重新指向寄存器fs入栈处.
-	addl $8, %esp
+	addl $8, %esp  # drop off the two values, pushed in: error code and handler address
 	pop %fs
 	pop %es
 	pop %ds
@@ -59,7 +50,7 @@ no_error_code:									#
 	popl %edx
 	popl %ecx
 	popl %ebx
-	popl %eax									# 
+	popl %eax								
 	iret
 
 # int1 -- debug调试中断入口点.处理过程同上.类型:错误/陷阱(Fault/Trap);无出错号.
