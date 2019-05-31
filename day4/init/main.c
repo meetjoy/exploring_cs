@@ -40,10 +40,7 @@ _syscall0(int, sync)
 #include <stddef.h>                     			
 #include <stdarg.h>									
 													
-// #include <unistd.h>
 #include <fcntl.h>                      			
-//#include <linux/head.h>
-//#include <sys/types.h>
 
 #include <linux/fs.h>								
 													

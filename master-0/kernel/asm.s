@@ -11,7 +11,6 @@
  * the fpu must be properly saved/resored. This hasn't been tested.
  */
 
-
 .globl divide_error, debug, nmi, int3, overflow, bounds, invalid_op
 .globl double_fault, coprocessor_segment_overrun
 .globl invalid_TSS, segment_not_present, stack_segment
@@ -55,8 +54,8 @@ no_error_code:									#
 
 # int1 -- debug调试中断入口点.处理过程同上.类型:错误/陷阱(Fault/Trap);无出错号.
 # 当eflags中TF标志置位时而引发的中断.当发现硬件断点(数据:陷阱,代码:错误),
-# 或者开启了指令跟踪陷阱或交换陷阱,或者调试寄存器访问无效(
-# 错误),CPU就会产生该异常.
+# 或者开启了指令跟踪陷阱或交换陷阱,或者调试寄存器访问无效(错误),CPU就会产生该异常.
+# int1	debug entry point, 
 debug:
 	pushl $do_int3								# _do_debug
 	jmp no_error_code
@@ -66,6 +65,7 @@ debug:
 # CPU内部就会产生中断向量2,并执行标准中断应答周期,因此很节省时间.NMI通常
 # 保留为极为重要的硬件事件使用.当CPU收到一个NMI信号并开始执行其中断处理过程是,
 # 随后所有的硬件中断都将被忽略.
+# int2 
 nmi:
 	pushl $do_nmi
 	jmp no_error_code
@@ -108,8 +108,8 @@ reserved:
 
 # int45 -- (0x20 + 13) Linux设置的数学协处理器硬件中断.
 # 当协处理器执行完一个操作时就会发出IRQ13中断信号,以通知CPU操作完成.
-# 80387在执行计算时,CPU会等待其操作完成.下行上的0xF0是协处理端口,用于清忙
-# 锁存器.通过写该端口,本中断将消除CPU的BUSY延续信号,并重新激活80387的处理器扩展请求引脚PEREQ.
+# 80387在执行计算时,CPU会等待其操作完成.下行上的0xF0是协处理端口,用于清忙锁存器.
+# 通过写该端口,本中断将消除CPU的BUSY延续信号,并重新激活80387的处理器扩展请求引脚PEREQ.
 # 该操作主要是为了确保在继续执行80387的任何指令之前,CPU响应本中断.
 irq13:
 	pushl %eax
@@ -128,13 +128,12 @@ irq13:
 
 # int8 -- 双出错故障. 类型: 放弃; 有错误码.
 # 通常当CPU在调用前一个异常的处理程序而又检测到一个新的异常时,这两个异常会被串行地进行处理,
-# 但也会碰到很少的情况,CPU不能进行这样的串行处理操作,此时就会
-# 引发该中断.
+# 但也会碰到很少的情况,CPU不能进行这样的串行处理操作,此时就会引发该中断.
 double_fault:
-	pushl $do_double_fault						# C函数地址入栈.
+	pushl $do_double_fault						#
 error_code:
-	xchgl %eax, 4(%esp)							# error code <-> %eax,eax原来的值被保存在堆栈上.
-	xchgl %ebx, (%esp)							# &function <-> %ebx,ebx原来的值被保存在堆栈上.
+	xchgl %eax, 4(%esp)							# error code <-> %eax,eax
+	xchgl %ebx, (%esp)							# &function <-> %ebx,ebx
 	pushl %ecx
 	pushl %edx
 	pushl %edi
