@@ -109,7 +109,7 @@ static int sprintf(char * str, const char *fmt, ...)
 
 static void time_init(void)
 {
-	struct tm time;								
+	struct tm time;	// time.h							
 	do {
 		time.tm_sec = CMOS_READ(0);				
 		time.tm_min = CMOS_READ(2);				
@@ -163,7 +163,7 @@ int main(void)	/* This really IS void, no error here. */
    	sprintf(term, "TERM=con%dx%d", CON_COLS, CON_ROWS);
 	envp[1] = term;
 	envp_rc[1] = term;
-    drive_info = DRIVE_INFO;										// copy hard disk table from 0x90080
+    drive_info = DRIVE_INFO;										// copy hard disk table from 0x90080, 32 bytes
 
 	memory_end = (1 << 20) + (EXT_MEM_K << 10);						// 1 MiB + EXT_MEM_K * 1024
 	memory_end &= 0xfffff000;										// Ignore the tail part less than 2^12 = 4k

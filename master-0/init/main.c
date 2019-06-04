@@ -209,10 +209,12 @@ int main(void)										/* This really IS void, no error here. */
 	/*
 	 * 此时中断仍被禁止着,做完必要的设置后就将其开启.
 	 */
-	// 首先保存根文件系统设备和交换文件设备号,并根据setup.s程序中获取的信息设置控制台终端屏幕行,列数环境变量TERM,并用其设置初始init进程
+	// 首先保存根文件系统设备和交换文件设备号,并根据setup.s程序中获取的信息设置控制台终端屏幕行,
+	// 列数环境变量TERM,并用其设置初始init进程
 	// 中执行etc/rc文件和shell程序使用的环境变量,以及复制内存0x90080处的硬盘表.
 	// 其中ROOT_DEV已在前面包含进的include/linux/fs.h文件上被声明为extern_int
-	// 而SWAP_DEV在include/linux/mm.h文件内也作了相同声明.这里mm.h文件并没有显式地列在本程序前部,因为前面包含进的include/linux/sched.h
+	// 而SWAP_DEV在include/linux/mm.h文件内也作了相同声明.这里mm.h文件并没有显式地列在本程序前部,
+	// 因为前面包含进的include/linux/sched.h
 	// 文件中已经含有它.
  	ROOT_DEV = ORIG_ROOT_DEV;										// ROOT_DEV定义在fs/super.c
  	SWAP_DEV = ORIG_SWAP_DEV;										// SWAP_DEV定义在mm/swap.c
@@ -313,10 +315,12 @@ void init(void)
 	printf("<<<<< %d buffers = %d bytes buffer space >>>>>\n\r", NR_BUFFERS,
 			NR_BUFFERS * BLOCK_SIZE);
 	printf("<<<<< Free mem: %d bytes >>>>>\n\r", memory_end - main_memory_start);
-	// 下面fork()用于创建一个子进程(任务2).对于被创建的子进程,fork()将返回0值,对于原进程(父进程)则返回子进程的进程号pid.所以第202--206行是子进程执行的内容.
-	// 该子进程关闭了句柄0(stdin),以只读方式打开/etc/rc文件,并使用execve()函数将进程自身替换成/bin/sh程序(即shell程序),然后执行/bin/sh程序.所携带的参数
-	// 和环境变量分别由argv_rc和envp_rc数组给出.关闭句柄0并立刻打开/etc/rc文件的作用是把标准输入stdin重定向到/etc/rc/文件.这样shell程序/bin/sh就可以运行
-	// rc文件中设置的命令.由于这里sh的运行方式是非交互式的,因此在执行完rc文件中的命令后就会立刻退出,进程2也随之结束.并于execve()函数说明请参见fs/exec.c程序.
+	// 下面fork()用于创建一个子进程(任务2).对于被创建的子进程,fork()将返回0值,对于原进程(父进程)则返回子进程的进程号pid.
+	// 所以第202--206行是子进程执行的内容.
+	// 该子进程关闭了句柄0(stdin),以只读方式打开/etc/rc文件,并使用execve()函数将进程自身替换成/bin/sh程序(即shell程序),然后执行/bin/sh程序.
+	// 所携带的参数	// 和环境变量分别由argv_rc和envp_rc数组给出.关闭句柄0并立刻打开/etc/rc文件的作用是把标准输入stdin重定向到/etc/rc/文件.
+	// 这样shell程序/bin/sh就可以运行rc文件中设置的命令.由于这里sh的运行方式是非交互式的,因此在执行完rc文件中的命令后就会立刻退出,进程2也随之结束.
+	// 并于execve()函数说明请参见fs/exec.c程序.
 	// 函数_exit()退出时的出错码1 - 操作未许可;2 -- 文件或目录不存在.
 	if (!(pid = fork())) {
 		close(0);
