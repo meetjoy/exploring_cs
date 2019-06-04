@@ -116,3 +116,19 @@ Both bootsect.S and setup.S are assembled and linked into single runnable files:
 
 While head.o only is assembled into an objective file. It references symbols from other files. So it can only be linked at a later stage. We will get there. See you next day. 
 
+## Day 4
+
+Finally we come to day 4. It will be a big day. 
+
+A quick review what we have done in the last 3 days. We've compiled and linked two seperate programs: bootsect.S and setup.S. Then we have compiled the third file head.s to objective file but not linked it. We have to linked this object file with some other objective files or library files. Then today we are going to introduce briefly our next also very important program file main.c. A great thing is this is the first program written in C \(not in assembly\) we have encounted so far. 
+
+The lines before the function main\(void\) includes:
+
+C preprocessing statements like \#include, \#define etc., and variable or function declaration statements. We can temporarily ignore these and move to the code the main function. It contains:
+
+1. Loads the swap device number, root device number and drive information into the variable . Formatting the enviroment variables and saves them. Sets size of memory and buffer.
+2. Initialization before moving to user mode. Main memroy initilization. Trap, block device, character device, tty and time initilization. Scheduling, hard disk, floppy disk and buffer initiliation. The move\_to\_user\_mode\(\) macro manually creates a return enviroment for the process 0 to live.
+3. Then fork\_for\_process0 firstly creates a process: process init or process 1. 
+
+
+
