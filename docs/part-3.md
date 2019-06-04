@@ -129,6 +129,9 @@ C preprocessing statements like \#include, \#define etc., and variable or functi
 1. Loads the swap device number, root device number and drive information into the variable . Formatting the enviroment variables and saves them. Sets size of memory and buffer.
 2. Initialization before moving to user mode. Main memroy initilization. Trap, block device, character device, tty and time initilization. Scheduling, hard disk, floppy disk and buffer initiliation. The move\_to\_user\_mode\(\) macro manually creates a return enviroment for the process 0 to live.
 3. Then fork\_for\_process0 firstly creates a process: process init or process 1. 
+4. Process 1 never dies unless you shut down the system. It does some initilization then it goes into a big cycle. It creates a process 2, this is actually a concole program. Once this shell dies, the process 1 will create another process. 
+
+See you in day 5. 
 
 
 
