@@ -5,7 +5,7 @@ CFLAGS	+= -nostdinc -I../include -finline-functions
 LDFLAGS	+= -r
 
 .c.s:
-	-finline-functions $(CC) $(CFLAGS) -S -o $*.s $<
+	$(CC) $(CFLAGS) -S -o $*.s $<
 .s.o:
 	$(AS) -o $*.o $<
 .c.o:

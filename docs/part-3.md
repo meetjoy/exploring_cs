@@ -157,5 +157,11 @@ Simply key in make and press entre in command line. Make the working dictionary 
 
 ### Kernel make file
 
+## Day 7: mm.o related files
 
+### mm folder
+
+3 \*.c or \*.s files added to under mm folder.
+
+### mm make file
 
