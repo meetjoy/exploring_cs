@@ -116,7 +116,7 @@ Both bootsect.S and setup.S are assembled and linked into single runnable files:
 
 While head.o only is assembled into an objective file. It references symbols from other files. So it can only be linked at a later stage. We will get there. See you next day. 
 
-## Day 4
+## Day 4: Incorporate main.c
 
 Finally we come to day 4. It will be a big day. 
 
@@ -132,6 +132,24 @@ C preprocessing statements like \#include, \#define etc., and variable or functi
 4. Process 1 never dies unless you shut down the system. It does some initilization then it goes into a big cycle. It creates a process 2, this is actually a concole program. Once this shell dies, the process 1 will create another process. 
 
 See you in day 5. 
+
+## Day 5: Compile main.c to main.o
+
+Today we are going to add two makefiles and a coulple of header files.
+
+### Main make files
+
+To make things clearer, we put some common lines in a makefile header file. Then in the main makefile currently we only covered the lines to compile the main.c to main.o.
+
+### Header files
+
+As main.c referencs lots of header files, \*.h files, we need to include all these in order to compile the main.c file.
+
+### Compile main.c
+
+Simply key in make and press entre in command line. Make the working dictionary path the same as where the make file is.
+
+
 
 
 
