@@ -165,3 +165,10 @@ Simply key in make and press entre in command line. Make the working dictionary 
 
 ### mm make file
 
+## Day 8: fs.o related files
+
+### fs folder
+
+18 \*.c or \*.s files added to under fs folder.
+
+### fs make file
