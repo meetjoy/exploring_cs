@@ -172,3 +172,12 @@ Simply key in make and press entre in command line. Make the working dictionary 
 18 \*.c or \*.s files added to under fs folder.
 
 ### fs make file
+
+## Day 9: lib.a related files
+
+### lib folder
+
+13 \*.c or \*.s files added to under lib folder.
+
+### lib make file
+
