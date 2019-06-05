@@ -205,3 +205,9 @@ Simply key in make and press entre in command line. Make the working dictionary 
 
 ### chr_drv make file
 
+## Day 13: tools folder and main makefile update
+
+### tools folder
+
+### main makefile
+
