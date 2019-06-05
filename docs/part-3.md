@@ -197,4 +197,11 @@ Simply key in make and press entre in command line. Make the working dictionary 
 
 ### blk_drv make file
 
+## Day 12: chr_drv.a related files
+
+### chr_drv folder
+
+7 \*.c or \*.s files added to under chr_drv folder.
+
+### chr_drv make file
 
