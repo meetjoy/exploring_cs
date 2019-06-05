@@ -181,3 +181,10 @@ Simply key in make and press entre in command line. Make the working dictionary 
 
 ### lib make file
 
+## Day 10: math.a related files
+
+### math folder
+
+9 \*.c or \*.s files added to under math folder.
+
+### math make file
