@@ -4,6 +4,12 @@ SWAP_DEV = 0304
 
 CPP    +=  -nostdinc -Iinclude
 CFLAGS +=  -nostdinc -Iinclude
+LDFLAGS	+= -Ttext 0 -e startup_32
+
+ARCHIVES=kernel/kernel.o mm/mm.o fs/fs.o
+DRIVERS =kernel/blk_drv/blk_drv.a kernel/chr_drv/chr_drv.a
+MATH	=kernel/math/math.a
+LIBS	=lib/lib.a
 
 .c.s:
 	$(CC) $(CFLAGS) -S -o $*.s $<
@@ -12,7 +18,7 @@ CFLAGS +=  -nostdinc -Iinclude
 .c.o:
 	$(CC) $(CFLAGS)	-c -o $*.o $<
 
-all: init/main.o
+all: Image
 
 clean:
 	rm -f init/main.s init/main.o
