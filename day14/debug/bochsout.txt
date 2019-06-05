@@ -31,7 +31,7 @@
 00000000000i[      ]   Sound support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x7fec500fb010. after alignment, vector=0x7fec500fc000
+00000000000i[MEM0  ] allocated memory at 0x7ff187714010. after alignment, vector=0x7ff187715000
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=256
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
@@ -42,7 +42,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Thu Jun  6 07:22:04 2019 (time0=1559776924)
+00000000000i[CMOS  ] Setting initial clock to: Thu Jun  6 07:32:48 2019 (time0=1559777568)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -170,7 +170,6 @@
 00001167077i[ACPI  ] new PM base address: 0xb000
 00001167091i[ACPI  ] new SM base address: 0xb100
 00001167119i[PCI   ] setting SMRAM control register to 0x4a
-00001284030i[XGUI  ] charmap update. Font is 9 x 16
 00001331212i[CPU0  ] Enter to System Management Mode
 00001331223i[CPU0  ] RSM: Resuming from System Management Mode
 00001495244i[PCI   ] setting SMRAM control register to 0x0a
@@ -184,9 +183,9 @@
 00001647531i[BXVGA ] VBE known Display Interface b0c0
 00001647563i[BXVGA ] VBE known Display Interface b0c5
 00001650488i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
+00001716510i[XGUI  ] charmap update. Font is 9 x 16
 00001995175i[BIOS  ] ata0-0: PCHS=900/15/17 translation=none LCHS=900/15/17
 00005442025i[BIOS  ] IDE time out
-00008003100i[XGUI  ] charmap update. Font is 9 x 16
 00050929975i[BIOS  ] Booting from 0000:7c00
 00114812496i[FLOPPY] partial read() on floppy image returns 161/512
 00114979161i[FLOPPY] read() on floppy image returns 0
@@ -322,26 +321,26 @@
 00136659528i[FLOPPY] read() on floppy image returns 0
 00136826193i[FLOPPY] read() on floppy image returns 0
 00137051691i[BIOS  ] int13_harddisk: function 15, unmapped device for ELDL=81
-00202440000i[      ] cpu loop quit, shutting down simulator
-00202440000i[CPU0  ] CPU is in protected mode (active)
-00202440000i[CPU0  ] CS.mode = 32 bit
-00202440000i[CPU0  ] SS.mode = 32 bit
-00202440000i[CPU0  ] EFER   = 0x00000000
-00202440000i[CPU0  ] | EAX=00000000  EBX=00007044  ECX=000b8000  EDX=00000017
-00202440000i[CPU0  ] | ESP=0002f148  EBP=00041728  ESI=000e0000  EDI=00000ffc
-00202440000i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf ZF af PF cf
-00202440000i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
-00202440000i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 00ffffff 1 1
-00202440000i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 00ffffff 1 1
-00202440000i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 00ffffff 1 1
-00202440000i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 00ffffff 1 1
-00202440000i[CPU0  ] |  FS:0017( 0002| 1|  3) 00000000 0009ffff 1 1
-00202440000i[CPU0  ] |  GS:0017( 0002| 1|  3) 00000000 0009ffff 1 1
-00202440000i[CPU0  ] | EIP=00006f34 (00006f34)
-00202440000i[CPU0  ] | CR0=0x8000001d CR2=0x0802cca0
-00202440000i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
-00202440000i[CPU0  ] 0x00006f34>> sub dword ptr ss:[esp+16], 0x00000004 : 836C241004
-00202440000i[CMOS  ] Last time is 1559776937 (Thu Jun  6 07:22:17 2019)
-00202440000i[XGUI  ] Exit
-00202440000i[      ] restoring default signal behavior
-00202440000i[SIM   ] quit_sim called with exit code 1
+00174000000i[      ] cpu loop quit, shutting down simulator
+00174000000i[CPU0  ] CPU is in protected mode (active)
+00174000000i[CPU0  ] CS.mode = 32 bit
+00174000000i[CPU0  ] SS.mode = 32 bit
+00174000000i[CPU0  ] EFER   = 0x00000000
+00174000000i[CPU0  ] | EAX=00000000  EBX=0000704c  ECX=000b8000  EDX=00000000
+00174000000i[CPU0  ] | ESP=0002f148  EBP=00041728  ESI=000e0000  EDI=00000ffc
+00174000000i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf ZF af PF cf
+00174000000i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00174000000i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 00ffffff 1 1
+00174000000i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 00ffffff 1 1
+00174000000i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 00ffffff 1 1
+00174000000i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 00ffffff 1 1
+00174000000i[CPU0  ] |  FS:0017( 0002| 1|  3) 00000000 0009ffff 1 1
+00174000000i[CPU0  ] |  GS:0017( 0002| 1|  3) 00000000 0009ffff 1 1
+00174000000i[CPU0  ] | EIP=00006fb2 (00006fb2)
+00174000000i[CPU0  ] | CR0=0x8000001d CR2=0x0802cca0
+00174000000i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
+00174000000i[CPU0  ] 0x00006fb2>> sub dword ptr ss:[esp+28], 0x00000001 : 836C241C01
+00174000000i[CMOS  ] Last time is 1559777579 (Thu Jun  6 07:32:59 2019)
+00174000000i[XGUI  ] Exit
+00174000000i[      ] restoring default signal behavior
+00174000000i[SIM   ] quit_sim called with exit code 1

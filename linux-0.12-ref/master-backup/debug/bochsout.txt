@@ -1,6 +1,6 @@
 00000000000i[      ] Bochs x86 Emulator 2.6.9
 00000000000i[      ]   Built from SVN snapshot on April 9, 2017
-00000000000i[      ] Compiled on May 10 2019 at 22:59:37
+00000000000i[      ] Compiled on May 12 2019 at 18:18:01
 00000000000i[      ] System configuration
 00000000000i[      ]   processors: 1 (cores=1, HT threads=1)
 00000000000i[      ]   A20 line support: yes
@@ -31,7 +31,7 @@
 00000000000i[      ]   Sound support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x7fb2dd115010. after alignment, vector=0x7fb2dd116000
+00000000000i[MEM0  ] allocated memory at 0x7f43c0d76010. after alignment, vector=0x7f43c0d77000
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=256
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
@@ -42,7 +42,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Fri May 17 03:28:18 2019 (time0=1558088898)
+00000000000i[CMOS  ] Setting initial clock to: Thu Jun  6 07:27:08 2019 (time0=1559777228)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -184,36 +184,36 @@
 00001647531i[BXVGA ] VBE known Display Interface b0c0
 00001647563i[BXVGA ] VBE known Display Interface b0c5
 00001650488i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
-00001994933i[BIOS  ] ata0-0: PCHS=900/15/17 translation=none LCHS=900/15/17
-00002263200i[XGUI  ] charmap update. Font is 9 x 16
-00005441783i[BIOS  ] IDE time out
-00050929973i[BIOS  ] Booting from 0000:7c00
-00114812494i[FLOPPY] partial read() on floppy image returns 161/512
-00114979159i[FLOPPY] read() on floppy image returns 0
-00115145824i[FLOPPY] read() on floppy image returns 0
-00115312489i[FLOPPY] read() on floppy image returns 0
-00115479154i[FLOPPY] read() on floppy image returns 0
-00140523806i[BIOS  ] int13_harddisk: function 15, unmapped device for ELDL=81
-00308760000i[      ] cpu loop quit, shutting down simulator
-00308760000i[CPU0  ] CPU is in protected mode (active)
-00308760000i[CPU0  ] CS.mode = 32 bit
-00308760000i[CPU0  ] SS.mode = 32 bit
-00308760000i[CPU0  ] EFER   = 0x00000000
-00308760000i[CPU0  ] | EAX=00000000  EBX=00007044  ECX=000b8000  EDX=00000000
-00308760000i[CPU0  ] | ESP=0002f148  EBP=00041728  ESI=000e0000  EDI=00000ffc
-00308760000i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af PF cf
-00308760000i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
-00308760000i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 00ffffff 1 1
-00308760000i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 00ffffff 1 1
-00308760000i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 00ffffff 1 1
-00308760000i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 00ffffff 1 1
-00308760000i[CPU0  ] |  FS:0017( 0002| 1|  3) 00000000 0009ffff 1 1
-00308760000i[CPU0  ] |  GS:0017( 0002| 1|  3) 00000000 0009ffff 1 1
-00308760000i[CPU0  ] | EIP=00006f69 (00006f69)
-00308760000i[CPU0  ] | CR0=0x8000001d CR2=0x0802cca0
-00308760000i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
-00308760000i[CPU0  ] 0x00006f69>> sub dword ptr ss:[esp+16], 0x00000004 : 836C241004
-00308760000i[CMOS  ] Last time is 1558088918 (Fri May 17 03:28:38 2019)
-00308760000i[XGUI  ] Exit
-00308760000i[      ] restoring default signal behavior
-00308760000i[SIM   ] quit_sim called with exit code 1
+00001950675i[XGUI  ] charmap update. Font is 9 x 16
+00001995175i[BIOS  ] ata0-0: PCHS=900/15/17 translation=none LCHS=900/15/17
+00005442025i[BIOS  ] IDE time out
+00050929975i[BIOS  ] Booting from 0000:7c00
+00114812496i[FLOPPY] partial read() on floppy image returns 161/512
+00114979161i[FLOPPY] read() on floppy image returns 0
+00115145826i[FLOPPY] read() on floppy image returns 0
+00115312491i[FLOPPY] read() on floppy image returns 0
+00115479156i[FLOPPY] read() on floppy image returns 0
+00115704658i[BIOS  ] int13_harddisk: function 15, unmapped device for ELDL=81
+02853945000i[      ] cpu loop quit, shutting down simulator
+02853945000i[CPU0  ] CPU is in protected mode (active)
+02853945000i[CPU0  ] CS.mode = 32 bit
+02853945000i[CPU0  ] SS.mode = 32 bit
+02853945000i[CPU0  ] EFER   = 0x00000000
+02853945000i[CPU0  ] | EAX=00000000  EBX=00007044  ECX=000b8000  EDX=00000000
+02853945000i[CPU0  ] | ESP=0002f148  EBP=00041728  ESI=000e0000  EDI=00000ffc
+02853945000i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf ZF af PF cf
+02853945000i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+02853945000i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 00ffffff 1 1
+02853945000i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 00ffffff 1 1
+02853945000i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 00ffffff 1 1
+02853945000i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 00ffffff 1 1
+02853945000i[CPU0  ] |  FS:0017( 0002| 1|  3) 00000000 0009ffff 1 1
+02853945000i[CPU0  ] |  GS:0017( 0002| 1|  3) 00000000 0009ffff 1 1
+02853945000i[CPU0  ] | EIP=00006f76 (00006f76)
+02853945000i[CPU0  ] | CR0=0x8000001d CR2=0x0802cca0
+02853945000i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
+02853945000i[CPU0  ] 0x00006f76>> jnz .+2 (0x00006f7a) : 7502
+02853945000i[CMOS  ] Last time is 1559777418 (Thu Jun  6 07:30:18 2019)
+02853945000i[XGUI  ] Exit
+02853945000i[      ] restoring default signal behavior
+02853945000i[SIM   ] quit_sim called with exit code 1
