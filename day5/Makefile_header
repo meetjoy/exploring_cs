@@ -3,8 +3,8 @@ CC	= gcc
 AS	= as --32
 LD	= ld
 
-CFLAGS	= -fno-pie -O0 -g3 -gdwarf-2 -m32 -fstrength-reduce -fomit-frame-pointer\
-          -fno-stack-protector -fno-builtin #-Wall
+CFLAGS	= -fno-pie -O0 -g3 -gdwarf-2 -m32 -fstrength-reduce -fomit-frame-pointer -fno-stack-protector -fno-builtin  #-Wall
+
 LDFLAGS = -no-pie -m elf_i386
 
 AR	= ar

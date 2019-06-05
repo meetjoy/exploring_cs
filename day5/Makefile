@@ -4,6 +4,7 @@ SWAP_DEV = 0304
 
 CPP    +=  -nostdinc -Iinclude
 CFLAGS +=  -nostdinc -Iinclude
+
 .c.s:
 	$(CC) $(CFLAGS) -S -o $*.s $<
 .s.o:
@@ -21,6 +22,7 @@ dep:
 	(for i in init/*.c;do echo -n "init/";$(CPP) -M $$i;done) >> tmp_make
 	cp tmp_make Makefile
 	#for i in fs kernel mm lib; do make dep -C $$i; done
+	
 ### Dependencies:
 init/main.o: init/main.c include/unistd.h include/sys/stat.h \
  include/sys/types.h include/sys/time.h include/time.h \
