@@ -149,7 +149,13 @@ As main.c referencs lots of header files, \*.h files, we need to include all the
 
 Simply key in make and press entre in command line. Make the working dictionary path the same as where the make file is.
 
+## Day 6: Kernel.o related files
 
+### Kernel folder
+
+12 \*.c or \*.s files added to under kernel folder.
+
+### Kernel make file
 
 
 
