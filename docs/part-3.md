@@ -211,3 +211,9 @@ Simply key in make and press entre in command line. Make the working dictionary 
 
 ### main makefile
 
+## Day 14: debug folder and test
+
+### debug folder
+
+### test
+
