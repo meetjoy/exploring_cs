@@ -20,14 +20,14 @@ kernel.o: $(OBJS)
 clean:
 	rm -f core *.o *.a tmp_make keyboard.s
 	for i in *.c;do rm -f `basename $$i .c`.s;done
-#	for i in chr_drv blk_drv math; do make clean -C $$i; done
+	for i in chr_drv blk_drv math; do make clean -C $$i; done
 
 dep:
 	sed '/\#\#\# Dependencies/q' < Makefile > tmp_make
 	(for i in *.c;do echo -n `echo $$i | sed 's,\.c,\.s,'`" "; \
 		$(CPP) -M $$i;done) >> tmp_make
 	cp tmp_make Makefile
-#	for i in chr_drv blk_drv math; do make dep -C $$i; done
+	for i in chr_drv blk_drv math; do make dep -C $$i; done
 
 ### Dependencies:
 exit.s exit.o: exit.c ../include/errno.h ../include/signal.h \
