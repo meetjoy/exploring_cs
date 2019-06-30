@@ -1,3 +1,4 @@
+
 # Part 1: Our First Assembly Program
 
 A **Linux** operating system is to be used as the platform for the experiments we are going to do in this book. Please move to the next section if you already have any distribution of Linux installed on your personal computer, it can be running on a virtual machine or alongside with Windows or macOS.
