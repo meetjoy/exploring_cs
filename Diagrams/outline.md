@@ -42,9 +42,16 @@ graph TD
 A[enable the math emulator]
 B[some public variables setup:<br/> root file device & swap device number <br/> formats console terminal cols and rows<br/>saves term into env<br/> drive_info = loads hard drive info]
 C[memory:<br/>memory_end = size of memory 16MiB<br/> buffer_memory_end = 4MiB = main_memory_start<br/>]
-D[a couple of initialation]
+D[rd_init: ramdisk init, which can be ignored]
+E[a couple of initialation]
+E1[mem_init: main memory init<br/>paging pages = 3840 which is 15 MiB * 256 pages/MiB, 1MiB to 16MiB<br/>buffer pages = 256 * 3 = 762 pages, 1MiB to 4MiB, set 100<br/>main memory pages = 256 * 12 = 3048 pages, 4MiB to 16 MiB, set 0<br/> mem_map array to mark: 0 available, 100 used]
+
+E2[test]
 
 A --> B
 B --> C
 C-->D
+D-->E
+E-->E1
+E1-->E2
 ```

@@ -713,7 +713,6 @@ void do_no_page(unsigned long error_code, unsigned long address)
 // size of mem_map[] = 3840, 1 byte to indicate the usage status of the page
 // main memory area: 5MiB to 16MiB = 12MiB; 12MiB = 256 * 12 = 3072 pages
 // area before main memory area: 1MiB to end of 4MiB = 3 MiB = 256 * 3 = 768 pages
-// 								 0 ~ end of 1MiB = 1 MiB = 256 pages
 void mem_init(long start_mem, long end_mem) //aug: start and end address of main memory
 {
 	int i;
