@@ -36,3 +36,15 @@ We are going to draw an outline of the operating system. So we can gain a deeper
 2. Initialization before moving to user mode. Main memroy initilization. Trap, block device, character device, tty and time initilization. Scheduling, hard disk, floppy disk and buffer initiliation. The move_to_user_mode() macro manually creates a return enviroment for the process 0 to live.
 3. Then fork_for_process0 firstly creates a process: process init or process 1. 
 4. Process 1 never dies unless you shut down the system. It does some initilization then it goes into a big cycle. It creates a process 2, this is actually a concole program. Once this shell dies, the process 1 will create another process. 
+## flow chart of main
+```mermaid
+graph TD
+A[enable the math emulator]
+B[some public variables setup:<br/> root file device & swap device number <br/> formats console terminal cols and rows<br/>saves term into env<br/> drive_info = loads hard drive info]
+C[memory:<br/>memory_end = size of memory 16MiB<br/> buffer_memory_end = 4MiB = main_memory_start<br/>]
+D[a couple of initialation]
+
+A --> B
+B --> C
+C-->D
+```
