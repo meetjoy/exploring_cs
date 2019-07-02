@@ -46,12 +46,34 @@ D[rd_init: ramdisk init, which can be ignored]
 E[a couple of initialation]
 E1[mem_init: main memory init<br/>paging pages = 3840 which is 15 MiB * 256 pages/MiB, 1MiB to 16MiB<br/>buffer pages = 256 * 3 = 762 pages, 1MiB to 4MiB, set 100<br/>main memory pages = 256 * 12 = 3048 pages, 4MiB to 16 MiB, set 0<br/> mem_map array to mark: 0 available, 100 used]
 
-E2[test]
-
 A --> B
 B --> C
 C-->D
 D-->E
 E-->E1
 E1-->E2
+E2-->E3
+E3-->E4
+E4-->E5
+E5-->E6
+E6-->E7
+
+E2[trap_init: 255 interruputs or exception in total, index of IDT<br/>0 - 31 by Intel, exception: Abort, trap, fault eg. Page-fault. 1 for interrupt <br/>32 - 47 for hardware interruput <br/>gates 48-255 for operating system, soft interrupt]
+
+E3[when exception happens say for <br/> 0 divide_error: CPU searches the IDT, locates and run the handler, prints error message, and do_exit<br/>1 debug: do_int3, prints message and iret<br/>2 nmi: same as 1<br/> 3 int3 same as 1<br/> 4-13,15,17 die as well<br/> 14: page_fault speicial <br/>16: coprocessor_error<br/>39: parallel_interrupt<br/>45: irq13<br/>]
+
+E4[block device init:<br/>set -1 to all request.dev, and null to request.next<br/> character device init: none]
+
+E5[tty_init: see later for more details]
+
+E6[time_init: set the startup_time in seconds]
+
+E7[sched_init:]
+
+
+
 ```
+1. interrupt & exception<br/>
+two pins INTR and NMI on the processor chip<br/>
+IF in EFLAGS can mask all the maskable hardware interrupts but not soft interrupts like INT 80<br/>
+exception includes software exception and processor exception<br/>
