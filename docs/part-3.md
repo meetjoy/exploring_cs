@@ -1,6 +1,6 @@
 # Part 3: Start Examining An Operating System
 
-From today, we are diving deeper to see how an operating system works. We start from 0, gradually we get an minimal operating system.
+From today, we are diving deeper to see how an operating system works. We start from 0, gradually we get a minimal operating system.
 
 ## Day 1: Boot loader, bootsect.S
 
