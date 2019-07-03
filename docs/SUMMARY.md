@@ -7,5 +7,5 @@
 * [Part 4: Diagrams](part-4-diagrams.md)
 * [Appendices](appendices.md)
 * [Concepts](concepts.md)
-* [ref-only-Useful References](ref-useful-references.md)
+* [Useful References](ref-useful-references.md)
 

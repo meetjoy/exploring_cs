@@ -1,4 +1,4 @@
 # Concepts
 
-This part gives introduction to important concepts. 
+This part is supposed to give introduction to important concepts. 
 
