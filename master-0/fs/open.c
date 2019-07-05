@@ -221,7 +221,7 @@ static int check_char_dev(struct m_inode * inode, int dev, int flag)
 		if ((IS_A_PTY_MASTER(min)) && (inode->i_count > 1))
 			return -1;
 		tty = TTY_TABLE(min);
-		// Log(LOG_INFO_TYPE, "<<<<< tty index = %d>>>>>\n", min);
+		// log(LOG_INFO_TYPE, "<<<<< tty index = %d>>>>>\n", min);
 		if (!(flag & O_NOCTTY) &&
 		    current->leader &&
 		    current->tty < 0 &&
@@ -251,7 +251,7 @@ static int check_char_dev(struct m_inode * inode, int dev, int flag)
 int sys_open(const char * filename, int flag, int mode)
 {
 	// 打开文件的系统调用的Log
-	// Log(LOG_INFO_TYPE, "<<<<< sys_open : filename = %s, flag = %d, mode = %d>>>>>\n", filename, flag, mode);
+	// log(LOG_INFO_TYPE, "<<<<< sys_open : filename = %s, flag = %d, mode = %d>>>>>\n", filename, flag, mode);
 	struct m_inode * inode;
 	struct file * f;
 	int i, fd;
@@ -280,7 +280,7 @@ int sys_open(const char * filename, int flag, int mode)
 	// 此时我们让进程对应文件句柄fd的文件结构指针指向搜索到的文件结构,并令文件引用计数递增1.然后调用函数open_namei()执行打开操作,若返回
 	// 值小于0,则说明出错,于是释放刚申请到的文件结构,返回出错码i.若文件打开操作成功,则inode是已打开文件的i节点指针.
 	(current->filp[fd] = f)->f_count++;
-	// Log(LOG_INFO_TYPE, "<<<<< sys_open : fd = %d\n", fd);
+	// log(LOG_INFO_TYPE, "<<<<< sys_open : fd = %d\n", fd);
 	if ((i = open_namei(filename, flag, mode, &inode)) < 0) {
 		current->filp[fd] = NULL;
 		f->f_count = 0;

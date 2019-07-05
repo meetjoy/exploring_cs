@@ -333,5 +333,5 @@ void init_swapping(void)
 		swap_bitmap = NULL;
 		return;
 	}
-	Log(LOG_INFO_TYPE, "<<<<< Swap device ok: %d pages (%d bytes) swap-space >>>>>\n\r", j, j * 4096);
+	log(LOG_INFO_TYPE, "<<<<< Swap device ok: %d pages (%d bytes) swap-space >>>>>\n\r", j, j * 4096);
 }

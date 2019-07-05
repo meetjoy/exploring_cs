@@ -34,7 +34,7 @@ extern int blankcount;		                    // 黑屏时间计数(kernel/chr_drv
 // 打印报警信息日志等级
 #define LOG_WARN_TYPE       2
 
-extern void Log(unsigned short log_level, const char *fmt, ...);
+extern void log(unsigned short log_level, const char *fmt, ...);
 
 #define free(x) free_s((x), 0)
 

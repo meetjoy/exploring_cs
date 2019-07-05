@@ -11,7 +11,7 @@ static char log_buf[1024];                       // 显示用临时缓冲区。
 static unsigned short cur_log_level = LOG_INFO_TYPE;
 
 // linux-0.12 kernel log function
-void Log(unsigned short log_level, const char *fmt, ...)
+void log(unsigned short log_level, const char *fmt, ...)
 {
     if (log_level >= cur_log_level) {
         va_list args;                           // va_list实际上是一个字符指针类型.

@@ -257,7 +257,7 @@ int main(void)										/* This really IS void, no error here. */
 	floppy_init();													// 软驱初始化.	(blk_drv/floppy.c)
 	sti();															// 所有初始化工作都完了,于是开启中断.
 	// 打印内核初始化完毕
-	Log(LOG_INFO_TYPE, "<<<<< Linux0.12 Kernel Init Finished, Ready Start Process0 >>>>>\n");
+	log(LOG_INFO_TYPE, "<<<<< Linux0.12 Kernel Init Finished, Ready Start Process0 >>>>>\n");
 	// 下面过程通过在堆栈中设置的参数,利用中断返回指令启动任务0执行.
 	move_to_user_mode();											// 移到用户模式下执行.(include/asm/system.h)
 	if (!fork_for_process0()) {										/* we count on this going ok */

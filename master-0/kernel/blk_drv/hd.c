@@ -220,7 +220,7 @@ int sys_setup(void * BIOS)
 	// 现在再对每个分区中的数据块总数进行统计,并保存在硬盘分区总数据数组hd_sizes[]中.然后让设备数据块总数指针数组的本设备项指向该数组.
 	for (i = 0 ; i < 5 * MAX_HD ; i++) {
 		if (hd[i].nr_sects != 0)
-			Log(LOG_INFO_TYPE, "<<<<< HD Partition%d Info : start_sect = %d, nr_sects = %d >>>>>\n", i, hd[i].start_sect, hd[i].nr_sects);
+			log(LOG_INFO_TYPE, "<<<<< HD Partition%d Info : start_sect = %d, nr_sects = %d >>>>>\n", i, hd[i].start_sect, hd[i].nr_sects);
 		hd_sizes[i] = hd[i].nr_sects >> 1 ;
 	}
 	blk_size[MAJOR_NR] = hd_sizes;
@@ -228,9 +228,9 @@ int sys_setup(void * BIOS)
 	// 根文件系统映像(blk_drv/ramdisk.c).即在系统设置有虚拟盘的情况下判断启动盘上是否还含有根文件系统的映像数据.如果有(此时该启动盘称为集成盘)则尝试
 	// 把该映像加载并存放到虚拟盘中,然后把此时的根文件系统设备号ROOT_DEV修改成虚拟盘的设备号.接着再对交换设备进行初始化.最后安装根文件系统.
 	if (NR_HD)
-		Log(LOG_INFO_TYPE, "<<<<< Partition table%s ok. >>>>>\n\r",(NR_HD > 1) ? "s":"");
+		log(LOG_INFO_TYPE, "<<<<< Partition table%s ok. >>>>>\n\r",(NR_HD > 1) ? "s":"");
 	for (i = 0; i < NR_HD; i++)
-		Log(LOG_INFO_TYPE, "<<<<< HD%d Info: cyl = %d, head = %d, sect = %d, ctl = %x >>>>>\n", hd_info[i].cyl, hd_info[i].head, hd_info[i].sect, hd_info[i].ctl);
+		log(LOG_INFO_TYPE, "<<<<< HD%d Info: cyl = %d, head = %d, sect = %d, ctl = %x >>>>>\n", hd_info[i].cyl, hd_info[i].head, hd_info[i].sect, hd_info[i].ctl);
 	rd_load();																	// blk_drv/ramdisk.c
 	init_swapping();															// mm/swap.c
 	mount_root();																// fs/super.c

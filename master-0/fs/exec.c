@@ -331,7 +331,7 @@ int do_execve(unsigned long * eip, long tmp, char * filename,
 		}
 	}
 	*(filename1 + index + 1) = '\0';
-	Log(LOG_INFO_TYPE, "<<<<< process pid = %d do_execve : %s >>>>>\n", current->pid, filename1);
+	log(LOG_INFO_TYPE, "<<<<< process pid = %d do_execve : %s >>>>>\n", current->pid, filename1);
 
 	// 在正式设置执行文件的运行环境之前,让我们先干些杂事.内核准备了128KB(32个页面)空间来存放正执行文件的命令行参数和环境字符串.
 	// 上行把p初始设置成位于128KB空间的最后1个长字处.在初始参数和环境空间的操作过程中,p将用来指明在128KB空间中的当前位置.
