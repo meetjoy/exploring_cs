@@ -158,10 +158,12 @@ void math_state_restore()
  * information in task[0] is never used.
  */
 /*
- * 'schedule()'是调度函数.这是个很好的代码!没有任何理由对它进行修改,因为它可以在所有的环境下工作(比如能够对IO-边界下得很好
+ * 'schedule()'是调度函数.这是个很好的代码!没有任何理由对它进行修改,
+ * 因为它可以在所有的环境下工作(比如能够对IO-边界下得很好
  * 的响应等).只有一件事值得留意,那就是这里的信号处进代码.
  *
- * 注意!!任务0是个闲置('idle')任务,只有当没有其他任务可以运行时才调用它.它不能被杀死,也不睡眠.任务0中的状态信息'state'是从
+ * 注意!!任务0是个闲置('idle')任务,只有当没有其他任务可以运行时才调用它.
+ * 它不能被杀死,也不睡眠.任务0中的状态信息'state'是从
  * 来不用的.
  */
 void schedule(void)
@@ -175,15 +177,18 @@ void schedule(void)
 	// 从任务数组中最后一个任务开始循环检测alarm.在循环时跳过空指针项.
 	for(p = &LAST_TASK ; p > &FIRST_TASK ; --p)
 		if (*p) {
-			// 如果设置过任务超时定时timeout,并且已经超时,则复位超时定时值,并且如果任务处于可中断睡眠状态TASK_INTERRUPTIBLE下,将其置为就绪
+			// 如果设置过任务超时定时timeout,并且已经超时,则复位超时定时值,
+			// 并且如果任务处于可中断睡眠状态TASK_INTERRUPTIBLE下,将其置为就绪
 			// 状态(TASK_RUNNING).
 			if ((*p)->timeout && (*p)->timeout < jiffies) {
 				(*p)->timeout = 0;
 				if ((*p)->state == TASK_INTERRUPTIBLE)
 					(*p)->state = TASK_RUNNING;
 			}
-			// 如果设置过任务的定时值alarm,并且已经过期(alarm<jiffies),则在信号位图中置SIGALRM信号,即向任务发送SIGALARM信号.然后清alarm.
-			// 该信号的默认操作是终止进程.jiffies是系统从开机开始算起的滴答数(10ms/滴答).定义在sched.h中.
+			// 如果设置过任务的定时值alarm,并且已经过期(alarm<jiffies),
+			// 则在信号位图中置SIGALRM信号,即向任务发送SIGALARM信号.然后清alarm.
+			// 该信号的默认操作是终止进程.jiffies是系统从开机开始算起的滴答数(10ms/滴答).
+			// 定义在sched.h中.
 			if ((*p)->alarm && (*p)->alarm < jiffies) {
 				(*p)->signal |= (1 << (SIGALRM - 1));
 				(*p)->alarm = 0;
@@ -218,7 +223,8 @@ void schedule(void)
 			if (*p)
 				(*p)->counter = ((*p)->counter >> 1) + (*p)->priority;
 	}
-	// 用下面的宏(定义在sched.h中)把当前任务指针current指向任务号为next的任务,并切换到该任务中运行.在146行上next被初始化为0.因此若系统中没有任何
+	// 用下面的宏(定义在sched.h中)把当前任务指针current指向任务号为next的任务,并切换到该任务中运行.
+	// 在146行上next被初始化为0.因此若系统中没有任何
 	// 其他任务可运行时,则next始终为0.因此调度函数会在系统空闲时去执行任务0.此时任务0权执行pause()
 	switch_to(next);					// 切换到任务号为next的任务,并运行之.
 }

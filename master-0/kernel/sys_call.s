@@ -136,9 +136,11 @@ sys_call:
 	# call *sys_call_table(, %eax, 4)	# 间接调用指定功能C函数.
 	pushl %eax							# 把系统调用返回值入栈.
 
-# 下面行查看当前任务的运行状态.如果不在就绪状态(state不等于0)就去执行调试程序.如果该任务在就绪状态,但是其时间片已经用
+# 下面行查看当前任务的运行状态.如果不在就绪状态(state不等于0)就去执行调试程序.如果该任务在就绪状态,
+# 但是其时间片已经用
 # 完(counter=0),则也去执行调度程序.
-# 例如当后台进程组中的进程执行控制终端读写操作时,那么默认条件下该后台进程组有进程会收到SIGTTIN或SIGTTOU信号,导致进程
+# 例如当后台进程组中的进程执行控制终端读写操作时,那么默认条件下该后台进程组有进程会收到SIGTTIN或SIGTTOU信号,
+# 导致进程
 # 组中所有进程处于停止状态.而当前进程则会立刻返回.
 2:
 	movl current, %eax				# 取当前任务(进程)数据结构指针->eax.
@@ -147,7 +149,8 @@ sys_call:
 	cmpl $0, counter(%eax)			# counter,如果当前进程剩余的执行时间为0则重新进行调度进程执行
 	je reschedule
 
-# 以下这段代码执行从系统调用C函数返回后,对信号进行识别处理.其它中断服务程序退出时也将跳转到这里进行处理后才退出中断过程,
+# 以下这段代码执行从系统调用C函数返回后,对信号进行识别处理.
+# 其它中断服务程序退出时也将跳转到这里进行处理后才退出中断过程,
 # 例如后面的处理器出错中断int 16.
 # 首先判断当前任务是不是初始任务task0,如果是则不必对其进行信号量方面的处理,直接返回.
 # task对应C程序中的task[]数组,直接引用task相当于引用task[0].
@@ -156,23 +159,28 @@ ret_from_sys_call:
 	cmpl task, %eax					# task[0] cannot have signals
 	je 3f							# 向前(forward)跳转到标号3处退出中断处理.
 	# 通过对原调用程序代码选择符的检查来判断调用程序是不是用户任务.如果不是则直接既出中断.
-	# 这是因为任务在内核态执行时不可抢占.否则对任务进行信号量处理.这里通过比较选择符是否为用户代码段选择符0x000f(RPL=3,局部表,代码
-	# 段)来判断是否为用户任务.如果不是则说明是某个中断服务程序(例如中断16)跳转到第107行执行到此,于是跳转退出中断程序.另外,如果原堆栈
+	# 这是因为任务在内核态执行时不可抢占.否则对任务进行信号量处理.
+	# 这里通过比较选择符是否为用户代码段选择符0x000f(RPL=3,局部表,代码
+	# 段)来判断是否为用户任务.如果不是则说明是某个中断服务程序(例如中断16)跳转到第107行执行到此,
+	# 于是跳转退出中断程序.另外,如果原堆栈
 	# 段选择符不为0x17(即原堆栈不在用户段中),也说明本次系统调用的调用者不是用户任务,则也退出.
 	cmpw $0x0f, CS(%esp)			# was old code segment supervisor ?
 	jne 3f
 	cmpw $0x17, OLDSS(%esp)			# was stack segment = 0x17 ?
 	jne 3f
 
-# 下面这段代码用于处理当前任务中的信号.首先取当前任务结构中的信号位图(32位,每位代表1种信号),然后用任务结构中的信号阻塞(屏蔽)码,阻塞
-# 不允许的信号位,取得数值最小的信号值,再把原信号位图中该信号对应的位复位(置0),最后将该信号值作为参数之一调用do_signal().do_signal()
-# 在(kernel/signal.c)中,其参数包括13个入栈信息.在do_signal()或信号处理函数返回之后,若返回值不为0则再看看是否需要切换进程或
+# 下面这段代码用于处理当前任务中的信号.首先取当前任务结构中的信号位图(32位,每位代表1种信号),
+# 然后用任务结构中的信号阻塞(屏蔽)码,阻塞
+# 不允许的信号位,取得数值最小的信号值,再把原信号位图中该信号对应的位复位(置0),
+# 最后将该信号值作为参数之一调用do_signal().do_signal()
+# 在(kernel/signal.c)中,其参数包括13个入栈信息.在do_signal()或信号处理函数返回之后,
+# 若返回值不为0则再看看是否需要切换进程或
 # 继续处理其他信号.
 	movl signal(%eax), %ebx			# 取信号位图->ebx,每1位代表1种信号,共32个信号.
 	movl blocked(%eax), %ecx		# 取阻塞(屏蔽)信号位图->ecx.
 	notl %ecx						# 每位取反.
 	andl %ebx, %ecx					# 获取许可的信号位图.
-	bsfl %ecx, %ecx					# 从低位(位0)开始扫描位图,看是否有1的位,若有,则ecx保留该位的偏移值(即地址位0--31).
+	bsfl %ecx, %ecx	# 从低位(位0)开始扫描位图,看是否有1的位,若有,则ecx保留该位的偏移值(即地址位0--31).
 	je 3f							# 如果没有信号则向前跳转既出.
 	btrl %ecx, %ebx					# 复位该信号(ebx含有原signal位图).
 	movl %ebx, signal(%eax)			# 重新保存signal位图信息->current->signal.
@@ -193,7 +201,8 @@ ret_from_sys_call:
 	iret 							# 系统调用结束
 
 #### int16 -- 处理器错误中断. 类型: 错误;无错误码.
-# 这是一个外部的基于硬件的异常.当协处理器检测到自己发生错误时,就会通过ERROR引脚通知CPU.下面代码用于处理协处理器发出的出错信号.并跳转去执行C函数
+# 这是一个外部的基于硬件的异常.当协处理器检测到自己发生错误时,就会通过ERROR引脚通知CPU.
+# 下面代码用于处理协处理器发出的出错信号.并跳转去执行C函数
 # math_error()(kernel/math/error.c).返回后将跳转到标号ret_from_sys_call处继续执行.
 .align 4
 coprocessor_error:
@@ -214,9 +223,12 @@ coprocessor_error:
 	jmp math_error					# 执行math_error()(kernel/math/error.c).
 
 #### int7 -- 设备不存在或协处理器不存在. 类型:错误;无错误码.
-# 如果控制寄存器CR0中EM(模拟)标志置位,则当CPU执行一个协处理器指令时就会引发该中断,这样CPU就可以有机会让这个中断处理程序模拟处理器指令.CR0的交换标志TS是
-# 在CPU执行任务转换时设置的.TS可以用来确定什么时候协处理器中的内容与CPU正在执行的任务不匹配了.当CPU在运行一个协处理器转移指令时发现TS置位时,就会引发该中断.
-# 此时就可以保存前一个任务的协处理器内容,并恢复新任务的协处理器执行状态.参见kernel/sched.c.该中断最后将转移到标号ret_from_sys_call处执行下去(检测并处理
+# 如果控制寄存器CR0中EM(模拟)标志置位,则当CPU执行一个协处理器指令时就会引发该中断,
+# 这样CPU就可以有机会让这个中断处理程序模拟处理器指令.CR0的交换标志TS是
+# 在CPU执行任务转换时设置的.TS可以用来确定什么时候协处理器中的内容与CPU正在执行的任务不匹配了.
+# 当CPU在运行一个协处理器转移指令时发现TS置位时,就会引发该中断.
+# 此时就可以保存前一个任务的协处理器内容,并恢复新任务的协处理器执行状态.
+# 参见kernel/sched.c.该中断最后将转移到标号ret_from_sys_call处执行下去(检测并处理
 # 信号).
 .align 4
 device_not_available:
@@ -252,8 +264,10 @@ device_not_available:
 	popl %ebp
 	ret								# 这里的ret将跳转到ret_from_sys_call.
 
-#### int32 -- (int 0x20)时钟中断处理程序.中断频率设置为100Hz(include/linux/sched.h),定时芯片8253/8254是
-# 在(kernel/sched.c)处初始化的.因此这里jiffies每10毫秒加1.这段代码将jiffies增1,发送结束中断指令给8259控制器,
+#### int32 -- (int 0x20)时钟中断处理程序.中断频率设置为100Hz(include/linux/sched.h),
+# 定时芯片8253/8254是
+# 在(kernel/sched.c)处初始化的.因此这里jiffies每10毫秒加1.这段代码将jiffies增1,
+# 发送结束中断指令给8259控制器,
 # 然后用当前特权级作为参数调用C函数do_timer(long CPL).当调用返回时转去检测并处理信号.
 .align 4
 timer_interrupt:
@@ -261,7 +275,8 @@ timer_interrupt:
 	push %es						# into them. %fs is used by _system_call
 	push %fs						# 保存ds,es并让其指向内核数据段.fs将用于system_call.
 	pushl $-1						# fill in -1 for orig_eax	# 填-1,表明不是系统调用.
-	# 下面我们保存寄存器eax,ecx和edx.这是因为gcc编译器在调用函数时不会保存它们.这里也保存了ebx寄存器.因为在后面ret_from_sys_call
+	# 下面我们保存寄存器eax,ecx和edx.这是因为gcc编译器在调用函数时不会保存它们.
+	# 这里也保存了ebx寄存器.因为在后面ret_from_sys_call
 	# 中会用到它.
 	pushl %edx						# we save %eax,%ecx,%edx as gcc doesn't
 	pushl %ecx						# save those across function calls. %ebx
@@ -276,7 +291,8 @@ timer_interrupt:
 	# 由于初始化中断控制芯片时没有采用自己动EOI,所以这里需要发指令结束该硬件中断.
 	movb $0x20, %al					# EOI to interrupt controller #1
 	outb %al, $0x20
-	# 下面从堆栈中取出执行系统调用代码的选择符(CS段寄存器值)中的当前特权级别(0或3)并压入堆栈,作为do_timer的参数.do_timer()函数执行
+	# 下面从堆栈中取出执行系统调用代码的选择符(CS段寄存器值)中的当前特权级别(0或3)并压入堆栈,
+	# 作为do_timer的参数.do_timer()函数执行
 	# 任务切换,计时等工作,在kernel/sched.c实现.
 	movl CS(%esp), %eax
 	andl $3, %eax					# %eax is CPL (0 or 3, 0=supervisor)

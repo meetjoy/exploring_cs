@@ -183,7 +183,8 @@ int core_dump(long signr)
 	return(0);	/* We didn't do a dump */
 }
 
-// 系统调用的中断处理程序中真正的信号预处理程序（在kernel/sys_call.s）。这段代码的主要作用是将信号处理句柄插入到
+// 系统调用的中断处理程序中真正的信号预处理程序（在kernel/sys_call.s）。
+// 这段代码的主要作用是将信号处理句柄插入到
 // 用户程序堆栈中，并在本系统调用结束返回后立刻执行信号句柄程序，然后继续执行用户的程序。
 // 函数的参数是进入系统调用处理程序sys_call.s开始，直到调用本函数前逐步压入堆栈的值。这些值包括：
 // 1、CPU执行中断指令压入的用户栈地址ss和esp、标志寄存器eflags和返回地址cs和eip；
@@ -197,8 +198,8 @@ int do_signal(long signr, long eax, long ebx, long ecx, long edx, long orig_eax,
 {
 	unsigned long sa_handler;
 	long old_eip = eip;
-	struct sigaction * sa = current->sigaction + signr - 1;			// 得到对应信号的处理数据结构
-	int longs;                      								// 即current->sigaction[signr-1]。
+	struct sigaction * sa = current->sigaction + signr - 1;	// 得到对应信号的处理数据结构
+	int longs;                      						// 即current->sigaction[signr-1]。
 
 	unsigned long * tmp_esp;
 
@@ -208,22 +209,30 @@ int do_signal(long signr, long eax, long ebx, long ecx, long edx, long orig_eax,
 		current->pid, signr, eax, orig_eax,
 		sa->sa_flags & SA_INTERRUPT);
 #endif	/* Continue, execute handler */
-	// 如果不是系统调用而是其他中断执行过程中调用的本函数时，roig_eax值为-1。因此当orig_eax不等于-1时，说明是在某个系统调用
-	// 的最后调用了本函数。在kernel/exit.c的waitpid()函数中，如果收到了SIGCHLD信号，或者在读管道函数fs/pipe.c中，管道
-	// 当前读数据但没有读到任何数据等情况下，进程收到了任何一个非阻塞的信号，则都会-ERESTARTSYS返回值返回。它表示进程可以被
-	// 中断，但是在继续执行后会重新启动系统调用。返回码-ERESTARTNOINTR说明在处理完信号后要求返回到原系统调用中继续运行，即系统
+	// 如果不是系统调用而是其他中断执行过程中调用的本函数时，roig_eax值为-1。
+	// 因此当orig_eax不等于-1时，说明是在某个系统调用
+	// 的最后调用了本函数。在kernel/exit.c的waitpid()函数中，如果收到了SIGCHLD信号，
+	// 或者在读管道函数fs/pipe.c中，管道
+	// 当前读数据但没有读到任何数据等情况下，进程收到了任何一个非阻塞的信号，
+	// 则都会-ERESTARTSYS返回值返回。它表示进程可以被
+	// 中断，但是在继续执行后会重新启动系统调用。
+	// 返回码-ERESTARTNOINTR说明在处理完信号后要求返回到原系统调用中继续运行，即系统
 	// 调用不会被中断。
-	// 因此下面语句说明如果是在系统调用中调用的本函数，并且相应系统调用的返回码eax等于-ERESTARTSYS或-ERESTARTNOINTR时进行下面
+	// 因此下面语句说明如果是在系统调用中调用的本函数，
+	// 并且相应系统调用的返回码eax等于-ERESTARTSYS或-ERESTARTNOINTR时进行下面
 	// 的处理（实际上还没有真正回到用户程序中）。
 	if ((orig_eax != -1) &&
 	    ((eax == -ERESTARTSYS) || (eax == -ERESTARTNOINTR))) {
-		// 如果系统调用返回码是-ERESTARTSYS（重新启动系统调用），并且sigaction中含有标志SA_INTERRUPT（系统调用被信号中断后不重新
-		// 启动系统调用）或者信号值小于SIGCONT或者信号值大于SIGTTOU（即信号不是SIGCONT、SIGSTOP、SIGTSTP、SIGTTIN或SIGTTOU），
+		// 如果系统调用返回码是-ERESTARTSYS（重新启动系统调用），
+		// 并且sigaction中含有标志SA_INTERRUPT（系统调用被信号中断后不重新
+		// 启动系统调用）或者信号值小于SIGCONT或者信号值大于SIGTTOU
+		// （即信号不是SIGCONT、SIGSTOP、SIGTSTP、SIGTTIN或SIGTTOU），
 		// 则修改系统调用的返回值为eax = -EINTR，即被信号中断的系统调用。
 		if ((eax == -ERESTARTSYS) && ((sa->sa_flags & SA_INTERRUPT) ||
 		    signr < SIGCONT || signr > SIGTTOU))
 			*(&eax) = -EINTR;
-		// 否则就恢复进程寄存器eax在调用系统调用之前的值，并且把源程序指令指针回调2个字节。即当返回用户程序时，让程序重新启动执行被信号
+		// 否则就恢复进程寄存器eax在调用系统调用之前的值，并且把源程序指令指针回调2个字节。
+		// 即当返回用户程序时，让程序重新启动执行被信号
 		// 中断的系统调用。
 		else {
 			*(&eax) = orig_eax;     				// orig_eax系统调用号
@@ -238,7 +247,7 @@ int do_signal(long signr, long eax, long ebx, long ecx, long edx, long orig_eax,
 	// 如果信号句柄为SIG_IGN（1,默认忽略句柄）则不对信号进行处理而直接返回。
 	sa_handler = (unsigned long) sa->sa_handler;
 	if (sa_handler == 1)
-		return(1);   								/* Ignore, see if there are more signals... */
+		return(1);   					/* Ignore, see if there are more signals... */
 	// 如果句柄为SIG_DFL（0,默认处理），则根据具体的信号进行分别处理。
 	if (!sa_handler) {
 		switch (signr) {
@@ -247,8 +256,10 @@ int do_signal(long signr, long eax, long ebx, long ecx, long edx, long orig_eax,
 		case SIGCHLD:
 			return(1);  							/* Ignore, ... */
 
-		// 如果信号是以下4种信号之一，则把当前进程状态置为停止状态TASK_STOPPED。若当前进程父进程对SIGCHLD信号的sigaction
-		// 处理标志SA_NOCLDSTOP（即当子进程停止执行或又继续执行时不要产生SIGCHLD信号）没有置位，那么就给父进程发送SIGCHLD
+		// 如果信号是以下4种信号之一，则把当前进程状态置为停止状态TASK_STOPPED。
+		// 若当前进程父进程对SIGCHLD信号的sigaction
+		// 处理标志SA_NOCLDSTOP（即当子进程停止执行或又继续执行时不要产生SIGCHLD信号）没有置位，
+		// 那么就给父进程发送SIGCHLD
 		// 信号。
 		case SIGSTOP:
 		case SIGTSTP:
