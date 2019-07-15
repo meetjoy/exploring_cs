@@ -143,8 +143,8 @@ sys_call:
 # 导致进程
 # 组中所有进程处于停止状态.而当前进程则会立刻返回.
 2:
-	movl current, %eax				# 取当前任务(进程)数据结构指针->eax.
-	cmpl $0, state(%eax)			# state,如果当前进程的状态不是0就绪状态则重新进行调度进程执行
+	movl current, %eax		# 取当前任务(进程)数据结构指针->eax.
+	cmpl $0, state(%eax)	# state,如果当前进程的状态不是0就绪状态则重新进行调度进程执行
 	jne reschedule
 	cmpl $0, counter(%eax)			# counter,如果当前进程剩余的执行时间为0则重新进行调度进程执行
 	je reschedule
@@ -245,7 +245,8 @@ device_not_available:
 	mov %ax, %es
 	movl $0x17, %eax				# fs置为指向局部数据段(出错程序的数据段).
 	mov %ax, %fs
-	# 清CR0中任务已交换标志TS,并取CR0值.若其中协处理器仿真标志EM没有置位,说明不是EM引起的中断,则恢复任务协处理器状态,执行C函数math_state_restore(),并在返回时
+	# 清CR0中任务已交换标志TS,并取CR0值.若其中协处理器仿真标志EM没有置位,说明不是EM引起的中断,
+	# 则恢复任务协处理器状态,执行C函数math_state_restore(),并在返回时
 	# 去执行ret_from_sys_call处的代码.
 	pushl $ret_from_sys_call		# 把下面跳转或调用的返回地址入栈.
 	clts							# clear TS so that we can use math
@@ -312,7 +313,8 @@ sys_execve:
 	ret
 
 #### sys_fork()调用,用于创建子进程,是system_call功能2.原型在include/linux/sys.h中.
-# 首先调用C函数find_empty_process(),取得一个进程号last_pid.若返回负数则说明目前任务数组已满.然后调用copy_process()复制进程.
+# 首先调用C函数find_empty_process(),取得一个进程号last_pid.若返回负数则说明目前任务数组已满.
+# 然后调用copy_process()复制进程.
 .align 4
 sys_fork:
 	call find_empty_process			# 为新进程取得进程号last_pid(kernel/fork.c)
@@ -329,8 +331,10 @@ sys_fork:
 
 #### int 46 -- (int 0x2E) 硬盘中断处理程序,响应硬盘中断请求IRQ14.
 # 当请求的硬盘操作完成或出错就会发出此中断信号.(参见kernel/blk_drv/hd.c).
-# 首先问8259A中断控制从芯片发送结束硬件中断指令(EOI),然后取变量do_hd中的函数指针放入edx寄存器中,并置do_hd为NULL,接着判断edx函数指针
-# 是否为空.如果为空,则给edx赋值指向unexpected_hd_interrupt(),用于显示出错信息.随后向8259A主芯片送EOI指令,并调用edx中指针指向的函数:
+# first, send 8259A中断控制从芯片发送结束硬件中断指令(EOI),然后取变量do_hd中的函数指针放入edx寄存器中,
+# 并置do_hd为NULL,接着判断edx函数指针
+# 是否为空.如果为空,则给edx赋值指向unexpected_hd_interrupt(),用于显示出错信息.
+# 随后向8259A主芯片送EOI指令,并调用edx中指针指向的函数:
 # read_intr(),write_intr()或unexpected_hd_interrupt().
 hd_interrupt:
 	pushl %eax
@@ -349,7 +353,8 @@ hd_interrupt:
 	outb %al, $0xA0					# EOI to interrupt controller #1	# 送从8259A
 	jmp 1f							# give port chance to breathe	# 这里jmp起延时作用.
 1:	jmp 1f
-	# do_hd定义为一个函数指针,将被赋值read_intr()或write_intr()函数地址.放到edx寄存器后就将do_hd指针变量置为NULL.然后测试得到的函数指针,
+	# do_hd定义为一个函数指针,将被赋值read_intr()或write_intr()函数地址.
+	# 放到edx寄存器后就将do_hd指针变量置为NULL.然后测试得到的函数指针,
 	# 若该指针为空,则赋予该指针指向C函数unexpected_hd_interrupt(),以处理未知硬盘中断.
 1:	xorl %edx, %edx
 	movl %edx, hd_timeout			# hd_timeout置为0.表示控制器已在规定时间内产生了中断.
@@ -358,9 +363,10 @@ hd_interrupt:
 	jne 1f							# 若空,则让指针指向C函数unexpected_hd_interrupt().
 	movl $unexpected_hd_interrupt, %edx
 1:	outb %al, $0x20					# 送8259A主芯片EOI指令(结束硬件中断).
-	call *%edx						# "interesting" way of handling intr. # 调用do_hd指向的C函数.
+	call *%edx						# "interesting" way of handling intr. 
+	                                # 调用do_hd指向的C函数.
 	pop %fs
-	pop %es
+	pop %es   
 	pop %ds
 	popl %edx
 	popl %ecx
@@ -369,9 +375,12 @@ hd_interrupt:
 
 #### int38 -- (int 0x26)软盘驱动器中断处理程序,响应硬件中断请求IRQ6.
 # 其处理过程与上面对硬盘的处理基本一样.(kernel/blk_drv/floppy.c).
-# 首先向8259A中断控制器主芯片发送EOI指令,然后取变量do_floppy中的函数指针放入eax寄存器中,并置do_floppy为NULL,
-# 接着判断eax函数指针是否为空.如为空,则给eax赋值张贴unexpected_floppy_interrupt(),用于显示出错信息.随后调用
-# eax指向的函数:rw_interrupt,seek_interrupt,recal_interrupt,reset_interrupt或unexpected_floppy_interrupt.
+# 首先向8259A中断控制器主芯片发送EOI指令,然后取变量do_floppy中的函数指针放入eax寄存器中,
+# 并置do_floppy为NULL,
+# 接着判断eax函数指针是否为空.如为空,则给eax赋值张贴unexpected_floppy_interrupt(),
+# 用于显示出错信息.随后调用
+# eax指向的函数:rw_interrupt,seek_interrupt,recal_interrupt,reset_interrupt或
+# unexpected_floppy_interrupt.
 floppy_interrupt:
 	pushl %eax
 	pushl %ecx

@@ -235,7 +235,7 @@ int do_signal(long signr, long eax, long ebx, long ecx, long edx, long orig_eax,
 		// 即当返回用户程序时，让程序重新启动执行被信号
 		// 中断的系统调用。
 		else {
-			*(&eax) = orig_eax;     				// orig_eax系统调用号
+			*(&eax) = orig_eax;  // orig_eax系统调用号
 			//*(&eip) = old_eip -= 2;
 			// 系统调用返回到用户态的时候再次执行本次系统调用
 			old_eip -= 2;
@@ -272,8 +272,10 @@ int do_signal(long signr, long eax, long ebx, long ecx, long edx, long orig_eax,
 				current->p_pptr->signal |= (1 << (SIGCHLD - 1));
 			return(1);  							/* Reschedule another event */
 
-		// 如果信号是以下6种信号之一，那么若信号产生了core_dump，则以退出码为signr|0x80调用do_exit()退出。否则退出码就是信号
-		// 值。do_exit()的参数是返回码和程序提供的退出状态信息。可作为wait()或waitpid()函数的状态信息。参见sys/wait.h。
+		// 如果信号是以下6种信号之一，那么若信号产生了core_dump，则以退出码为signr|0x80调用do_exit()退出。
+		// 否则退出码就是信号值。do_exit()的参数是返回码和程序提供的退出状态信息。
+		// 可作为wait()或waitpid()函数的状态信息。
+		// 参见sys/wait.h。
 		// wait()或waidpid()利用这些宏就可以取得子进程的退出状态码或子进程终止的原因（信号）。
 		case SIGQUIT:
 		case SIGILL:
@@ -295,30 +297,40 @@ int do_signal(long signr, long eax, long ebx, long ecx, long edx, long orig_eax,
          * OK，现在我们准备对信号句柄调用的设置
          */
 	// 如果该信号句柄只需被调用一次，则将该句柄置空。注意，该信号句柄前面已经保存在sa_handler指针中。
-	// 在系统调用进程内核时，用户程序返回地址（eip、cs）被保存在内核态栈中。下面这段代码修改内核态堆栈上用户调用时
-	// 的代码指针eip为指向信号处理句柄，同时也将sa_restorer、signr、进程屏蔽码（如果SA_NOMASK没置位）、eax、
-	// ecx、edx作为参数以及原调用系统调用的程序返回指针及标志寄存器值压入用户堆栈。因此在本次系统调用中断返回用户
+	// 在系统调用进程内核时，用户程序返回地址（eip、cs）被保存在内核态栈中。
+	// 下面这段代码修改内核态堆栈上用户调用时
+	// 的代码指针eip为指向信号处理句柄，同时也将sa_restorer、signr、进程屏蔽码（如果SA_NOMASK没置位）、
+	// eax、
+	// ecx、edx作为参数以及原调用系统调用的程序返回指针及标志寄存器值压入用户堆栈。
+	// 因此在本次系统调用中断返回用户
 	// 程序时会首先执行用户信号句柄程序，然后继续执行用户程序。
 	if (sa->sa_flags & SA_ONESHOT)
 		sa->sa_handler = NULL;
-	// 将内核态栈上用户调用系统调用 下一条代码指针eip指向该信号处理句柄。由于C函数是传值函数，因此给eip赋值时需要
+	// 将内核态栈上用户调用系统调用 下一条代码指针eip指向该信号处理句柄。由于C函数是传值函数，
+	// 因此给eip赋值时需要
 	// 使用“*(&eip)”的形式。另外，如果允许信号自己的处理句柄收到信号自己，则也需要将进程的阻塞码压入堆栈。
-	// 这里请注意，使用如下方式（第193行）对普通C函数参数进行修改是不起作用的。因为当函数返回时堆栈上的参数将会被
-	// 调用者丢弃。这里之所以可以使用这种方式，是因为该函数是从汇编程序中被调用的，并且在函数返回后汇编程序并没有把
+	// 这里请注意，使用如下方式（第193行）对普通C函数参数进行修改是不起作用的。
+	// 因为当函数返回时堆栈上的参数将会被
+	// 调用者丢弃。这里之所以可以使用这种方式，是因为该函数是从汇编程序中被调用的，
+	// 并且在函数返回后汇编程序并没有把
 	// 调用do_signal()时的所有参数都丢弃。eip等仍然在堆栈中。
-	// sigaction结构的sa_mask字段给出了在当前信号句柄（信号描述符）程序执行期间应该被屏蔽的信号集。同时，引起本
-	// 信号句柄执行的信号也会被屏蔽。不过若sa_flags中使用了SA_NOMASK标志，那么引起本信号句柄执行的信号将不会被屏蔽
+	// sigaction结构的sa_mask字段给出了在当前信号句柄（信号描述符）程序执行期间应该被屏蔽的信号集。
+	// 同时，引起本
+	// 信号句柄执行的信号也会被屏蔽。不过若sa_flags中使用了SA_NOMASK标志，
+	// 那么引起本信号句柄执行的信号将不会被屏蔽
 	// 掉。如果允许信号自己的处理句柄程序收到信号自己，则也需要将进程的信号阻塞码压入堆栈。
 	*(&eip) = sa_handler;
 	longs = (sa->sa_flags & SA_NOMASK)?7:8;
-	// 将原调用程序的用户堆栈指针向下扩展7（或8）个长字（用来存放调用信号句柄的参数等），并检查内存使用情况（如内存超
+	// 将原调用程序的用户堆栈指针向下扩展7（或8）个长字（用来存放调用信号句柄的参数等），
+	// 并检查内存使用情况（如内存超
 	// 界则分配新页等）。
 	//*(&esp) -= longs;
 	__asm__("subl %1, %0\n\t" \
 			: \
 			:"m"(esp), "a"(longs * 4));
 	verify_area(esp, longs * 4);
-	// 在用户堆栈中从下到上存放sa_restorer、信号signr、屏蔽码blocked（如果SA_NOMASK置位）、eax、ecx、edx、eflags
+	// 在用户堆栈中从下到上存放sa_restorer、信号signr、屏蔽码blocked（如果SA_NOMASK置位）、
+	// eax、ecx、edx、eflags
 	// 和用户程序原代码指针。
 	tmp_esp = esp;
 	put_fs_long((long) sa->sa_restorer, tmp_esp++);

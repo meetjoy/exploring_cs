@@ -206,7 +206,8 @@ void schedule(void)
 		next = 0;
 		i = NR_TASKS;
 		p = &task[NR_TASKS];
-		// 这段代码是从任务数组的最后一个任务开始循环处理,并跳过不含任务的数组糟.比较每个就绪状态任务的counter(任务运行时间的递减滴答计数)值,
+		// 这段代码是从任务数组的最后一个任务开始循环处理,并跳过不含任务的数组糟.
+		// 比较每个就绪状态任务的counter(任务运行时间的递减滴答计数)值,
 		// 哪一个值大,运行时间还不长,next就指向哪个的任务号.
 		while (--i) {
 			// 当前索引没有进程指针则跳过当前循环
@@ -215,8 +216,10 @@ void schedule(void)
 			if ((*p)->state == TASK_RUNNING && (*p)->counter > c)
 				c = (*p)->counter, next = i;
 		}
-		// 如果比较得出有counter值不等于0的结果,或者後方中没有一个可运行的任务存在(此时c仍然为-1,next=0),则退出开始的循环,执行161行上的任务切换
-		// 操作.否则就根据每个任务的优先权值,更新每一个任务的counter值,然后回到125行重新比较.counter值的计算方式为counter = counter /2 +priority.
+		// 如果比较得出有counter值不等于0的结果,或者後方中没有一个可运行的任务存在
+		// (此时c仍然为-1,next=0),则退出开始的循环,执行161行上的任务切换
+		// 操作.否则就根据每个任务的优先权值,更新每一个任务的counter值,然后回到125行重新比较.
+		// counter值的计算方式为counter = counter /2 +priority.
 		// 注意,这里计算过程不考虑进程的状态.
 		if (c) break;
 		for(p = &LAST_TASK ; p > &FIRST_TASK ; --p)
@@ -230,7 +233,8 @@ void schedule(void)
 }
 
 // pause()系统调用.转换当前任务的状态为可中断的等待状态,并重新调试.
-// 该系统调用将导致进程进入睡眠状态,直到收到一个信号.该信号用于终止进程或者使进程调用一个信号捕获函数.只有当捕获了一个信号,并且信号捕获处理函数返回,
+// 该系统调用将导致进程进入睡眠状态,直到收到一个信号.该信号用于终止进程或者使进程调用一个信号捕获函数.
+// 只有当捕获了一个信号,并且信号捕获处理函数返回,
 // pause()才会返回.此时pause()返回值应该是-1,并且errno被置为EINTR.这里还没有完全实现(直到0.95版).
 int sys_pause(void)
 {
@@ -458,13 +462,15 @@ void add_timer(long jiffies, void (*fn)(void))
 }
 
 // 时钟中断C函数处理程序,在sys_call.s中的timer_interrupt被调用.
-// 参数cpl是当前特权级0或3,是时钟中断发生时正被执行的代码选择符中的特权级.cpl=0时表示中断发生时正在执行内核代码,cpl=3时表示中断发生时正在执行用户
+// 参数cpl是当前特权级0或3,是时钟中断发生时正被执行的代码选择符中的特权级.
+// cpl=0时表示中断发生时正在执行内核代码,cpl=3时表示中断发生时正在执行用户
 // 代码.对于一个进程由于执行时间片用完时,则进行任务切换.并执行一个计时更新工作.
 void do_timer(long cpl)
 {
 	static int blanked = 0;
 
-	// 首先判断是否经过了一定时间而让屏幕黑屏(blankcount).如果blankcount计数不为零,或者黑屏延时间隔时间blankinterval为0的话,那么若已经处理黑屏状态
+	// 首先判断是否经过了一定时间而让屏幕黑屏(blankcount).如果blankcount计数不为零,
+	// 或者黑屏延时间隔时间blankinterval为0的话,那么若已经处理黑屏状态
 	// (黑屏标志blanked=1),则让屏幕恢复显示.若blnkcount计数不为零,则递减之,并且复位黑屏标志.
 	if (blankcount || !blankinterval) {
 		if (blanked)
@@ -480,21 +486,23 @@ void do_timer(long cpl)
 	// 接着处理硬盘操作超时问题.如果硬盘超时计数递减之后为0,则进行硬盘访问超时处理.
 	if (hd_timeout)
 		if (!--hd_timeout)
-			hd_times_out();							// 硬盘访问超时处理(blk_drv/hd.c).
+			hd_times_out();		// 硬盘访问超时处理(blk_drv/hd.c).
 
 	// 如果发声计数次数到,则关闭发声.(向0x61口发送命令,复位位0和1.位0控制8253计数器2的工作,位1控制扬声器.
-	if (beepcount)									// 扬声器发声时间滴答数(chr_drv/console.c)
+	if (beepcount)				// 扬声器发声时间滴答数(chr_drv/console.c)
 		if (!--beepcount)
 			sysbeepstop();
 
-	// 如果当前特权级(cpl)为0(最高,表示是内核程序在工作),则将内核代码时间stime递增;[Linus把内核程序统称为超级用户(superviser)的
+	// 如果当前特权级(cpl)为0(最高,表示是内核程序在工作),则将内核代码时间stime递增;
+	// [Linus把内核程序统称为超级用户(superviser)的
 	// 程序.这种称呼来自Intel CPU手册.]如果cpl>0,则表示是一般用户程序在工作,增加utime.
 	if (cpl)
 		current->utime++;
 	else
 		current->stime++;
 
-	// 如果有定时器存在,则将链表第1个定时器的值减1.如果已等于0,则调用相应的处理程序,并将该处理程序指针置空.然后去掉该项定时器.next_timer是
+	// 如果有定时器存在,则将链表第1个定时器的值减1.如果已等于0,则调用相应的处理程序,
+	// 并将该处理程序指针置空.然后去掉该项定时器.next_timer是
 	// 定时器链表的头指针.
 	if (next_timer) {
 		next_timer->jiffies--;
@@ -510,10 +518,11 @@ void do_timer(long cpl)
 	// 如果当前软盘控制器FDC的数字输出寄存器中马达启动位有置位的,则执行软盘定时程序.
 	if (current_DOR & 0xf0)
 		do_floppy_timer();
-	// 如果进程运行时间还没完,则退出.否则置当前任务运行计数值为0.并且若发生时钟中断时正在内核代码中运行则返回,否则调用执行调试函数.
+	// 如果进程运行时间还没完,则退出.否则置当前任务运行计数值为0.
+	// 并且若发生时钟中断时正在内核代码中运行则返回,否则调用执行调试函数.
 	if ((--current->counter) > 0) return;
 	current->counter = 0;
-	if (!cpl) return;								// 对于内核态程序,不信赖counter值进行调试.
+	if (!cpl) return;			// 对于内核态程序,不信赖counter值进行调试.
 	schedule();
 }
 
