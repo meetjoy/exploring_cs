@@ -52,7 +52,7 @@ static inline void put_fs_word(short val,short * addr)
 __asm__ ("movw %0,%%fs:%1"::"q" (val),"m" (*addr));
 }
 
-//// 将一长字存放在fs段中指定内存地址处.
+// 将一长字存放在fs段中指定内存地址处.
 // 参数:val - 长字值;addr - 内存地址.
 // %0 - 寄存器(长字值val);%1 - (内存地址addr).
 static inline void put_fs_long(unsigned long val,unsigned long * addr)

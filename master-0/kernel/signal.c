@@ -53,35 +53,40 @@ int sys_sigpending(sigset_t *set)
 /*
  * 自动地更换成新的信号屏蔽码，并等待信号的到来。
  *
- * 我们需要对系统调用（syscall）做一些处理。我们会从系统调用库接口取得某些信息。注意，我们需要把调用规则与libc库
- * 中的子程序统一考虑。
+ * 我们需要对系统调用（syscall）做一些处理。我们会从系统调用库接口取得某些信息。
+ * 注意，我们需要把调用规则与libc库中的子程序统一考虑。
  *
- * “set”正是POSIX标准1003.1-1998的3.3.7节中所描述的信号屏蔽码sigmask。其中认为类型sigset_t能够作为一个32位
- * 量传递。
+ * “set”正是POSIX标准1003.1-1998的3.3.7节中所描述的信号屏蔽码sigmask。
+ * 其中认为类型sigset_t能够作为一个32位量传递。
  *
- * “restart”中保持有重启标志。如果为非0值，那么我们就设置原来的屏蔽码，并且正常返回。如果它为0,那么我们就把当前的
+ * “restart”中保持有重启标志。如果为非0值，那么我们就设置原来的屏蔽码，并且正常返回。
+ * 如果它为0,那么我们就把当前的
  * 屏蔽码保存在oldmask中并且阻塞进程，直到收到任何一个信号为止。
  */
 // 该系统调用临时把进程信号屏蔽码替换成参数中给定的set，然后挂起进程，直到收到一个信号为止。
-// restart是一个被中断的系统调用重新启动标志。当第1次调用该系统调用时，这是0.并且在该函数中会把进程原来的阻塞码
-// blocked保存起来（old_mask），并设置restart为非0值。因此当进程第2次调用该系统调用时，它就会恢复进程原来保存在
-// old_mask中的阻塞码。
+// restart是一个被中断的系统调用重新启动标志。当第1次调用该系统调用时，这是0.
+// 并且在该函数中会把进程原来的阻塞码
+// blocked保存起来（old_mask），并设置restart为非0值。因此当进程第2次调用该系统调用时，
+// 它就会恢复进程原来保存在old_mask中的阻塞码。
 int sys_sigsuspend(int restart, unsigned long old_mask, unsigned long set)
 {
-	// pause()系统调用将导致调用它的进程进入睡眠状态，直到收到一个信号。该信号或者会终止进程时执行，或者导致进程去执行
-	// 相应的信号捕获函数。
+	// pause()系统调用将导致调用它的进程进入睡眠状态，直到收到一个信号。该信号或者会终止进程时执行，
+	// 或者导致进程去执行相应的信号捕获函数。
     extern int sys_pause(void);
 
-	// 如果restart标志不为0,表示重新让程序运行起来。于是恢复前面保存在old_mask中的原进程阻塞码。并返回码-EINTR（系统
-	// 调用被信号中断）。
+	// 如果restart标志不为0,表示重新让程序运行起来。于是恢复前面保存在old_mask中的原进程阻塞码。
+	// 并返回码-EINTR（系统调用被信号中断）。
     if (restart) {
 			/* we're restarting */  /* 我们正在重新启动系统调用 */
 			current->blocked = old_mask;
 			return -EINTR;
     }
-	// 否则表示restart标志的值是0.表示第1次调用。于是首先设置restart标志（置为1），保存进程当前阻塞码blocked到old_mask
-	// 中，并把进程的阻塞码替换成set。然后调用pause()让进程睡眠，等待信号的到来。当进程收到一个信号时，pause()就会返回，并且
-	// 进程会去执行信号处理函数，然后本调用返回-ERESTARTNOINTR码退出。这个返回码说明在处理完信号后要求返回到本系统调用中继续
+	// 否则表示restart标志的值是0.表示第1次调用。于是首先设置restart标志（置为1），
+	// 保存进程当前阻塞码blocked到old_mask
+	// 中，并把进程的阻塞码替换成set。然后调用pause()让进程睡眠，等待信号的到来。
+	// 当进程收到一个信号时，pause()就会返回，并且
+	// 进程会去执行信号处理函数，然后本调用返回-ERESTARTNOINTR码退出。
+	// 这个返回码说明在处理完信号后要求返回到本系统调用中继续
 	// 运行，即本系统调用不会被中断。
     /* we're not restarting.  do the work */
     /* 我们不是重新运行，那么就干活吧 */
@@ -103,7 +108,8 @@ static inline void save_old(char * from, char * to)
 {
 	int i;
 
-	// 首先验证to处的内存空间是否足够大。然后把一个sigaction结构信息复制到fs段（用户）空间中。宏函数put_fs_byte()在
+	// 首先验证to处的内存空间是否足够大。
+	// 然后把一个sigaction结构信息复制到fs段（用户）空间中。宏函数put_fs_byte()在
 	// include/asm/segment.h中实现。
 	verify_area(to, sizeof(struct sigaction));
 	for (i = 0 ; i < sizeof(struct sigaction) ; i++) {
@@ -124,8 +130,10 @@ static inline void get_new(char * from, char * to)
 
 // signal()系统调用。类似于sigaction()。为指定的信号安装新的信号句柄（信号处理程序）。
 // 信号句柄可以是用户指定的函数，也可以是SIG_DFL（默认句柄）或SIG_IGN（忽略）。
-// 参数signum -- 指定的信号； handler -- 指定的句柄； restorer -- 恢复函数指针，该函数由Libc库提供。用于在信号
-// 处理程序结束后恢复系统调用返回时几个寄存器的原有值以及系统调用的返回值，就好像系统调用没有执行过信号处理程序而直接
+// 参数signum -- 指定的信号； handler -- 指定的句柄； restorer -- 恢复函数指针，
+// 该函数由Libc库提供。用于在信号
+// 处理程序结束后恢复系统调用返回时几个寄存器的原有值以及系统调用的返回值，
+// 就好像系统调用没有执行过信号处理程序而直接
 // 返回到用户程序一样。函数返回原信号句柄。
 int sys_signal(int signum, long handler, long restorer)
 {
@@ -134,20 +142,22 @@ int sys_signal(int signum, long handler, long restorer)
 	// 首先验证信号值在有效范围（1--32）内，并且不得是信号SIGKILL和SIGSTOP。因为这两个信号不能被进程捕获。
 	if (signum < 1 || signum > 32 || signum == SIGKILL || signum == SIGSTOP)
 		return -EINVAL;
-	// 然后根据提供的参数组建sigaction结构内容。sa_handler是指定的信号处理句柄（函数）。sa_mask是执行信号处理句柄时的
-	// 信号屏蔽码。sa_flags是执行时的一些标志组合。这里设定该信号处理句柄只使用1次后就恢复到默认值，并允许信号在自己的处理
-	// 句柄中收到。
+	// 然后根据提供的参数组建sigaction结构内容。sa_handler是指定的信号处理句柄（函数）。
+	// sa_mask是执行信号处理句柄时的
+	// 信号屏蔽码。sa_flags是执行时的一些标志组合。这里设定该信号处理句柄只使用1次后就恢复到默认值，
+	// 并允许信号在自己的处理句柄中收到。
 	tmp.sa_handler = (void (*)(int)) handler;
 	tmp.sa_mask = 0;
 	tmp.sa_flags = SA_ONESHOT | SA_NOMASK;
-	tmp.sa_restorer = (void (*)(void)) restorer;    				// 保存恢复处理函数指针。
+	tmp.sa_restorer = (void (*)(void)) restorer;   // 保存恢复处理函数指针。
 	// 接着取该信号原来的处理句柄，并设置该信号的sigaction结构。最后返回原信号句柄。
 	handler = (long) current->sigaction[signum - 1].sa_handler;
 	current->sigaction[signum - 1] = tmp;
 	return handler;
 }
 
-// sigaction()系统调用。改变进程在收到一个信号时的操作。signum是除了SIGKILL以外的任何信号。[如果新操作（action）不为空]
+// sigaction()系统调用。改变进程在收到一个信号时的操作。signum是除了SIGKILL以外的任何信号。
+// [如果新操作（action）不为空]
 // 则新操作被安装。如果oldaction指针不为空，则原操作被保留到oldaction。成功则返回0,否则为-EINVAL。
 int sys_sigaction(int signum, const struct sigaction * action,
 	struct sigaction * oldaction)
@@ -157,7 +167,8 @@ int sys_sigaction(int signum, const struct sigaction * action,
 	// 首先验证信号值在有效范围（1--32）内，并且不得是信号SIGKILL和SIGSTOP。因为这两个信号不能被进程捕获。
 	if (signum < 1 || signum > 32 || signum == SIGKILL || signum == SIGSTOP)
 		return -EINVAL;
-	// 在信号的sigaction结构中设置新的操作（动作）。如果oldaction指针不为空的话，则将原操作指针保存到oldaction所指的位置。
+	// 在信号的sigaction结构中设置新的操作（动作）。如果oldaction指针不为空的话，
+	// 则将原操作指针保存到oldaction所指的位置。
 	tmp = current->sigaction[signum - 1];
 	get_new((char *) action,
 		(char *) (signum - 1 + current->sigaction));
@@ -212,8 +223,8 @@ int do_signal(long signr, long eax, long ebx, long ecx, long edx, long orig_eax,
 	// 如果不是系统调用而是其他中断执行过程中调用的本函数时，roig_eax值为-1。
 	// 因此当orig_eax不等于-1时，说明是在某个系统调用
 	// 的最后调用了本函数。在kernel/exit.c的waitpid()函数中，如果收到了SIGCHLD信号，
-	// 或者在读管道函数fs/pipe.c中，管道
-	// 当前读数据但没有读到任何数据等情况下，进程收到了任何一个非阻塞的信号，
+	// 或者在读管道函数fs/pipe.c中，管道当前读数据但没有读到任何数据等情况下，
+	// 进程收到了任何一个非阻塞的信号，
 	// 则都会-ERESTARTSYS返回值返回。它表示进程可以被
 	// 中断，但是在继续执行后会重新启动系统调用。
 	// 返回码-ERESTARTNOINTR说明在处理完信号后要求返回到原系统调用中继续运行，即系统
@@ -259,8 +270,7 @@ int do_signal(long signr, long eax, long ebx, long ecx, long edx, long orig_eax,
 		// 如果信号是以下4种信号之一，则把当前进程状态置为停止状态TASK_STOPPED。
 		// 若当前进程父进程对SIGCHLD信号的sigaction
 		// 处理标志SA_NOCLDSTOP（即当子进程停止执行或又继续执行时不要产生SIGCHLD信号）没有置位，
-		// 那么就给父进程发送SIGCHLD
-		// 信号。
+		// 那么就给父进程发送SIGCHLD信号。
 		case SIGSTOP:
 		case SIGTSTP:
 		case SIGTTIN:
@@ -300,8 +310,7 @@ int do_signal(long signr, long eax, long ebx, long ecx, long edx, long orig_eax,
 	// 在系统调用进程内核时，用户程序返回地址（eip、cs）被保存在内核态栈中。
 	// 下面这段代码修改内核态堆栈上用户调用时
 	// 的代码指针eip为指向信号处理句柄，同时也将sa_restorer、signr、进程屏蔽码（如果SA_NOMASK没置位）、
-	// eax、
-	// ecx、edx作为参数以及原调用系统调用的程序返回指针及标志寄存器值压入用户堆栈。
+	// eax、ecx、edx作为参数以及原调用系统调用的程序返回指针及标志寄存器值压入用户堆栈。
 	// 因此在本次系统调用中断返回用户
 	// 程序时会首先执行用户信号句柄程序，然后继续执行用户程序。
 	if (sa->sa_flags & SA_ONESHOT)

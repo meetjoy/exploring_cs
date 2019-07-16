@@ -63,7 +63,7 @@ state		= 0						# these are offsets into the task-struct.	# 进程状态码.
 counter		= 4						# 任务运行时间计数(递减)(滴答数),运行时间片.
 priority 	= 8						# 运行优先数.任务开始运行时counter=priority,越大则运行时间越长.
 signal		= 12					# 是信号位图,每个位代表一种信号,信号值=位偏移值+1.
-sigaction 	= 16					# MUST be 16 (=len of sigaction)	# sigaction结构长度必须是16字节.
+sigaction 	= 16					# MUST be 16 (=len of sigaction)# sigaction结构长度必须是16字节.
 blocked 	= (33*16)				# 受阻塞信号位图的偏移量.
 
 # 以下定义在sigaction结构中的偏移量,参见include/signal.h

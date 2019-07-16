@@ -225,7 +225,8 @@ unrshift:
 	ret
 
 
-# 这段代码对收到caps键扫描码进行处理.通过mode中位7可以知道caps键当前是否正处于在按下状态.若是则返回,否则就翻转mode标志中caps键按下的
+# 这段代码对收到caps键扫描码进行处理.通过mode中位7可以知道caps键当前是否正处于在按下状态.
+# 若是则返回,否则就翻转mode标志中caps键按下的
 # 位(位6)和leds标志中caps-lock位(位2),设置mode标志中caps键已按下标志位(位7).
 caps:
 	testb $0x80, mode								# 测试mode中位7是否置位(即在按下状态).
