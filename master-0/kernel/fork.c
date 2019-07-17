@@ -76,8 +76,10 @@ int copy_mem(int nr, struct task_struct * p)
 
 	// 首先取当前进程局部描述符表中代码段描述符和数据段描述符项中的段限长(字节数).
 	// 0x0f是代码段选择符;0x17是数据段选择符.
-	// 然后取当前进程代码段和数据段的线性地址空间中的基地址.由于Linux0.12内核还不支持代码和数据段分立的情况,
-	// 因此这里需要检查代码段和数据段基址是否都相同,并且要求数据段的长度至少不小于代码段的长度,否则内核显示出错信息,并停止运行.
+	// 然后取当前进程代码段和数据段的线性地址空间中的基地址.
+	// 由于Linux0.12内核还不支持代码和数据段分立的情况,
+	// 因此这里需要检查代码段和数据段基址是否都相同,并且要求数据段的长度至少不小于代码段的长度,
+	// 否则内核显示出错信息,并停止运行.
 	// get_limit()和get_base()定义在include/linux/sched.h.
 	code_limit = get_limit(0x0f);
 	data_limit = get_limit(0x17);
@@ -136,7 +138,8 @@ int copy_process(int nr, long ebp, long edi, long esi, long gs, long none,
 	if (!p)
 		return -EAGAIN;
 	task[nr] = p;
-	*p = *current;							/* NOTE! this doesn't copy the supervisor stack */	/* 注意!这样不会复制超级用户堆栈(只复制进程结构) */
+	*p = *current;	/* NOTE! this doesn't copy the supervisor stack */	
+	/* 注意!这样不会复制超级用户堆栈(只复制进程结构) */
 	//	memcpy(p, current, sizeof(struct task_struct));
 	// 随后对复制来的进程结构内容进行一些修改,作为新进程的任务结构.先将新进程的状态置为不可中断等待状态,
 	// 以防止内核调试其执行.然后设置新进程
@@ -152,9 +155,12 @@ int copy_process(int nr, long ebp, long edi, long esi, long gs, long none,
 	p->utime = p->stime = 0;				// 用户态时间和核心态运行时间.
 	p->cutime = p->cstime = 0;				// 子进程用户态和核心态运行时间.
 	p->start_time = jiffies;				// 进程开始运行时间(当前时间滴答数).
-	// 再修改任务状态段TSS数据.由于系统给任务结构p分配了1页新内存,所以(PAGE_SIZE + (long) p)让esp0正好指向该页顶端.ss0:esp0用作程序在内核
-	// 态执行时的栈.另外,在第3章中我们已经知道,每个任务在GDT表中都有两个段描述符,一个是任务的TSS段描述符,另一个是任务的LDT表段描述符.下面语句就是
-	// 把GDT中本任务LDT段描述符的选择符保存在本任务的TSS段.当CPU执行切换任务时,会自动从TSS中把LDT段描述符的选择符加载到ldtr寄存器中.
+	// 再修改任务状态段TSS数据.由于系统给任务结构p分配了1页新内存,
+	// 所以(PAGE_SIZE + (long) p)让esp0正好指向该页顶端.ss0:esp0用作程序在内核
+	// 态执行时的栈.另外,在第3章中我们已经知道,每个任务在GDT表中都有两个段描述符,
+	// 一个是任务的TSS段描述符,另一个是任务的LDT表段描述符.下面语句就是
+	// 把GDT中本任务LDT段描述符的选择符保存在本任务的TSS段.当CPU执行切换任务时,
+	// 会自动从TSS中把LDT段描述符的选择符加载到ldtr寄存器中.
 	p->tss.back_link = 0;
 	p->tss.esp0 = PAGE_SIZE + (long) p;		// 任务内核态栈指针.
 	p->tss.ss0 = 0x10;              		// 内核态栈的段选择符(与内核数据段相同).
@@ -176,9 +182,12 @@ int copy_process(int nr, long ebp, long edi, long esi, long gs, long none,
 	p->tss.gs = gs & 0xffff;
 	p->tss.ldt = _LDT(nr);					// 任务局部表描述符的选择符(LDT描述符在GET中).
 	p->tss.trace_bitmap = 0x80000000;		// (高16位有效).
-	// 如果当前任务使用了协处理器,就保存其上下文.汇编指令clts用于清除控制寄存器CR0中的任务已交换(TS)标志.每当发生任务切换,CPU都会设置该标志.该标志用于管理
-	// 数学协处理器:如果该标志置位,那么每个ESC指令都会被捕获(异常7).如果协处理器存在标志MP也同时置位的话,那么WAIT指令也会捕获.因此,如果任务切换发生在一个
-	// ESC指令开始执行之后,则协处理器中的内容就可能需要在执行新的ESC指令之前保存起来.捕获处理句柄会保存协处理器的内容并复位TS标志.指令fnsave用于把协处理器的
+	// 如果当前任务使用了协处理器,就保存其上下文.汇编指令clts用于清除控制寄存器CR0中的任务已交换(TS)标志.
+	// 每当发生任务切换,CPU都会设置该标志.该标志用于管理
+	// 数学协处理器:如果该标志置位,那么每个ESC指令都会被捕获(异常7).
+	// 如果协处理器存在标志MP也同时置位的话,那么WAIT指令也会捕获.因此,如果任务切换发生在一个
+	// ESC指令开始执行之后,则协处理器中的内容就可能需要在执行新的ESC指令之前保存起来.
+	// 捕获处理句柄会保存协处理器的内容并复位TS标志.指令fnsave用于把协处理器的
 	// 所有状态保存到目的操作数指定的内存区域中(tss.i387).
 	if (last_task_used_math == current)
 		__asm__("clts ; fnsave %0 ; frstor %0"::"m" (p->tss.i387));
@@ -190,8 +199,9 @@ int copy_process(int nr, long ebp, long edi, long esi, long gs, long none,
 		free_page((long) p);
 		return -EAGAIN;
 	}
-	// 如果父进程中有文件是打开的,则将对应文件的打开次数增1.因为这里创建的子进程会与父进程共享这些打开的文件.将当前进程(父进程)的pwd,root和
-	// executable引用次数均增1.与上面同样的道理,子进程也引用了这些i节点.
+	// 如果父进程中有文件是打开的,则将对应文件的打开次数增1.
+	// 因为这里创建的子进程会与父进程共享这些打开的文件.
+	// 将当前进程(父进程)的pwd,root和executable引用次数均增1.与上面同样的道理,子进程也引用了这些i节点.
 	for (i = 0; i < NR_OPEN; i++)
 		if (f = p->filp[i])
 			f->f_count++;
@@ -203,11 +213,15 @@ int copy_process(int nr, long ebp, long edi, long esi, long gs, long none,
 		current->executable->i_count++;
 	if (current->library)
 		current->library->i_count++;
-	// 随后在GDT表中设置新任务TSS段和LDT段描述符项.这两个段的限长均被设置成104字节.参见include/asm/system.h.然后设置进程之间的关系链表指针,即把新进程插入
-	// 到当前进程的子进程链表中.把新进程的父进程设置为当前进程,把新进程的最新子进程指针p_cpt和年轻兄弟进程指针p_ysptr置空.接着让新进程的老兄进程指针p_osptr
-	// 设置等于父进程的最新子进程指针.若当前进程确实还有其他子进程,则让比邻老兄进程的最年轻进程指针p_yspter指向新进程.最后把当前进程的最新子进程指针指向这个新进程.
+	// 随后在GDT表中设置新任务TSS段和LDT段描述符项.这两个段的限长均被设置成104字节.
+	// 参见include/asm/system.h.然后设置进程之间的关系链表指针,即把新进程插入
+	// 到当前进程的子进程链表中.把新进程的父进程设置为当前进程,
+	// 把新进程的最新子进程指针p_cpt和年轻兄弟进程指针p_ysptr置空.接着让新进程的老兄进程指针p_osptr
+	// 设置等于父进程的最新子进程指针.若当前进程确实还有其他子进程,
+	// 则让比邻老兄进程的最年轻进程指针p_yspter指向新进程.最后把当前进程的最新子进程指针指向这个新进程.
 	// 然后把新进程设置成就绪态.最后返回新进程号.
-	// 另外,set_tss_desc()和set_ldt_desc()定义在include/asm/system.h文件中."gdt+(nr<<1)+FIRST_TSS_ENTRY"是任务nr的TSS描述符项在全局表中的地址.
+	// 另外,set_tss_desc()和set_ldt_desc()定义在include/asm/system.h文件中.
+	// "gdt+(nr<<1)+FIRST_TSS_ENTRY"是任务nr的TSS描述符项在全局表中的地址.
 	// 因为每个任务占用GDT表中2项,因此上式中要包括'(nr<<1)'.
 	// 请注意,在任务切换时,任务寄存器tr会由CPU自动加载.
 	set_tss_desc(gdt + (nr << 1) + FIRST_TSS_ENTRY, &(p->tss));
@@ -219,7 +233,7 @@ int copy_process(int nr, long ebp, long edi, long esi, long gs, long none,
 	if (p->p_osptr)						// 若新进程有老兄兄弟进程,则让其年轻进程兄弟指针指向新进程
 		p->p_osptr->p_ysptr = p;
 	current->p_cptr = p;				// 让当前进程最新子进程指针指向新进程.
-	p->state = TASK_RUNNING;			/* do this last, just in case */        /* 设置进程状态为待运行状态栏 */
+	p->state = TASK_RUNNING;/* do this last, just in case *//* 设置进程状态为待运行状态栏 */
 	log(LOG_INFO_TYPE, "<<<<< fork new process current_pid = %d, child_pid = %d, nr = %d >>>>>\n", current->pid, p->pid, nr);
 	return last_pid;        			// 返回新进程号
 }
@@ -229,8 +243,9 @@ int find_empty_process(void)
 {
 	int i;
 
-	// 首先获取新的进程号.如果last_pid增1后超出进程号的正数表示范围,则重新从1开始使用pid号.然后在任务数组中搜索刚设置的pid号是
-	// 否已经被任何任务使用.如果是则跳转到函数开始处理重新获得一个pid号.接着在任务数组中为新任务寻找一个空闲项,并返回项号.last_pid是一
+	// 首先获取新的进程号.如果last_pid增1后超出进程号的正数表示范围,则重新从1开始使用pid号.
+	// 然后在任务数组中搜索刚设置的pid号是否已经被任何任务使用.如果是则跳转到函数开始处理重新获得一个pid号.
+	// 接着在任务数组中为新任务寻找一个空闲项,并返回项号.last_pid是一
 	// 个全局变量,不用返回.如果此时任务数组中64个项已经被全部占用,则返回出错码.
 	repeat:
 		if ((++last_pid) < 0) last_pid = 1;
