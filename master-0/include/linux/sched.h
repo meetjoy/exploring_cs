@@ -462,7 +462,7 @@ static inline unsigned long _get_base(char * addr){
 // 字节数减1,因此这里还需要加1后返回.
 // %0 - 存放段长值(字节数);%1 - 段选择符segment.
 #define get_limit(segment) ({ \
-unsigned long __lim此时新进程与其父进程it; \
+unsigned long __limit; \
 __asm__("lsll %1,%0\n\tincl %0":"=r" (__limit):"r" (segment)); \
 __limit;})
 

@@ -356,8 +356,8 @@ int sys_getpgrp(void)
 
 // 创建一个会话（session）（即设置其leader = 1），并且设置其会话号=其组号=其进程号。
 // 如果当前进程已是会话首领并且不是超级用户，则出错返回。否则设置当前进程为新会话首领（leader = 1），
-// 并且设置当前进程会话
-// 号session和组号pgrp都等于进程号pid，而且设置当前进程没有控制终端。最后系统调用返回会话号。
+// 并且设置当前进程会话号session和组号pgrp都等于进程号pid，而且设置当前进程没有控制终端。
+// 最后系统调用返回会话号。
 int sys_setsid(void)
 {
 	if (current->leader && !suser())

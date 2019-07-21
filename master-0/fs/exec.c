@@ -654,7 +654,7 @@ restart_interp:
 	// 最后将原调用系统中断的程序在堆栈上的代码指针替换为指向新执行程序的入口点,
 	// 并将栈指针替换为新执行文件的栈指针.此后返回指令将弹出这些栈数
 	// 据并使得CPU去执行新执行文件,因此不会返回到原调用系统中断的程序中去了.
-	eip[0] = ex.a_entry;												/* eip, magic happens :-) */	/* eip,魔法起作用了 */
+	eip[0] = ex.a_entry;								/* eip, magic happens :-) */	/* eip,魔法起作用了 */
 	eip[3] = p;															/* stack pointer */		/* esp,堆栈指针 */
 	return 0;
 exec_error2:

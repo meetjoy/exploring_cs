@@ -93,7 +93,8 @@ extern void mem_init(long start, long end);			// 内存管理初始化(mm/memory
 extern long rd_init(long mem_start, int length);	// 虚拟盘初始化(blk_drv/ramdisk.c)
 extern long kernel_mktime(struct tm * tm);			// 计算系统开机启动时间(秒)
 
-// fork系统调用函数,该函数作为static inline表示内联函数，主要用来在进程0里面创建进程1的时候内联，使进程0在生成进程1的时候
+// fork系统调用函数,该函数作为static inline表示内联函数，主要用来在进程0里面创建进程1的时候内联，
+// 使进程0在生成进程1的时候
 // 不使用自己的用户堆栈
 static inline long fork_for_process0() {
 	long __res;
@@ -281,8 +282,10 @@ int main(void)										/* This really IS void, no error here. */
 		__asm__("int $0x80"::"a" (__NR_pause):);					// 即执行系统调用pause().
 }
 
-// 下面函数产生格式化信息并输出到标准输出设备stdout(1),这里是指屏幕上显示.参数'*fmt'指定输出将采用的格式,参见标准C语言书籍.
-// 该子程序正好是vsprintf如何使用的一个简单例子.该程序使用vsprintf()将格式化的字符串放入printbuf缓冲区,然后用write()将
+// 下面函数产生格式化信息并输出到标准输出设备stdout(1),这里是指屏幕上显示.
+// 参数'*fmt'指定输出将采用的格式,参见标准C语言书籍.
+// 该子程序正好是vsprintf如何使用的一个简单例子.
+// 该程序使用vsprintf()将格式化的字符串放入printbuf缓冲区,然后用write()将
 // 缓冲区的内容输出到标准设备(1--stdout).vsprintf()函数的实现见kernel/vsprintf.c.
 int printf(const char *fmt, ...)
 {
@@ -295,7 +298,8 @@ int printf(const char *fmt, ...)
 	return i;
 }
 
-// 在main()中已经进行子系统初始化,包括内存管理,各种硬件设备和驱动程序.init()函数在任务0第1次创建的子进程(任务1)中.它首先对第一个将要执行
+// 在main()中已经进行子系统初始化,包括内存管理,各种硬件设备和驱动程序.
+// init()函数在任务0第1次创建的子进程(任务1)中.它首先对第一个将要执行
 // 的程序(shell)的环境进行初始化,然后以登录shell方式加载程序并执行之.
 void init(void)
 {
@@ -325,9 +329,9 @@ void init(void)
 	if (!(pid = fork())) {
 		close(0);
 		if (open("/etc/rc", O_RDONLY, 0))
-			_exit(1);												// 若打开文件失败,则退出(lib/_exit.c).
-		execve("/bin/sh", argv_rc, envp_rc);						// 替换成/bin/sh程序并执行.
-		_exit(2);													// 若execve()执行失败则退出.
+			_exit(1);									// 若打开文件失败,则退出(lib/_exit.c).
+		execve("/bin/sh", argv_rc, envp_rc);			// 替换成/bin/sh程序并执行.
+		_exit(2);										// 若execve()执行失败则退出.
     }
 	// 下面还是父进程（1）执行的语句。wait()等待子进程停止或终止，返回值应是子进程的进程号（pid)。这三句的作用是父进程等待子进程
 	// 的结束。&i是存放返回状态信息的位置。如果wait()返回值不等于子进程号，则继续等待。
@@ -358,7 +362,5 @@ void init(void)
 		printf("\n\rchild %d died with code %04x\n\r", pid, i);
 		sync();
 	}
-	_exit(0);														/* NOTE! _exit, not exit() */
+	_exit(0);							/* NOTE! _exit, not exit() */
 }
-
-

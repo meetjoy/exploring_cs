@@ -574,7 +574,7 @@ int sys_exit(int error_code)
 // 参数pid是进程号；*stat_addr是保存状态信息位置的指针；options是waitpid选项。
 int sys_waitpid(pid_t pid, unsigned long * stat_addr, int options)
 {
-	int flag;               				// 该标志用于后面所选出的子进程处于就绪或睡眠态。
+	int flag;              // 该标志用于后面所选出的子进程处于就绪或睡眠态。
 	struct task_struct *p;
 	unsigned long oldblocked;
 
@@ -585,8 +585,7 @@ repeat:
 	flag = 0;
 	for (p = current->p_cptr ; p ; p = p->p_osptr) {
 		// 如果等待的子进程号pid>0，但与被扫描子进程p的pid不相等，说明它是当前进程另外的子进程，
-		// 于是跳过该进程，接着扫描下一
-		// 个进程。
+		// 于是跳过该进程，接着扫描下一个进程。
 		if (pid > 0) {
 			if (p->pid != pid)
 				continue;
@@ -597,8 +596,7 @@ repeat:
 			if (p->pgrp != current->pgrp)
 				continue;
 		// 否则，如果指定的pid<-1，表示正在等待进程组号等于pid绝对值的任何子进程。
-		// 如果此时被扫描进程p的组号与pid的绝对值
-		// 不等，则跳过。
+		// 如果此时被扫描进程p的组号与pid的绝对值不等，则跳过。
 		} else if (pid != -1) {
 			if (p->pgrp != -pid)
 				continue;
@@ -606,8 +604,7 @@ repeat:
 		// 如果前3个对pid的判断都不符合，则表示当前进程正在等待其任何子进程，即pid = -1的情况。
 		// 此时所选择到的进程p或者是其进程
 		// 号等于指定pid，或者是当前进程组中的任何子进程，或者是进程号组等于指定pid绝对值的子进程，
-		// 或者是任何子进程（此时指定的
-		// pid等于-1）。接下来根据这个子进程p所处的状态来处理。
+		// 或者是任何子进程（此时指定的pid等于-1）。接下来根据这个子进程p所处的状态来处理。
 		// 当子进程p停止状态时，如果此时参数选项options中WUNTRACED标志没有置位，表示程序无须立刻返回，
 		// 或者子进程此时的退出码等于
 		// 0，于是继续扫描处理其他子进程。如果WUNTRACED置位且子进程退出码不为0,则把退出码移入高字节，
@@ -627,8 +624,7 @@ repeat:
 			// 如果子进程p处于僵死状态，则首先把它在用户态和内核态运行的时间分别累计到当前进程（父进程）中，
 			// 然后取出子进程pid和退出码，
 			// 把退出码放入返回状态位置stat_addr处并释放该子进程。最后返回子进程的退出码和pid。
-			// 若定义了调试进程树符号，则调用进程树
-			// 检测显示函数。
+			// 若定义了调试进程树符号，则调用进程树检测显示函数。
 			case TASK_ZOMBIE:
 				current->cutime += p->utime;
 				current->cstime += p->stime;

@@ -75,7 +75,8 @@ int sys_sync(void)
 	int i;
 	struct buffer_head *bh;
 
-	// 首先调用i节点同步函数，把内在i节点表中所有修改过的i节点写入高速缓冲中。然后扫描所有高速缓冲区，对已被修改的缓冲块
+	// 首先调用i节点同步函数，把内在i节点表中所有修改过的i节点写入高速缓冲中。
+	// 然后扫描所有高速缓冲区，对已被修改的缓冲块
 	// 产生写盘请求，将缓冲中数据写入盘中，做到高速缓冲中的数据与设备中的同步。
 	sync_inodes();	 /* write out inodes into buffers */
 	bh = start_buffer; // bh指向缓冲开始处。

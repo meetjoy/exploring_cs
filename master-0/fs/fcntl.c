@@ -20,13 +20,15 @@ extern int sys_close(int fd);
 // 返回新文件句柄或出错码.
 static int dupfd(unsigned int fd, unsigned int arg)
 {
-	// 首先检查函数参数的有效性.如果文件句柄值大于一个程序最多打开文件数NR_OPEN,或者该句柄的文件结构不存在,则返回出错码并退出.如果指定的新
+	// 首先检查函数参数的有效性.如果文件句柄值大于一个程序最多打开文件数NR_OPEN,或者该句柄的文件结构不存在,
+	// 则返回出错码并退出.如果指定的新
 	// 句柄值arg大于最多打开文件数,也返回出错码并退出.注意,实际上文件句柄就是进程文件结构指针数组项索引号.
 	if (fd >= NR_OPEN || !current->filp[fd])
 		return -EBADF;
 	if (arg >= NR_OPEN)
 		return -EINVAL;
-	// 然后在当前进程的文件结构指针数组中寻找索引号等于或大于arg,但还没有使用的项.若找到的新句柄值arg大于最多打开文件数(即没有空闲项),则返回
+	// 然后在当前进程的文件结构指针数组中寻找索引号等于或大于arg,但还没有使用的项.
+	// 若找到的新句柄值arg大于最多打开文件数(即没有空闲项),则返回
 	// 出错码并退出.
 	while (arg < NR_OPEN)
 		if (current->filp[arg])
