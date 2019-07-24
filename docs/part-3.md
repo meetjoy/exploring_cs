@@ -211,11 +211,19 @@ Simply key in make and press entre in command line. Make the working dictionary 
 
 ### tools folder
 
+Examine the **tools** folder.
+
 ### main makefile
+
+Generate the kernel.
 
 ## Day 14: debug folder and test
 
 ### debug folder
 
+Debugging files added to debug folder.
+
 ### test
+
+Do a overall test of the system.
 
