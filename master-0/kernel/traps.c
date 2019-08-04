@@ -69,7 +69,7 @@ void coprocessor_error(void);				// int16(kernel/sys_call.s)
 void reserved(void);						// int15(kernel/asm.s)
 void parallel_interrupt(void);				// int39(kernel/sys_call.s)
 void irq13(void);							// int45协处理器中断处理(kernel/asm.s)
-void alignment_check(void);					// int46(kernel/asm.s)
+void alignment_check(void);					// int17(kernel/asm.s)
 
 // 该子程序用来打印出错中断的名称,出错号,调用程序的EIP,EFLAGS,ESP,fs段寄存器值,段的基址,段的长度,
 // 进程号pid,任务号,10字节指令码.如果堆栈在用户数据段,则还打印16字节堆栈内容.这些信息可用于程序调试.

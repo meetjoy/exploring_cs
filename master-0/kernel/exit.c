@@ -291,6 +291,7 @@ int kill_proc(int pid, int sig, int priv)
 // 如果信号sig为0，则不发送信号，但仍会进行错误检查。如果成功则返回0.
 // 该函数扫描任务数组表，并根据pid对满足条件的进程发送指定信号sig。若pid等于0，表明当前进程是进程组组长，因此需要
 // 向所有组内的进程强制发送信号sig。
+// sys call 37
 int sys_kill(int pid, int sig)
 {
 	struct task_struct **p = NR_TASKS + task;       // p指向任务数组最后一项。

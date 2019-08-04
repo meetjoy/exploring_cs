@@ -12,12 +12,14 @@
 #include <errno.h>
 
 // 获取当前任务信号屏蔽位图（屏蔽码或阻塞码）。sgetmask可分解为signal-get-mask。以下类似。
+// sys call 68 
 int sys_sgetmask()
 {
 	return current->blocked;
 }
 
 // 设置新的信号屏蔽位图。信号SIGKILL和SIGSTOP不能被屏蔽。返回值是原信号屏蔽位图。
+// sys call 69
 int sys_ssetmask(int newmask)
 {
 	int old = current->blocked;
@@ -27,6 +29,7 @@ int sys_ssetmask(int newmask)
 }
 
 // 检测并取得进程收到的但被屏蔽（阻塞）的信号。还未处理信号的位图将被放入set中。
+// sys call 73
 int sys_sigpending(sigset_t *set)
 {
     /* fill in "set" with signals pending but blocked. */
@@ -68,6 +71,7 @@ int sys_sigpending(sigset_t *set)
 // 并且在该函数中会把进程原来的阻塞码
 // blocked保存起来（old_mask），并设置restart为非0值。因此当进程第2次调用该系统调用时，
 // 它就会恢复进程原来保存在old_mask中的阻塞码。
+// sys call 72
 int sys_sigsuspend(int restart, unsigned long old_mask, unsigned long set)
 {
 	// pause()系统调用将导致调用它的进程进入睡眠状态，直到收到一个信号。该信号或者会终止进程时执行，
@@ -104,6 +108,7 @@ int sys_sigsuspend(int restart, unsigned long old_mask, unsigned long set)
 }
 
 // 复制sigaction数据到fs数据段to处。即从内核空间复制到用户（任务）数据段中。
+// local
 static inline void save_old(char * from, char * to)
 {
 	int i;
@@ -120,6 +125,7 @@ static inline void save_old(char * from, char * to)
 }
 
 // 把sigaction数据从fs数据段from位置复制到to处。即从用户数据空间取到内核数据段中。
+// local
 static inline void get_new(char * from, char * to)
 {
 	int i;
@@ -135,6 +141,7 @@ static inline void get_new(char * from, char * to)
 // 处理程序结束后恢复系统调用返回时几个寄存器的原有值以及系统调用的返回值，
 // 就好像系统调用没有执行过信号处理程序而直接
 // 返回到用户程序一样。函数返回原信号句柄。
+// sys call 48
 int sys_signal(int signum, long handler, long restorer)
 {
 	struct sigaction tmp;
@@ -159,6 +166,7 @@ int sys_signal(int signum, long handler, long restorer)
 // sigaction()系统调用。改变进程在收到一个信号时的操作。signum是除了SIGKILL以外的任何信号。
 // [如果新操作（action）不为空]
 // 则新操作被安装。如果oldaction指针不为空，则原操作被保留到oldaction。成功则返回0,否则为-EINVAL。
+// sys call 67
 int sys_sigaction(int signum, const struct sigaction * action,
 	struct sigaction * oldaction)
 {
@@ -189,6 +197,7 @@ int sys_sigaction(int signum, const struct sigaction * action,
 /*
  * 在当前目录中产生core dump映像文件的子程序。目前还没有实现。
  */
+// local
 int core_dump(long signr)
 {
 	return(0);	/* We didn't do a dump */
@@ -202,6 +211,7 @@ int core_dump(long signr)
 // 2、第85--91行在刚进入system_call时压入栈的段寄存器ds、es、fs以及寄存器eax（orig_eax）、edx、ecx和ebx的值；
 // 3、第100行调用sys_call_tables后压入栈中的相应系统调用处理函数的返回值（eax）。
 // 4、第124行压入栈中的当前处理的信号值（signr）。
+// in sys call wraper
 int do_signal(long signr, long eax, long ebx, long ecx, long edx, long orig_eax,
 	long fs, long es, long ds,
 	long eip, long cs, long eflags,

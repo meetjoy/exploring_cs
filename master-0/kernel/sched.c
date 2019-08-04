@@ -248,6 +248,7 @@ void schedule(void)
 // 该系统调用将导致进程进入睡眠状态,直到收到一个信号.该信号用于终止进程或者使进程调用一个信号捕获函数.
 // 只有当捕获了一个信号,并且信号捕获处理函数返回,pause()才会返回.此时pause()返回值应该是-1,
 // 并且errno被置为EINTR.这里还没有完全实现(直到0.95版).
+// sys call 29
 int sys_pause(void)
 {
 	current->state = TASK_INTERRUPTIBLE;
@@ -304,7 +305,8 @@ repeat:	schedule();
 		tmp->state = 0;
 }
 
-// 将当前任务置为可中断的等待状态(TASK_INIERRUPTIBLE),并放入头指针*p指定的等待队列中.
+// 将当前任务置为可中断的等待状态(TASK_INIERRUPTIBLE),
+// 并放入头指针*p指定的等待队列中.
 void interruptible_sleep_on(struct task_struct **p)
 {
 	__sleep_on(p, TASK_INTERRUPTIBLE);
