@@ -1,6 +1,4 @@
-# Part 4: Understanding the Workflow
+# Part 4 Understanding the Workflow
 
-Some diagrams will be drawn. With these diagrams we hope a good understanding of the whole system at the logical level can be gained.
-
-The diagrams currently locates in Github.
+A series of tables or diagrams were prepared, which includes process managment, interrupts, memory management, registers etc.. The diagrams excel file currently locates in Github.
 

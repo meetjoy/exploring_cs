@@ -1,4 +1,4 @@
-# Part 3: Start Examining An Operating System
+# Part 3 Start Examining An Operating System
 
 From today, we are diving deeper to see how an operating system works. We start from 0, gradually we get a minimal operating system.
 
@@ -225,5 +225,5 @@ Debugging files added to debug folder.
 
 ### test
 
-Do a overall test of the system.
+Do an overall test of the system.
 
