@@ -1,3 +1,7 @@
+# 1 "setup.S"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "setup.S"
 !
 !	setup.s		(C) 1991 Linus Torvalds
 ! setup.s is responsible for getting the system data from the BIOS,
@@ -17,11 +21,60 @@
 
 ! NOTE! These had better be the same as in bootsect.s!
 ! 以下这些参数最好和bootsect.s中的相同!
-#include <linux/config.h>
 
-INITSEG  = DEF_INITSEG			! we move boot here - out of the way	! 原来bootsect所处的段.
-SYSSEG   = DEF_SYSSEG			! system loaded at 0x10000 (65536).		! system在0x10000处.
-SETUPSEG = DEF_SETUPSEG			! this is the current segment			! 本程序所在的段地址.
+# 1 "../include/linux/config.h" 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 56 "../include/linux/config.h"
+
+# 68 "../include/linux/config.h"
+
+# 79 "../include/linux/config.h"
+
+# 21 "setup.S" 2
+
+INITSEG  = 0x9000			! we move boot here - out of the way	! 原来bootsect所处的段.
+SYSSEG   = 0x1000			! system loaded at 0x10000 (65536).		! system在0x10000处.
+SETUPSEG = 0x9020			! this is the current segment			! 本程序所在的段地址.
 
 .globl begtext, begdata, begbss, endtext, enddata, endbss
 .text
