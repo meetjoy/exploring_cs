@@ -362,7 +362,8 @@ static int has_stopped_jobs(int pgrp)
 }
 
 // 程序退出处理函数。
-// 该函数将根据进程自身的特性对其进行处理，并把当前进程状态设置成僵死状态TASK_ZOMBIE，最后调用调度函数schedule()去
+// 该函数将根据进程自身的特性对其进行处理，并把当前进程状态设置成僵死状态TASK_ZOMBIE，
+// 最后调用调度函数schedule()去
 // 执行其他进程，不再返回。
 void do_exit(long code)
 {
