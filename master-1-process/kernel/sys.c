@@ -80,7 +80,7 @@ int sys_setregid(int rgid, int egid)
 /*
  * setgid()的实现与具有SAVED_IDS的SYSV的实现方法相似。
  */
-// 设置进程组号（gid）。如果任务没有超级用户特权，它可以使用setgid()将其有效gid（effective gid）设置为成其保留
+// 设置用户组号（gid）。如果任务没有超级用户特权，它可以使用setgid()将其有效gid（effective gid）设置为成其保留
 // gid（saved git）或其实际git（real gid）。如果任务有超级用户特权，则实际gid、有效gid和保留gid都被设置成参数
 // 指定的gid。
 int sys_setgid(int gid)
@@ -94,32 +94,7 @@ int sys_setgid(int gid)
 	return 0;
 }
 
-// 打开或关闭进程计账功能。
-int sys_acct()
-{
-	return -ENOSYS;
-}
 
-// 映射任意物理内在到进程的虚拟地址空间。
-int sys_phys()
-{
-	return -ENOSYS;
-}
-
-int sys_lock()
-{
-	return -ENOSYS;
-}
-
-int sys_mpx()
-{
-	return -ENOSYS;
-}
-
-int sys_ulimit()
-{
-	return -ENOSYS;
-}
 
 // 返回从1970年1月1日00:00:00 GMT开始计时的时间值（秒）。如果tloc不为null，则时间值也存储在那里。
 // 由于参数是一个指针，而其所指位置在用户空间，因此需要使用函数put_fs_long()来访问该值。在进入内核中运行时，段
@@ -150,7 +125,7 @@ int sys_time(long * tloc)
  * 100% compatible with POSIX w/ Saved ID's.
  */
 /*
- * 无特权的用户可以见实际的uid（realuid）改成有效的uid（effective uid），反之亦然。（BSD 形式的实现）
+ * 无特权的用户可以ba实际的uid（realuid）改成有效的uid（effective uid），反之亦然。（BSD 形式的实现）
  *
  * 当你设置有效的uid时，同时也设置了保存的uid。这使得一个使用setuid的程序可以完全放弃其特权。当你在对一个程序进行
  * 安全审计时，这通常是一种很好的处理方法。最基本的考虑是一个使用setreuid()的程序将会与BSD系统100%兼容。而一个使
@@ -381,6 +356,7 @@ int sys_setgroups(int gidsetsize, gid_t *grouplist)
 }
 
 // 检查当前进程是否在指定的用户组grp中.是则返回1,否则返回0.
+// invoked in do_execve() and permission()
 int in_group_p(gid_t grp)
 {
 	int	i;
@@ -472,7 +448,7 @@ int sys_getrlimit(int resource, struct rlimit *rlim)
 // 设置当前进程指定资源的界限值。
 // 参数resource指定我们设置界限的资源名称，实际上它是任务结构中rlim[]数组的索引项值。
 // 参数rlim是指向rlimit结构的用户缓冲区指针，用于内核读取新的资源界限信息。
-int sys_setrlimit(int resource, struct rlimit *rlim)
+int c(int resource, struct rlimit *rlim)
 {
 	struct rlimit new, *old;
 
@@ -707,6 +683,33 @@ int sys_rename()
 }
 
 int sys_prof()
+{
+	return -ENOSYS;
+}
+
+// 打开或关闭进程计账功能。
+int sys_acct()
+{
+	return -ENOSYS;
+}
+
+// 映射任意物理内在到进程的虚拟地址空间。
+int sys_phys()
+{
+	return -ENOSYS;
+}
+
+int sys_lock()
+{
+	return -ENOSYS;
+}
+
+int sys_mpx()
+{
+	return -ENOSYS;
+}
+
+int sys_ulimit()
 {
 	return -ENOSYS;
 }
