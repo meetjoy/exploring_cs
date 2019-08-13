@@ -448,7 +448,7 @@ int sys_getrlimit(int resource, struct rlimit *rlim)
 // 设置当前进程指定资源的界限值。
 // 参数resource指定我们设置界限的资源名称，实际上它是任务结构中rlim[]数组的索引项值。
 // 参数rlim是指向rlimit结构的用户缓冲区指针，用于内核读取新的资源界限信息。
-int c(int resource, struct rlimit *rlim)
+int sys_setrlimit(int resource, struct rlimit *rlim)
 {
 	struct rlimit new, *old;
 

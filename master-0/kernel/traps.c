@@ -48,7 +48,6 @@ __asm__("mov %%fs,%%ax":"=a" (__res):); \
 __res;})
 
 // 以下定义了一些函数原型.
-void page_exception(void);					// 页异常.实际是page_fault(mm/page.s)
 
 void divide_error(void);					// int0(kernel/asm.s)
 void debug(void);							// int1(kernel/asm.s)
@@ -65,11 +64,50 @@ void segment_not_present(void);				// int11(kernel/asm.s)
 void stack_segment(void);					// int12(kernel/asm.s)
 void general_protection(void);				// int13(kernel/asm.s)
 void page_fault(void);						// int14(mm/page.s)
-void coprocessor_error(void);				// int16(kernel/sys_call.s)
 void reserved(void);						// int15(kernel/asm.s)
+void coprocessor_error(void);				// int16(kernel/sys_call.s)
+void alignment_check(void);					// int17(kernel/asm.s)
+
 void parallel_interrupt(void);				// int39(kernel/sys_call.s)
 void irq13(void);							// int45协处理器中断处理(kernel/asm.s)
-void alignment_check(void);					// int17(kernel/asm.s)
+
+// include/asm/system.h
+void trap_init(void)
+{
+	int i;
+	// gates 0 - 17, 39, 45 set; 
+	// other geates in 18-47 reserved; 
+	// gates  0-31 by intel
+	// gates 32-47 for hardware
+	// gates 48-255 available for operating system
+	set_trap_gate(0, &divide_error);	// _set_gate(&idt[n], 15, 0, addr)		
+	set_trap_gate(1, &debug);
+	set_trap_gate(2, &nmi);
+	set_system_gate(3, &int3);	/* int3-5 can be called from all */
+	set_system_gate(4, &overflow);
+	set_system_gate(5, &bounds);
+	set_trap_gate(6, &invalid_op);
+	set_trap_gate(7, &device_not_available); // function not implemented
+	set_trap_gate(8, &double_fault);
+	set_trap_gate(9, &coprocessor_segment_overrun);
+	set_trap_gate(10, &invalid_TSS);
+	set_trap_gate(11, &segment_not_present);
+	set_trap_gate(12, &stack_segment);
+	set_trap_gate(13, &general_protection);
+	set_trap_gate(14, &page_fault);
+	set_trap_gate(15, &reserved);
+	set_trap_gate(16, &coprocessor_error); // function not implemented
+	set_trap_gate(17, &alignment_check);
+	for (i = 18; i < 48; i++)
+		set_trap_gate(i, &reserved);
+		
+	set_trap_gate(45, &irq13);
+	outb_p(inb_p(0x21)&0xfb, 0x21);	// 允许8259A主芯片的IRQ2中断请求(连接从芯片)
+	outb(inb_p(0xA1)&0xdf, 0xA1);   // 允许8259A从芯片的IRQ13中断请求(协处理器中断)
+
+	set_trap_gate(39, &parallel_interrupt);	// 设置并行口1的中断0x27陷阱门描述符.
+}
+
 
 // 该子程序用来打印出错中断的名称,出错号,调用程序的EIP,EFLAGS,ESP,fs段寄存器值,段的基址,段的长度,
 // 进程号pid,任务号,10字节指令码.如果堆栈在用户数据段,则还打印16字节堆栈内容.这些信息可用于程序调试.
@@ -201,37 +239,3 @@ void do_reserved(long esp, long error_code)
 	die("reserved (15,17-47) error", esp, error_code);
 }
 
-// include/asm/system.h
-void trap_init(void)
-{
-	int i;
-	// gates 0 - 17, 39, 45 set; 
-	// other geates in 18-47 reserved; 
-	// gates  0-31 by intel
-	// gates 32-47 for hardware
-	// gates 48-255 available for operating system
-	set_trap_gate(0, &divide_error);	// _set_gate(&idt[n], 15, 0, addr)		
-	set_trap_gate(1, &debug);
-	set_trap_gate(2, &nmi);
-	set_system_gate(3, &int3);	/* int3-5 can be called from all */
-	set_system_gate(4, &overflow);
-	set_system_gate(5, &bounds);
-	set_trap_gate(6, &invalid_op);
-	set_trap_gate(7, &device_not_available); // function not implemented
-	set_trap_gate(8, &double_fault);
-	set_trap_gate(9, &coprocessor_segment_overrun);
-	set_trap_gate(10, &invalid_TSS);
-	set_trap_gate(11, &segment_not_present);
-	set_trap_gate(12, &stack_segment);
-	set_trap_gate(13, &general_protection);
-	set_trap_gate(14, &page_fault);
-	set_trap_gate(15, &reserved);
-	set_trap_gate(16, &coprocessor_error); // function not implemented
-	set_trap_gate(17, &alignment_check);
-	for (i = 18; i < 48; i++)
-		set_trap_gate(i, &reserved);
-	set_trap_gate(45, &irq13);
-	outb_p(inb_p(0x21)&0xfb, 0x21);	// 允许8259A主芯片的IRQ2中断请求(连接从芯片)
-	outb(inb_p(0xA1)&0xdf, 0xA1);   // 允许8259A从芯片的IRQ13中断请求(协处理器中断)
-	set_trap_gate(39, &parallel_interrupt);	// 设置并行口1的中断0x27陷阱门描述符.
-}
