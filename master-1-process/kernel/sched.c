@@ -11,7 +11,7 @@
  * current-task
  */
 /*
- * 'sched.c'是主要的内核文件.其中包括有关高度的基本函数(sleep_on,wakeup,schedule等)
+ * 'sched.c'是主要的内核文件.其中包括有关scheduling的基本函数(sleep_on,wakeup,schedule等)
  * 以及一些简单的系统调用函数(比如getpid(),仅从当前任务中获取一个字段).
  */
 // 下面是调度程序头文件.定义了任务结构task_struct,第1个初始任务的数据.
@@ -31,44 +31,9 @@
 // 除了SIGKILL和SIGSTOP信号以外其他信号都是可阻塞的.
 #define _BLOCKABLE (~(_S(SIGKILL) | _S(SIGSTOP)))
 
-// 内核调试函数.显示任务号nr的进程号,进程状态和内核堆栈空闲字节数(大约).
-void show_task(int nr, struct task_struct * p)
-{
-	int i, j = 4096 - sizeof(struct task_struct);
-
-	printk("%d: pid=%d, state=%d, father=%d, child=%d, ", nr, p->pid,
-		p->state, p->p_pptr->pid, p->p_cptr ? p->p_cptr->pid : -1);
-	i = 0;
-	while (i < j && !((char *)(p + 1))[i])				// 检测指定任务数据结构以后等于0的字节数.
-		i++;
-	printk("%d/%d chars free in kstack\n\r", i, j);
-	printk("   PC=%08X.", *(1019 + (unsigned long *) p));
-	if (p->p_ysptr || p->p_osptr)
-		printk("   Younger sib=%d, older sib=%d\n\r",
-			p->p_ysptr ? p->p_ysptr->pid : -1,
-			p->p_osptr ? p->p_osptr->pid : -1);
-	else
-		printk("\n\r");
-}
-
-// 显示所有任务的任务号,进程号,进程状态和内核堆栈空闲字节数(大约).
-// NR_TASKS是系统能容纳的最大进程(任务)数量(64个),定义在include/kernel/sched.h
-void show_state(void)
-{
-	int i;
-
-	printk("\rTask-info:\n\r");
-	for (i = 0; i < NR_TASKS; i++)
-		if (task[i])
-			show_task(i, task[i]);
-}
-
-// PC8253定时芯片的输入时钟频率约为1.193180MHz.Linux内核希望定时器发出中断的频率是100Hz,
-// 也即每10ms发出一次时钟中断.因此这里
-// LATCH是设置8253芯片的初值.
 #define LATCH (1193180 / HZ)
 
-extern void mem_use(void);              	// 没有任何地方定义和引用该函数。
+// extern void mem_use(void);              	// 没有任何地方定义和引用该函数。
 
 extern int timer_interrupt(void);			// 时钟中断处理程序(kernel/sys_call.s)
 extern int system_call(void);				// 系统调用中断处理程序(kernel/sys_call.s)
@@ -148,8 +113,8 @@ void math_state_restore()
 	if (last_task_used_math) {
 		__asm__("fnsave %0"::"m" (last_task_used_math->tss.i387));
 	}
-	// 现在,las_task_used_math指向当前任务,以备当前任务被交换出去时使用.此时如果当前任务用过协处理器,则恢复其状态.否则的话说明是第一次使用,
-	// 于是就向协处理器发初始化命令,并设置使用协处理器标志.
+	// 现在,las_task_used_math指向当前任务,以备当前任务被交换出去时使用.此时如果当前任务用过协处理器,则恢复其状态.
+	// 否则的话说明是第一次使用,于是就向协处理器发初始化命令,并设置使用协处理器标志.
 	last_task_used_math = current;
 	if (current->used_math) {
 		__asm__("frstor %0"::"m" (current->tss.i387));
@@ -277,7 +242,8 @@ static inline void __sleep_on(struct task_struct **p, int state)
 		return;
 	if (current == &(init_task.task))
 		panic("task[0] trying to sleep");
-	// 让tmp指向已经在等待队列上的任务(如果有的话),例如inode->i_wait.并且将睡眠队列头的等待指针指向当前任务.这样就把当前任务插入到了*p的等待队列中.然后
+	// 让tmp指向已经在等待队列上的任务(如果有的话),例如inode->i_wait.并且将睡眠队列头的等待指针指向当前任务.
+	// 这样就把当前任务插入到了*p的等待队列中.然后
 	// 将当前任务置为指定的等待状态,并执行重新调度.
 	tmp = *p;
 	*p = current;
@@ -313,16 +279,14 @@ void interruptible_sleep_on(struct task_struct **p)
 }
 
 // 把当前任务置为不可中断的等待状态(TASK_UNINTERRUPTIBLE),并让睡眠队列头指针指向当前任务.
-// 只有明确地唤醒时才会返回.该函数提供了进程与中断处理程序之间的
-// 同步机制.
+// 只有明确地唤醒时才会返回.该函数提供了进程与中断处理程序之间同步机制.
 void sleep_on(struct task_struct **p)
 {
 	__sleep_on(p, TASK_UNINTERRUPTIBLE);
 }
 
 // 唤醒*p指向的任务.*p是任务等待队列头指针.由于新等待任务是插入在等待队列头指针处的,
-// 因此唤醒的是最后进入等待队列的任务.若该任务已经处于停止或
-// 僵死状态,则显示警告信息.
+// 因此唤醒的是最后进入等待队列的任务.若该任务已经处于停止或僵死状态,则显示警告信息.
 void wake_up(struct task_struct **p)
 {
 	if (p && *p) {
@@ -668,3 +632,40 @@ void sched_init(void)
 	outb(inb_p(0x21) & ~0x01, 0x21);
 	set_system_gate(0x80, &system_call);
 }
+
+
+// 内核调试函数.显示任务号nr的进程号,进程状态和内核堆栈空闲字节数(大约).
+void show_task(int nr, struct task_struct * p)
+{
+	int i, j = 4096 - sizeof(struct task_struct);
+
+	printk("%d: pid=%d, state=%d, father=%d, child=%d, ", nr, p->pid,
+		p->state, p->p_pptr->pid, p->p_cptr ? p->p_cptr->pid : -1);
+	i = 0;
+	while (i < j && !((char *)(p + 1))[i])				// 检测指定任务数据结构以后等于0的字节数.
+		i++;
+	printk("%d/%d chars free in kstack\n\r", i, j);
+	printk("   PC=%08X.", *(1019 + (unsigned long *) p));
+	if (p->p_ysptr || p->p_osptr)
+		printk("   Younger sib=%d, older sib=%d\n\r",
+			p->p_ysptr ? p->p_ysptr->pid : -1,
+			p->p_osptr ? p->p_osptr->pid : -1);
+	else
+		printk("\n\r");
+}
+
+// 显示所有任务的任务号,进程号,进程状态和内核堆栈空闲字节数(大约).
+// NR_TASKS是系统能容纳的最大进程(任务)数量(64个),定义在include/kernel/sched.h
+void show_state(void)
+{
+	int i;
+
+	printk("\rTask-info:\n\r");
+	for (i = 0; i < NR_TASKS; i++)
+		if (task[i])
+			show_task(i, task[i]);
+}
+
+// PC8253定时芯片的输入时钟频率约为1.193180MHz.Linux内核希望定时器发出中断的频率是100Hz,
+// 也即每10ms发出一次时钟中断.因此这里
+// LATCH是设置8253芯片的初值.
