@@ -1,6 +1,6 @@
 # Part 6 Write your very first mini operating system
 
-## scripts preparation
+## outline preparation
 ### introduction
 
 objective: at the end of the course, you will finish our very own mini operating system
@@ -25,13 +25,16 @@ run it
 ### tools
 ### assembly codes
 
-## videos
+## videos, scripts & resources
 
-### write our very first program in assembly (not yet)
+### Write our very first program in assembly
 
-### installing virtualbox
+### Concepts: hypervisor, virtual machine & assembler
+
+### Installing Virtualbox
+
 current version: VirtualBox-6.0.10
-### installing Ubuntu desktop
+### Installing Ubuntu Desktop
 current version: 18.04LTS
 
 
