@@ -27,7 +27,7 @@ run it
 
 ## videos, scripts & resources
 
-### Write our very first program in assembly
+### Write our very first program in assembly language
 
 ### Hypervisor, virtual machine & assembler
 
