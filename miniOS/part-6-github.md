@@ -29,6 +29,10 @@ run it
 
 ### Write our very first program in assembly language
 
+### 
+### terminal, install binutiles, run as and ld, install bochs, run our first program
+
+
 ### Hypervisor, virtual machine & assembler
 
 ### Installing VirtualBox
@@ -39,7 +43,6 @@ Welcome back, now we have downloaded the installer. Click to install, .... final
 ### Installing Ubuntu Desktop
 
 Hi guys, in this video we are going to install Ubuntu. Firstly search Ubuntu in the browser then we go to their offical website. Under Downloads, we click the 18.04LTS. Lts stands for the long term service version. 18.04 is the current available latest version. The file is nearly 2G, so it takes a couple of minutes. Now pause the video and do the same on your computer. 
-
 2nd part of the video. Finish.
 
 
