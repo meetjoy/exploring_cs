@@ -1,0 +1,6 @@
+
+x86 assembly language
+https://en.wikipedia.org/wiki/X86_assembly_language
+
+Linux command line
+https://tutorials.ubuntu.com/tutorial/command-line-for-beginners#0

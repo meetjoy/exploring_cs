@@ -27,23 +27,30 @@ run it
 
 ## videos, scripts & resources
 
-### Write our very first program in assembly language
+### 01 Write our very first program in assembly language
 
-### 
-### terminal, install binutiles, run as and ld, install bochs, run our first program
+### 02 GNU assembler, Linux Desktop, virtual machine & hypervisor
+Hi guys, in last video we have written some x86 assembly code and save it into first.s. 
+we have learned that the CPU cannot understand assembly code directly, the CPU can only understand and execute machine code directly. 
+Now the question for us is how to turn these assembly code into machine code. the program that can translate assembly code into machine code is called assembler. 
 
+### 03 Installing VirtualBox on macOS
+### 04 Installing VirtualBox on Windows
 
-### Hypervisor, virtual machine & assembler
-
-### Installing VirtualBox
 Hi guys, in this video we are going to install VirtualBox. Firstly we search "virtualbox" in the browser, then we come to their official website. I am using Windows now, so click and download the Windows version. Now pause the video, download either the Windows version or the MacOS version for your computer.
 
 Welcome back, now we have downloaded the installer. Click to install, .... finally click finsh. Okay, here we are, that's the hypervisor or the virtual machine manager. In the next video we are going to see how to install Ubuntu. 
 
-### Installing Ubuntu Desktop
+### 06 Installing Ubuntu Desktop
 
 Hi guys, in this video we are going to install Ubuntu. Firstly search Ubuntu in the browser then we go to their offical website. Under Downloads, we click the 18.04LTS. Lts stands for the long term service version. 18.04 is the current available latest version. The file is nearly 2G, so it takes a couple of minutes. Now pause the video and do the same on your computer. 
 2nd part of the video. Finish.
 
+### Terminal (pwd, ls, cd, mv, mkdir, rmdir, touch, rm, clear)
 
+### Installing Binutils and assembling
+
+### Examing the objective file
+
+### ld, install bochs, run our first program
 
