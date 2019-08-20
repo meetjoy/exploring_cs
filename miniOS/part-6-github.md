@@ -34,23 +34,32 @@ Hi guys, in last video we have written some x86 assembly code and save it into f
 we have learned that the CPU cannot understand assembly code directly, the CPU can only understand and execute machine code directly. 
 Now the question for us is how to turn these assembly code into machine code. the program that can translate assembly code into machine code is called assembler. 
 
-### 03 Installing VirtualBox on macOS
-### 04 Installing VirtualBox on Windows
+### 03A Installing VirtualBox on macOS
+### 03B Installing VirtualBox on Windows
 
 Hi guys, in this video we are going to install VirtualBox. Firstly we search "virtualbox" in the browser, then we come to their official website. I am using Windows now, so click and download the Windows version. Now pause the video, download either the Windows version or the MacOS version for your computer.
 
 Welcome back, now we have downloaded the installer. Click to install, .... finally click finsh. Okay, here we are, that's the hypervisor or the virtual machine manager. In the next video we are going to see how to install Ubuntu. 
 
-### 06 Installing Ubuntu Desktop
+### 04 Installing Ubuntu Desktop
 
 Hi guys, in this video we are going to install Ubuntu. Firstly search Ubuntu in the browser then we go to their offical website. Under Downloads, we click the 18.04LTS. Lts stands for the long term service version. 18.04 is the current available latest version. The file is nearly 2G, so it takes a couple of minutes. Now pause the video and do the same on your computer. 
 2nd part of the video. Finish.
 
-### 07 Terminal & command line: pwd, ls, cd, mkdir, touch, mv, clear, apt install, sudo
+### 05Terminal, basic Linux commands, as, binutils
+what is terminal
+3 ways to open the terminal
+change text size and colour
 
-### Installing Binutils and assembling
+pwd, ls, cd, mkdir, touch, mv, clear, apt
 
-### Examining the objective file
+https://tutorials.ubuntu.com/tutorial/command-line-for-beginners#8
+
+
+### assembling, Examining the objective file
+concepts: byte, hex number, object file
+
+
 
 ### ld, install bochs, run our first program
 
