@@ -47,7 +47,13 @@ Hi guys, in this video we are going to install Ubuntu. Firstly search Ubuntu in 
 2nd part of the video. Finish.
 
 ### 05Terminal, basic Linux commands, as, binutils
-what is terminal, graphical interface
+Hi guys, in last video we've installed Ubuntu Desktop. According to our plan we are supposed to install the GNU assembler or GAS in this video. 
+For these people who are not familiar with the terminal or command line interface, firstly we go through over some very commonly used linux commands. Let's get started!
+
+What is a terminal? 
+
+graphical interface
+
 3 ways to open the terminal
 change text size and colour
 
