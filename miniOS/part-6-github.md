@@ -47,19 +47,36 @@ Hi guys, in this video we are going to install Ubuntu. Firstly search Ubuntu in 
 2nd part of the video. Finish.
 
 ### 05Terminal, basic Linux commands, as, binutils
-what is terminal
+what is terminal, graphical interface
 3 ways to open the terminal
 change text size and colour
 
-pwd, ls, cd, mkdir, touch, mv, clear, apt
+pwd, cd, ls, mkdir, touch, mv, clear, tree, apt, sudo, ~, 
+Table key
+as binutils
 
 https://tutorials.ubuntu.com/tutorial/command-line-for-beginners#8
 
 
-### assembling, Examining the objective file
-concepts: byte, hex number, object file
+### assembly, linking, examining the objective file
+concepts:
+assembly,
+source file -> objective file
+linking
+objective files, ->  executable file or runnable
 
+disassembly
+objdump,
+architecture i8086
 
+byte
+hex number
+binary
 
-### ld, install bochs, run our first program
+### use ld for linking
+-Ttext=0x7c00 -o
+
+### emulator, bochs
+Do not really want 
+
 
