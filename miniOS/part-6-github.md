@@ -46,7 +46,7 @@ Welcome back, now we have downloaded the installer. Click to install, .... final
 Hi guys, in this video we are going to install Ubuntu. Firstly search Ubuntu in the browser then we go to their offical website. Under Downloads, we click the 18.04LTS. Lts stands for the long term service version. 18.04 is the current available latest version. The file is nearly 2G, so it takes a couple of minutes. Now pause the video and do the same on your computer. 
 2nd part of the video. Finish.
 
-### 05Terminal, basic Linux commands, as, binutils
+### 05Terminal, basic Linux commands, as & binutils
 Hi guys, in last video we've installed Ubuntu Desktop. According to our plan we are supposed to install the GNU assembler or GAS in this video. 
 For these people who are not familiar with the terminal or command line interface, firstly we go through over some very commonly used linux commands. Let's get started!
 
@@ -64,25 +64,32 @@ as binutils
 https://tutorials.ubuntu.com/tutorial/command-line-for-beginners#8
 
 
-### assembly, linking, examining the objective file
-concepts:
-assembly,
-source file -> objective file
+### 06Assembly, object file, binary, hexadecimal, disassembly, architecture, i8086
+
+manufacturers
+
+### linking, executable file or runnable, little endian
 linking
-objective files, ->  executable file or runnable
 
-disassembly
-objdump,
-architecture i8086
+ld -Ttext=0x7c00 --oformat=binary first.o -o first.img
+-Ttext
+--oformat
 
-byte
-hex number
-binary
+object files, ->  executable file or runnable
 
-### use ld for linking
--Ttext=0x7c00 -o
+### run our first program using emulator Bochs
 
-### emulator, bochs
-Do not really want 
+script
+run
+
+### 
+
+ legacy BIOS
+ memory
+ I/O
+ instruction, Directives, label
+ registers
+
+
 
 
