@@ -72,6 +72,7 @@ manufacturers
 
 
 ### 08run our first program using emulator Bochs
+run our first program using emulator Bochs
 Emulator
 Install bochs
 Run sample system
