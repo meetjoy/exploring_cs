@@ -64,22 +64,33 @@ as binutils
 https://tutorials.ubuntu.com/tutorial/command-line-for-beginners#8
 
 
-### 06Assembly, object file, binary, hexadecimal, disassembly, architecture, i8086
+### 06 Assembly, object file, binary, hexadecimal, disassembly, architecture, i8086
 
 manufacturers
 
-### 07linking, executable file or runnable, boot, ROM, POST, legacy BIOS, MBR, RAM, 0x7c00, UEFI
+### 07 linking, executable file or runnable, boot, ROM, POST, legacy BIOS, MBR, RAM, 0x7c00, UEFI
 
 
-### run our first program using emulator Bochs
+### 08run our first program using emulator Bochs
+Emulator
+Install bochs
+Run sample system
+Run first program
 
+### explaination of first.s
+directive
+registers
+ASCII code
+label
+interruput
+AA55
+Legacy BIOS functions
+
+###
+explain CPU/Memory I/O model
 script
 run
-
-### 
-
- legacy BIOS
- memory
+ memory layout
  I/O
  instruction, Directives, label
  registers
