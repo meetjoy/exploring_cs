@@ -1,0 +1,4 @@
+#!/bin/bash
+as mos.s -o mos.o
+ld  mos.o -o  mos -Ttext=0x7c00 --oformat=binary
+bochs
