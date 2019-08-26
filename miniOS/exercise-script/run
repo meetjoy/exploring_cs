@@ -1,0 +1,4 @@
+#!/bin/bash
+as first.s -o first.o
+ld first.o -o first -Ttext=0x7c00 --oformat=binary
+bochs

@@ -1,7 +1,0 @@
-
-sudo apt-get install libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libx11-dev
-
-./configure
-make
-sudo make install
-
