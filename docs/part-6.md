@@ -17,9 +17,6 @@ we need an assembler
 install virtualbox then ubuntu, then the complier
 now we've got an execuable or runnable file
 
-### how to run it?
-installing bochs Emulator
-run it
 
 ### concepts
 ### tools
@@ -32,10 +29,10 @@ run it
 ### Concepts: hypervisor, virtual machine & assembler
 
 ### Installing Virtualbox
-
 current version: VirtualBox-6.0.10
 ### Installing Ubuntu Desktop
 current version: 18.04LTS
 
+### Note: please see the vidoe course for all
 
 

@@ -70,28 +70,21 @@ manufacturers
 
 ### 07 linking, executable file or runnable, boot, ROM, POST, legacy BIOS, MBR, RAM, 0x7c00, UEFI
 
-
-### 08run our first program using emulator Bochs
+### 08 installing emulator Bochs
 run our first program using emulator Bochs
 Emulator
 Install bochs
 Run sample system
 Run first program
+### 09 run our first program using Bochs
 
-### explaination of first.s
-directive
-registers
-ASCII code
-label
-interruput
-AA55
-Legacy BIOS functions
+### 10Explaination of first.s: directives, instruction, label, interrupt, legacy BIOS attributes
+
+### 11 Making a bash Script
 
 ###
 explain CPU/Memory I/O model
-script
+AA55
 run
- memory layout
- I/O
- instruction, Directives, label
- registers
+memory layout
+I/O

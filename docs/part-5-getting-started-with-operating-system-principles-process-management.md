@@ -46,7 +46,7 @@ system call -> C handler -> schedule() -> do signal().
 
 ## Interrupts
 
-
-
 ## Experiment: installing VirtualBox
 ## Experiment: installing Ubuntu Desktop 18.04
+
+### Note: this part would be a video course
