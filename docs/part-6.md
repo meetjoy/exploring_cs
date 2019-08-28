@@ -1,9 +1,9 @@
-# Part 6 Write your very first mini operating system
+# Part 6 Write our very first program in assembly language
 
 ## outline preparation
 ### introduction
 
-objective: at the end of the course, you will finish our very own mini operating system
+objective: at the end of the course, you will finish our very first program in assembly
 feature: learn by doing, step by step
 0 fundamental required
 

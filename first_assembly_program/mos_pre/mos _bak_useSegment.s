@@ -1,13 +1,12 @@
-.code16                 #! tell the assembler to generate 16-bit code
-.globl _start           # comments start with '!',to be altered at a later stage
+.code16                 
+.globl _start           
 _start:                 
-
     movb $0x0A, %ah     # set the colour attributes
-    movb $67, %al       # set the code point to %al
-    xor %dx, %dx 
+    movb $68, %al       # set the code point to %al
+
     movw SCN_SEL, %es  
-    movl scn_pos, %ebx
-    movw %ax, %es:(%bx) # write 2 bytes to screen, 1 character displaye
+    movl scn_pos, %bx
+    movw %ax, %es:(%bx) # write 2 bytes to screen, 1 character display
 
     jmp .
 

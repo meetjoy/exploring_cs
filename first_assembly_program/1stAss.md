@@ -7,6 +7,7 @@ objective: at the end of the course, you will finish our very own mini operating
 feature: learn by doing, step by step
 0 fundamental required
 
+## Section 1
 ### write our very first program in assembly
 first.s
 what is assembly?
@@ -78,13 +79,34 @@ Run sample system
 Run first program
 ### 09 run our first program using Bochs
 
-### 10Explaination of first.s: directives, instruction, label, interrupt, legacy BIOS attributes
+### 10 Explaination of first.s: directives, instruction, label, interrupt, legacy BIOS attributes
 
 ### 11 Making a bash Script
 
+### 12 summary?
 ###
 explain CPU/Memory I/O model
 AA55
 run
 memory layout
 I/O
+
+## Section 2
+### challenge 1: print a character to screen
+### concepts 
+Video colour text memory area
+Address operand syntax
+### answer 
+open website of ascii code and BIOS colour attribute
+
+
+### print first name?
+
+???
+segment registers 
+stack
+function
+memory layout
+add $0x80 interrupt in
+add two function
+timer
