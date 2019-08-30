@@ -1,5 +1,5 @@
 ### Video 1 Introduction
-Hello everyone, nowdays we are using all kinds of computers everyday: your laptop, Macbook, or your smartphone. 
+Hello everyone, nowdays we are using all kinds of computers everyday: your laptop, Macbook, or your smart phone. 
 You must have ever been wondering what happens in the startup stage of your Windows operating system, your MacOS or the mobilephones. 
 
 In this short course, we will firstly introduce what is assembly language and machine language, the correspondence between them. Then we write our very first program in assembly language.
@@ -8,11 +8,14 @@ In order to run this program, we need a program called assembler to translate ou
 
 I will show you how to do all of these step by step. From installing the Linux Desktop, the most commonly used Linux commands, to the use of GNU assembler, GNU linker and objdump. And how to make a script file.
 
-We also cover a bunch of concepts: hexidecimal, disassembly, instruction set architecture, booting, Power on Self Test, Read only memory, legacy BIOS, master booting block, Random access memory, Interrupt and ASCII Character etc..
+We also cover a bunch of concepts: hexadecimal, disassembly, instruction set architecture, booting, Power on Self Test, read only memory, legacy BIOS, master booting block, random access memory, interrupt and ASCII character etc..
 
-We will see how compilation of the source code of the Bochs and the installtion, using the classical steps: configue, make, and make install. Eventually we will run our first program on Bochs. 
+We will see how to do the compilation of the source code of the Bochs and the installation, using the classical steps: configure, make, and make install. Eventually we will run our first program on Bochs. 
 
-Follow this course, I gurrantee you will learn the basic usage of lots of linux commands and programs, understand better over the low-level computer technical concepts. And open a door to the world of the operating system and computer science. See you there. 
+I gurrantee you will learn the basic usage of lots of Linux commands and programs, understand better over the low-level computer technical concepts. From there we have the ability to explore more over the computer operating system. See you. 
+
+### secondary title
+In this course, we will learn how to translate an assembly source file eventually to an executable file, and run it on the emulator Bochs.
 
 ### Video 2 Write our very first program in assembly language
 We learn that there is a strong correspondence between the machine code and the assembly code. Then we write our first program in assembly lanuage.  
@@ -49,9 +52,6 @@ sudo make install
 ### Video 12 Run our first program using Bochs
 ### Video 13 Explain our first assembly language line by line: Interrupt, ASCII
 ### Video 14 Make a script file to save clicks
-
-### Video 15
-
 
 ### Target of student
 most fundamental basics of assembly language
