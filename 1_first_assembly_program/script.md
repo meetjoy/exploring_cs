@@ -7,7 +7,13 @@ operation,
 write first program in assembly language
 
 Video 0 Introduction
+###################
+two kinds of things, 1st is we introcue a couple of very basic computer low level concpets: like
 
+2st is we present you straightly how to do operate the programs, 
+
+lastly, with this knowlege, we open a big door to the computer low level techniques
+###################
 Video 1 Write our very first program in assembly language
 We learn that there is a strong correspondence between the machine code and the assembly code. Then we write our first program in assembly lanuage.  
 x86 assembly language:
